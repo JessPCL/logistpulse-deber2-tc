@@ -1,0 +1,24 @@
+graph planta {
+  layout=neato; overlap=false; splines=true; fontname=Helvetica; labelloc=t;
+  label="Planta LOGISTPULSE · Dijkstra R→D: R → B → A → E → D = 11 m (azul) · ruta empatada de la Figura 5 (naranja punteado)";
+  node [shape=box, style="rounded,filled", fillcolor="#eef4fc", color="#7f9cc4", fontname=Helvetica];
+  edge [fontname=Helvetica, color="#9aa7b8", penwidth=1.5];
+  "A" [label="A\nPasillo A", pos="1.8,2!", fillcolor="#eef4fc"];
+  "B" [label="B\nPasillo B", pos="1.8,0!", fillcolor="#eef4fc"];
+  "C" [label="C\nPasillo C", pos="3.6,-1!", fillcolor="#eef4fc"];
+  "D" [label="D\nDespacho", pos="7.6,1!", fillcolor="#fdebd7"];
+  "E" [label="E\nEmpaque", pos="5.4,1!", fillcolor="#eef4fc"];
+  "P" [label="P\nPicking", pos="3.6,1!", fillcolor="#eef4fc"];
+  "R" [label="R\nRecepción", pos="0,1!", fillcolor="#e3f4ea"];
+  "A" -- "B" [label="1", color="#1f6eb5", penwidth=4];
+  "A" -- "E" [label="5", color="#1f6eb5", penwidth=4];
+  "A" -- "P" [label="3", color="#e67e22", penwidth=3, style=dashed];
+  "A" -- "R" [label="4"];
+  "B" -- "C" [label="3"];
+  "B" -- "P" [label="7"];
+  "B" -- "R" [label="2", color="#1f6eb5", penwidth=4];
+  "C" -- "E" [label="4"];
+  "C" -- "P" [label="2"];
+  "D" -- "E" [label="3", color="#1f6eb5", penwidth=4];
+  "E" -- "P" [label="2", color="#e67e22", penwidth=3, style=dashed];
+}

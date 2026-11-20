@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--Generado por logistpulse.automatas.jflap · OrdenCompra. Abrir con JFLAP 7.x (Finite Automaton).-->
+<structure>
+	<type>fa</type>
+	<automaton>
+		<!--Estados-->
+		<state id="0" name="Borrador">
+			<x>70.0</x>
+			<y>220.0</y>
+			<label>q0</label>
+			<initial/>
+		</state>
+		<state id="1" name="En aprobacion">
+			<x>230.0</x>
+			<y>220.0</y>
+			<label>q1</label>
+		</state>
+		<state id="2" name="Aprobada">
+			<x>390.0</x>
+			<y>130.0</y>
+			<label>q2</label>
+		</state>
+		<state id="3" name="Rechazada">
+			<x>390.0</x>
+			<y>320.0</y>
+			<label>q3</label>
+			<final/>
+		</state>
+		<state id="4" name="Enviada">
+			<x>550.0</x>
+			<y>130.0</y>
+			<label>q4</label>
+		</state>
+		<state id="5" name="Recepcion parcial">
+			<x>720.0</x>
+			<y>40.0</y>
+			<label>q5</label>
+		</state>
+		<state id="6" name="Recibida">
+			<x>880.0</x>
+			<y>130.0</y>
+			<label>q6</label>
+			<final/>
+		</state>
+		<!--Transiciones (δ parcial: lo no declarado rechaza)-->
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>s</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>2</to>
+			<read>a</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>3</to>
+			<read>r</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>4</to>
+			<read>e</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>5</to>
+			<read>p</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>6</to>
+			<read>c</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>5</to>
+			<read>p</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>6</to>
+			<read>f</read>
+		</transition>
+	</automaton>
+</structure>

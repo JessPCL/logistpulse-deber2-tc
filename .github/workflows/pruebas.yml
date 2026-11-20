@@ -1,0 +1,30 @@
+# Integración continua: en cada push y en cada Pull Request corre las 141 pruebas
+# en un servidor limpio de GitHub. En repos PÚBLICOS es gratis. El check verde del PR
+# es evidencia de "revisión" y de "resultados reproducibles" para la rúbrica.
+name: Pruebas
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+    env:
+      # Las pruebas de TIEMPO real se omiten en el servidor compartido (ruido);
+      # las de CONTEO de operaciones (que atan el Big-O al código) sí corren.
+      LOGISTPULSE_SIN_TIEMPOS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Pruebas (funcionales + complejidad por conteo)
+        run: python -m unittest discover -s tests -v
+      - name: Demo completa
+        run: python -m logistpulse > /dev/null
+      - name: Revisión de la entrega contra la rúbrica (informativa)
+        run: python scripts/verificar_entrega.py

@@ -1,0 +1,35 @@
+{
+  "descripcion": "Planta LOGISTPULSE de la Figura 5 del enunciado. Distancias en metros. Pasillos bidireccionales => grafo NO dirigido.",
+  "dirigido": false,
+  "unidad": "m",
+  "vertices": {
+    "R": "Recepción",
+    "A": "Pasillo A",
+    "B": "Pasillo B",
+    "C": "Pasillo C",
+    "P": "Picking",
+    "E": "Empaque",
+    "D": "Despacho"
+  },
+  "aristas": [
+    ["R", "A", 4],
+    ["R", "B", 2],
+    ["A", "B", 1],
+    ["A", "P", 3],
+    ["A", "E", 5],
+    ["B", "P", 7],
+    ["B", "C", 3],
+    ["P", "E", 2],
+    ["P", "C", 2],
+    ["C", "E", 4],
+    ["E", "D", 3]
+  ],
+  "origen": "R",
+  "destino": "D",
+  "escenarios": [
+    {"nombre": "Base (sin bloqueos)", "bloqueados": []},
+    {"nombre": "Pasillo A bloqueado", "bloqueados": ["A"]},
+    {"nombre": "Picking bloqueado", "bloqueados": ["P"]},
+    {"nombre": "Empaque bloqueado (D queda aislado)", "bloqueados": ["E"]}
+  ]
+}

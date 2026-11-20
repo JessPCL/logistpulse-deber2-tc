@@ -1,0 +1,21 @@
+digraph "Reserva" {
+  rankdir=LR; fontname=Helvetica; labelloc=t;
+  label="AFD · Reserva  (F = doble círculo; transiciones no dibujadas → sumidero ERROR)";
+  node [fontname=Helvetica, style=filled, fillcolor="#eef4fc", color="#7f9cc4"];
+  edge [fontname=Helvetica, fontsize=11, color="#4b5d78"];
+  __inicio [shape=point, width=0.12, label=""];
+  "Solicitada" [shape=circle, fillcolor="#eef4fc"];
+  "Validada" [shape=circle, fillcolor="#eef4fc"];
+  "Reservada" [shape=circle, fillcolor="#eef4fc"];
+  "Consumida" [shape=doublecircle, fillcolor="#e3f4ea"];
+  "Liberada" [shape=doublecircle, fillcolor="#fbeaea"];
+  "Expirada" [shape=doublecircle, fillcolor="#fbeaea"];
+  "Rechazada" [shape=doublecircle, fillcolor="#fbeaea"];
+  __inicio -> "Solicitada";
+  "Solicitada" -> "Validada" [label="v: validar"];
+  "Solicitada" -> "Rechazada" [label="s: sin_stock"];
+  "Validada" -> "Reservada" [label="c: confirmar"];
+  "Reservada" -> "Consumida" [label="p: picking"];
+  "Reservada" -> "Liberada" [label="x: cancelar"];
+  "Reservada" -> "Expirada" [label="t: vence_plazo"];
+}

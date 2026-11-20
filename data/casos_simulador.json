@@ -1,0 +1,370 @@
+{
+ "descripcion": "Datos de los 10 expedientes del simulador LOGISTPULSE (tabla 'Datos del caso' y código de referencia de cada correo). 'extras' son instancias adicionales del equipo para pruebas límite y comparaciones; no cambian las condiciones de los correos.",
+ "p1": {
+  "conexiones": [
+   [
+    "Durán",
+    "Quito"
+   ],
+   [
+    "Durán",
+    "Guayaquil"
+   ],
+   [
+    "Quito",
+    "Norte"
+   ],
+   [
+    "Guayaquil",
+    "Sur"
+   ]
+  ],
+  "origen": "Durán",
+  "destino": "Norte",
+  "extras": {
+   "cierre_de_vias": [
+    [
+     "Quito",
+     "Norte"
+    ]
+   ]
+  }
+ },
+ "p2": {
+  "tramos": [
+   [
+    "Quito",
+    "Latacunga",
+    2
+   ],
+   [
+    "Quito",
+    "Ambato",
+    5
+   ],
+   [
+    "Latacunga",
+    "Guayaquil",
+    6
+   ],
+   [
+    "Ambato",
+    "Guayaquil",
+    3
+   ]
+  ],
+  "origen": "Quito",
+  "destino": "Guayaquil",
+  "extras": {
+   "contraejemplo_peso_negativo": {
+    "S": [
+     [
+      "A",
+      2
+     ],
+     [
+      "B",
+      3
+     ]
+    ],
+    "B": [
+     [
+      "A",
+      -2
+     ]
+    ],
+    "A": [
+     [
+      "C",
+      1
+     ]
+    ],
+    "C": []
+   }
+  }
+ },
+ "p3": {
+  "tramos": [
+   [
+    "Planta",
+    "Quito",
+    7
+   ],
+   [
+    "Planta",
+    "Guayaquil",
+    5
+   ],
+   [
+    "Quito",
+    "Clientes",
+    4
+   ],
+   [
+    "Guayaquil",
+    "Clientes",
+    6
+   ],
+   [
+    "Quito",
+    "Guayaquil",
+    2
+   ]
+  ],
+  "fuente": "Planta",
+  "sumidero": "Clientes"
+ },
+ "n1": {
+  "A": [
+   [
+    0,
+    1,
+    0
+   ],
+   [
+    1,
+    0,
+    1
+   ],
+   [
+    0,
+    1,
+    0
+   ]
+  ],
+  "B": [
+   [
+    0,
+    1,
+    1
+   ],
+   [
+    1,
+    0,
+    0
+   ],
+   [
+    1,
+    0,
+    0
+   ]
+  ]
+ },
+ "n2": {
+  "N_binario": "1011011",
+  "B_binario": "1010"
+ },
+ "n3": {
+  "p": 23,
+  "g": 5,
+  "h": 8,
+  "B": 10
+ },
+ "n4": {
+  "G": [
+   [
+    0,
+    1,
+    1
+   ],
+   [
+    1,
+    0,
+    1
+   ],
+   [
+    1,
+    1,
+    0
+   ]
+  ],
+  "extras": {
+   "asimetrico_6": {
+    "aristas": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      2
+     ],
+     [
+      2,
+      3
+     ],
+     [
+      3,
+      4
+     ],
+     [
+      5,
+      1
+     ],
+     [
+      5,
+      2
+     ]
+    ],
+    "n": 6,
+    "nota": "camino 0-1-2-3-4 + vértice 5 unido a 1 y 2: único automorfismo = identidad"
+   }
+  }
+ },
+ "c1": {
+  "n": 3,
+  "clausulas": [
+   [
+    1,
+    -2
+   ],
+   [
+    2,
+    3
+   ]
+  ],
+  "extras": {
+   "tres_cnf_satisfacible": {
+    "n": 5,
+    "clausulas": [
+     [
+      1,
+      2,
+      3
+     ],
+     [
+      -1,
+      -2,
+      4
+     ],
+     [
+      -3,
+      -4,
+      5
+     ],
+     [
+      2,
+      4,
+      -5
+     ],
+     [
+      -1,
+      3,
+      5
+     ]
+    ]
+   },
+   "tres_cnf_insatisfacible": {
+    "n": 3,
+    "clausulas": [
+     [
+      1,
+      2,
+      3
+     ],
+     [
+      1,
+      2,
+      -3
+     ],
+     [
+      1,
+      -2,
+      3
+     ],
+     [
+      1,
+      -2,
+      -3
+     ],
+     [
+      -1,
+      2,
+      3
+     ],
+     [
+      -1,
+      2,
+      -3
+     ],
+     [
+      -1,
+      -2,
+      3
+     ],
+     [
+      -1,
+      -2,
+      -3
+     ]
+    ]
+   }
+  }
+ },
+ "c2": {
+  "centros": [
+   "Planta",
+   "Quito",
+   "Guayaquil"
+  ],
+  "distancias": [
+   [
+    0,
+    4,
+    8
+   ],
+   [
+    4,
+    0,
+    3
+   ],
+   [
+    8,
+    3,
+    0
+   ]
+  ],
+  "L": 20,
+  "extras": {
+   "trampa_heuristica": [
+    [
+     0,
+     1,
+     2,
+     10
+    ],
+    [
+     1,
+     0,
+     1,
+     2
+    ],
+    [
+     2,
+     1,
+     0,
+     1
+    ],
+    [
+     10,
+     2,
+     1,
+     0
+    ]
+   ]
+  }
+ },
+ "c3": {
+  "aristas": [
+   [
+    "A",
+    "B"
+   ],
+   [
+    "B",
+    "C"
+   ]
+  ],
+  "k": 1
+ }
+}

@@ -1,0 +1,23 @@
+digraph "OrdenCompra" {
+  rankdir=LR; fontname=Helvetica; labelloc=t;
+  label="AFD · OrdenCompra  (F = doble círculo; transiciones no dibujadas → sumidero ERROR)";
+  node [fontname=Helvetica, style=filled, fillcolor="#eef4fc", color="#7f9cc4"];
+  edge [fontname=Helvetica, fontsize=11, color="#4b5d78"];
+  __inicio [shape=point, width=0.12, label=""];
+  "Borrador" [shape=circle, fillcolor="#eef4fc"];
+  "En aprobacion" [shape=circle, fillcolor="#eef4fc"];
+  "Aprobada" [shape=circle, fillcolor="#eef4fc"];
+  "Rechazada" [shape=doublecircle, fillcolor="#fbeaea"];
+  "Enviada" [shape=circle, fillcolor="#eef4fc"];
+  "Recepcion parcial" [shape=circle, fillcolor="#eef4fc"];
+  "Recibida" [shape=doublecircle, fillcolor="#e3f4ea"];
+  __inicio -> "Borrador";
+  "Borrador" -> "En aprobacion" [label="s: solicitar_aprobacion"];
+  "En aprobacion" -> "Aprobada" [label="a: aprobar"];
+  "En aprobacion" -> "Rechazada" [label="r: rechazar"];
+  "Aprobada" -> "Enviada" [label="e: emitir_orden"];
+  "Enviada" -> "Recepcion parcial" [label="p: recibir_parte"];
+  "Enviada" -> "Recibida" [label="c: recibir_completa"];
+  "Recepcion parcial" -> "Recepcion parcial" [label="p: recibir_parte"];
+  "Recepcion parcial" -> "Recibida" [label="f: completar_recepcion"];
+}

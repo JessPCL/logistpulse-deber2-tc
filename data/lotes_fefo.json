@@ -1,0 +1,81 @@
+{
+  "descripcion": "Lotes de prueba para FEFO. fecha_referencia = día de la reserva.",
+  "fecha_referencia": "2026-11-20",
+  "lotes": [
+    {
+      "codigo": "L-003",
+      "sku": "LECHE-1L",
+      "vencimiento": "2026-12-05",
+      "disponible": 40
+    },
+    {
+      "codigo": "L-001",
+      "sku": "LECHE-1L",
+      "vencimiento": "2026-12-01",
+      "disponible": 30
+    },
+    {
+      "codigo": "L-002",
+      "sku": "LECHE-1L",
+      "vencimiento": "2026-12-01",
+      "disponible": 25
+    },
+    {
+      "codigo": "L-004",
+      "sku": "LECHE-1L",
+      "vencimiento": "2026-11-18",
+      "disponible": 50
+    },
+    {
+      "codigo": "L-007",
+      "sku": "LECHE-1L",
+      "vencimiento": "2026-11-20",
+      "disponible": 15
+    },
+    {
+      "codigo": "L-005",
+      "sku": "LECHE-1L",
+      "vencimiento": "2026-12-20",
+      "disponible": 0
+    },
+    {
+      "codigo": "L-006",
+      "sku": "LECHE-1L",
+      "vencimiento": "2027-01-10",
+      "disponible": 60
+    },
+    {
+      "codigo": "Y-100",
+      "sku": "YOGUR-200G",
+      "vencimiento": "2026-11-25",
+      "disponible": 12
+    }
+  ],
+  "pedidos": [
+    {
+      "sku": "LECHE-1L",
+      "cantidad": 80,
+      "politica": "parcial"
+    },
+    {
+      "sku": "LECHE-1L",
+      "cantidad": 200,
+      "politica": "parcial"
+    },
+    {
+      "sku": "LECHE-1L",
+      "cantidad": 200,
+      "politica": "rechazar"
+    },
+    {
+      "sku": "LECHE-1L",
+      "cantidad": 200,
+      "politica": "esperar"
+    },
+    {
+      "sku": "YOGUR-200G",
+      "cantidad": 12,
+      "politica": "parcial"
+    }
+  ]
+}

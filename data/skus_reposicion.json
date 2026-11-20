@@ -1,0 +1,11 @@
+{
+  "descripcion": "Inventario por SKU para la regla de punto de pedido. Incluye el ejemplo del enunciado (SKU-EJ).",
+  "skus": [
+    {"sku": "SKU-EJ",     "disponible": 18, "en_orden": 10, "reservado": 5,  "minimo": 30, "objetivo": 50},
+    {"sku": "LECHE-1L",   "disponible": 155, "en_orden": 0, "reservado": 80, "minimo": 100, "objetivo": 250},
+    {"sku": "YOGUR-200G", "disponible": 12, "en_orden": 40, "reservado": 12, "minimo": 30, "objetivo": 60},
+    {"sku": "AGUA-500ML", "disponible": 300, "en_orden": 0, "reservado": 20, "minimo": 100, "objetivo": 400},
+    {"sku": "QUESO-500G", "disponible": 10, "en_orden": 0, "reservado": 15, "minimo": 20, "objetivo": 40},
+    {"sku": "PAN-MOLDE",  "disponible": 25, "en_orden": 5, "reservado": 0,  "minimo": 30, "objetivo": 45}
+  ]
+}

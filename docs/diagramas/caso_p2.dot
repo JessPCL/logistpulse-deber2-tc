@@ -1,0 +1,10 @@
+digraph p2 {
+  rankdir=LR; fontname=Helvetica;
+  node [shape=ellipse, style=filled, fillcolor="#eef4fc", color="#7f9cc4", fontname=Helvetica];
+  edge [fontname=Helvetica, color="#4b5d78"];
+  label="p2 · tiempos de viaje (dirigido)"; labelloc=t;
+  "Quito" -> "Latacunga" [label="2"];
+  "Quito" -> "Ambato" [label="5"];
+  "Latacunga" -> "Guayaquil" [label="6"];
+  "Ambato" -> "Guayaquil" [label="3"];
+}

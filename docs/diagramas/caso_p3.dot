@@ -1,0 +1,11 @@
+digraph p3 {
+  rankdir=LR; fontname=Helvetica;
+  node [shape=ellipse, style=filled, fillcolor="#eef4fc", color="#7f9cc4", fontname=Helvetica];
+  edge [fontname=Helvetica, color="#4b5d78"];
+  label="p3 · capacidades (camiones/día)"; labelloc=t;
+  "Planta" -> "Quito" [label="7"];
+  "Planta" -> "Guayaquil" [label="5"];
+  "Quito" -> "Clientes" [label="4"];
+  "Quito" -> "Guayaquil" [label="2"];
+  "Guayaquil" -> "Clientes" [label="6"];
+}

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--Generado por logistpulse.automatas.jflap · Reserva. Abrir con JFLAP 7.x (Finite Automaton).-->
+<structure>
+	<type>fa</type>
+	<automaton>
+		<!--Estados-->
+		<state id="0" name="Solicitada">
+			<x>70.0</x>
+			<y>220.0</y>
+			<label>q0</label>
+			<initial/>
+		</state>
+		<state id="1" name="Validada">
+			<x>240.0</x>
+			<y>160.0</y>
+			<label>q1</label>
+		</state>
+		<state id="2" name="Reservada">
+			<x>420.0</x>
+			<y>160.0</y>
+			<label>q2</label>
+		</state>
+		<state id="3" name="Consumida">
+			<x>620.0</x>
+			<y>50.0</y>
+			<label>q3</label>
+			<final/>
+		</state>
+		<state id="4" name="Liberada">
+			<x>620.0</x>
+			<y>160.0</y>
+			<label>q4</label>
+			<final/>
+		</state>
+		<state id="5" name="Expirada">
+			<x>620.0</x>
+			<y>270.0</y>
+			<label>q5</label>
+			<final/>
+		</state>
+		<state id="6" name="Rechazada">
+			<x>240.0</x>
+			<y>320.0</y>
+			<label>q6</label>
+			<final/>
+		</state>
+		<!--Transiciones (δ parcial: lo no declarado rechaza)-->
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>v</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>6</to>
+			<read>s</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>2</to>
+			<read>c</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>3</to>
+			<read>p</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>4</to>
+			<read>x</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>5</to>
+			<read>t</read>
+		</transition>
+	</automaton>
+</structure>

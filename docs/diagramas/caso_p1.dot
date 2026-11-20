@@ -1,0 +1,10 @@
+digraph p1 {
+  rankdir=LR; fontname=Helvetica;
+  node [shape=ellipse, style=filled, fillcolor="#eef4fc", color="#7f9cc4", fontname=Helvetica];
+  edge [fontname=Helvetica, color="#4b5d78"];
+  label="p1 · tramos activos (dirigido)"; labelloc=t;
+  "Durán" -> "Quito" [color="#1f6eb5", penwidth=3];
+  "Durán" -> "Guayaquil";
+  "Quito" -> "Norte" [color="#1f6eb5", penwidth=3];
+  "Guayaquil" -> "Sur";
+}

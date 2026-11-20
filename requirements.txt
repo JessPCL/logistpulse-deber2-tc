@@ -1,0 +1,4 @@
+# El código solo usa la biblioteca estándar de Python (>= 3.8).
+# Opcional:
+#   - pytest   -> para correr las pruebas con `pytest` (también corren con `python -m unittest`)
+#   - Graphviz (programa del sistema, comando `dot`) -> para regenerar docs/diagramas. En Colab ya está instalado.

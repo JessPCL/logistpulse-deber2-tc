@@ -1,0 +1,25 @@
+digraph "Pedido" {
+  rankdir=LR; fontname=Helvetica; labelloc=t;
+  label="AFD · Pedido  (F = doble círculo; transiciones no dibujadas → sumidero ERROR)";
+  node [fontname=Helvetica, style=filled, fillcolor="#eef4fc", color="#7f9cc4"];
+  edge [fontname=Helvetica, fontsize=11, color="#4b5d78"];
+  __inicio [shape=point, width=0.12, label=""];
+  "Borrador" [shape=circle, fillcolor="#eef4fc"];
+  "Confirmado" [shape=circle, fillcolor="#eef4fc"];
+  "Reservado" [shape=circle, fillcolor="#eef4fc"];
+  "Preparacion" [shape=circle, fillcolor="#eef4fc"];
+  "Empacado" [shape=circle, fillcolor="#eef4fc"];
+  "Despachado" [shape=circle, fillcolor="#eef4fc"];
+  "Entregado" [shape=doublecircle, fillcolor="#e3f4ea"];
+  "Cancelado" [shape=doublecircle, fillcolor="#fbeaea"];
+  __inicio -> "Borrador";
+  "Borrador" -> "Confirmado" [label="c: confirmar"];
+  "Borrador" -> "Cancelado" [label="x: cancelar"];
+  "Confirmado" -> "Reservado" [label="r: reservar"];
+  "Confirmado" -> "Cancelado" [label="x: cancelar"];
+  "Reservado" -> "Preparacion" [label="i: iniciar_picking"];
+  "Reservado" -> "Cancelado" [label="x: cancelar"];
+  "Preparacion" -> "Empacado" [label="e: empacar"];
+  "Empacado" -> "Despachado" [label="d: despachar"];
+  "Despachado" -> "Entregado" [label="n: entregar"];
+}

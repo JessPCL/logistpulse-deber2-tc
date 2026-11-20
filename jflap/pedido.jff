@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--Generado por logistpulse.automatas.jflap · Pedido. Abrir con JFLAP 7.x (Finite Automaton).-->
+<structure>
+	<type>fa</type>
+	<automaton>
+		<!--Estados-->
+		<state id="0" name="Borrador">
+			<x>70.0</x>
+			<y>260.0</y>
+			<label>q0</label>
+			<initial/>
+		</state>
+		<state id="1" name="Confirmado">
+			<x>210.0</x>
+			<y>180.0</y>
+			<label>q1</label>
+		</state>
+		<state id="2" name="Reservado">
+			<x>350.0</x>
+			<y>100.0</y>
+			<label>q2</label>
+		</state>
+		<state id="3" name="Preparacion">
+			<x>500.0</x>
+			<y>100.0</y>
+			<label>q3</label>
+		</state>
+		<state id="4" name="Empacado">
+			<x>650.0</x>
+			<y>100.0</y>
+			<label>q4</label>
+		</state>
+		<state id="5" name="Despachado">
+			<x>800.0</x>
+			<y>100.0</y>
+			<label>q5</label>
+		</state>
+		<state id="6" name="Entregado">
+			<x>950.0</x>
+			<y>100.0</y>
+			<label>q6</label>
+			<final/>
+		</state>
+		<state id="7" name="Cancelado">
+			<x>500.0</x>
+			<y>300.0</y>
+			<label>q7</label>
+			<final/>
+		</state>
+		<!--Transiciones (δ parcial: lo no declarado rechaza)-->
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>c</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>7</to>
+			<read>x</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>2</to>
+			<read>r</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>7</to>
+			<read>x</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>3</to>
+			<read>i</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>7</to>
+			<read>x</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>4</to>
+			<read>e</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>5</to>
+			<read>d</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>6</to>
+			<read>n</read>
+		</transition>
+	</automaton>
+</structure>
