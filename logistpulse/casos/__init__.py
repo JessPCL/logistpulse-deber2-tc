@@ -170,7 +170,7 @@ CASOS: List[Caso] = [
         "Orden de visita (tour).", "HAM-CYCLE ≤p TSP-DEC en O(n²) (Karp 1972).",
         "Enumeración de permutaciones (decisión) · Held–Karp (optimización) · vecino más cercano (heurística)",
         "Exacto (enumeración, Held–Karp) / heurístico (vecino más cercano)",
-        "O(n!·n) · Held–Karp O(n²·2ⁿ)", "O(n) · Held–Karp O(n·2ⁿ)", "n = centros",
+        "O((n−1)!·n) = O(n!) · Held–Karp O(n²·2ⁿ)", "O(n) · Held–Karp O(n·2ⁿ)", "n = centros",
         "Sí: (n−1)! tours finitos.",
         "logistpulse/casos/c2_tsp_decision.py",
         "Con L = 20: Sí (Planta→Quito→Guayaquil→Planta = 15). Con L = 14: No.",

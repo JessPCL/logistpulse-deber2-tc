@@ -10,7 +10,7 @@ NP-difícil: HAM-CYCLE ≤p TSP-DEC (Karp 1972). Dado G=(V,E) con n vértices,
 construir D con D[u][v] = 1 si (u,v) ∈ E, 2 si no, y L = n. G tiene ciclo
 hamiltoniano ⇔ hay tour de costo ≤ n. Construcción O(n²) ⇒ polinómica.
 
-Algoritmos: enumeración O(n!·n) (se fija el inicio: (n−1)! órdenes); Held–Karp
+Algoritmos: enumeración O((n−1)!·n) = O(n!) (se fija el inicio: (n−1)! órdenes de O(n) cada uno); Held–Karp
 O(n²·2ⁿ) tiempo y O(n·2ⁿ) espacio (exacto); vecino más cercano O(n²) (heurística,
 SIN garantía de optimalidad).
 """
@@ -127,7 +127,19 @@ def vecino_mas_cercano(D: Matriz, inicio: int = 0, contar=None) -> Tuple[Tuple[i
 
 
 def reducir_ham_a_tsp(n: int, aristas: Iterable[Tuple[int, int]]) -> Tuple[List[List[int]], int]:
-    """Reducción polinómica HAM-CYCLE ≤p TSP-DEC. O(n²)."""
+    """Reducción polinómica HAM-CYCLE ≤p TSP-DEC. O(n²).
+
+    Con n < 3 un grafo simple no tiene ciclo hamiltoniano: se devuelve una instancia
+    fija con respuesta No (dos centros a distancia 1 y L = 1; el único tour cuesta 2).
+    """
+    if isinstance(n, bool) or not isinstance(n, int) or n < 0:
+        raise ValueError("n debe ser entero ≥ 0")
+    aristas = list(aristas)
+    if n < 3:
+        for u, v in aristas:
+            if not (0 <= u < n and 0 <= v < n) or u == v:
+                raise ValueError(f"Arista inválida ({u},{v})")
+        return [[0, 1], [1, 0]], 1
     D = [[0 if i == j else 2 for j in range(n)] for i in range(n)]
     for u, v in aristas:
         if not (0 <= u < n and 0 <= v < n) or u == v:

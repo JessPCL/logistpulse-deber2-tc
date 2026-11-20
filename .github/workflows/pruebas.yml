@@ -1,4 +1,4 @@
-# Integración continua: en cada push y en cada Pull Request corre las 141 pruebas
+# Integración continua: en cada push y en cada Pull Request corre las más de 140 pruebas
 # en un servidor limpio de GitHub. En repos PÚBLICOS es gratis. El check verde del PR
 # es evidencia de "revisión" y de "resultados reproducibles" para la rúbrica.
 name: Pruebas

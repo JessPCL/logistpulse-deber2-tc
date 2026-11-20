@@ -120,6 +120,12 @@ class TestC2(unittest.TestCase):
         with self.assertRaises(ValueError):
             c2.reducir_ham_a_tsp(3, [(0, 0)])
 
+    def test_reduccion_casos_pequenos_dan_no(self):
+        """Con n < 3 no hay ciclo hamiltoniano simple: la reducción produce una instancia No."""
+        for n, aristas in ((0, []), (1, []), (2, []), (2, [(0, 1)])):
+            D, L = c2.reducir_ham_a_tsp(n, aristas)
+            self.assertIsNone(c2.decidir(D, L), (n, aristas))
+
 
 class TestC3(unittest.TestCase):
     def test_instancia(self):

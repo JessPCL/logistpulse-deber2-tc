@@ -1,6 +1,6 @@
 # Inventario de pruebas
 
-_Generado por `scripts/generar_docs.py`. Total: 141 métodos de prueba (complejidad (conteo): 16 · complejidad (tiempo): 4 · inválida: 33 · límite: 19 · normal: 69). Muchos métodos agrupan varios casos con `subTest`. La categoría se asigna por el nombre del método._
+_Generado por `scripts/generar_docs.py`. Total: 142 métodos de prueba (complejidad (conteo): 16 · complejidad (tiempo): 4 · inválida: 33 · límite: 19 · normal: 70). Muchos métodos agrupan varios casos con `subTest`. La categoría se asigna por el nombre del método._
 
 | Archivo | Prueba | Categoría | Descripción |
 |---|---|---|---|
@@ -52,6 +52,7 @@ _Generado por `scripts/generar_docs.py`. Total: 141 métodos de prueba (compleji
 | `test_casos_npc` | `TestC2.test_instancia` | normal |  |
 | `test_casos_npc` | `TestC2.test_invalidos` | inválida |  |
 | `test_casos_npc` | `TestC2.test_limite_presupuesto` | límite |  |
+| `test_casos_npc` | `TestC2.test_reduccion_casos_pequenos_dan_no` | normal | Con n < 3 no hay ciclo hamiltoniano simple: la reducción produce una instancia No. |
 | `test_casos_npc` | `TestC2.test_reduccion_ham_a_tsp` | normal |  |
 | `test_casos_npc` | `TestC2.test_verificador_rechaza` | inválida |  |
 | `test_casos_npc` | `TestC3.test_exactos_y_aproximacion` | normal |  |
