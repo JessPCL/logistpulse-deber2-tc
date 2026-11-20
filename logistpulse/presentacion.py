@@ -21,7 +21,7 @@ def reporte_automatas() -> str:
         out.append("")
         for cadena, esperado, explicacion in SECUENCIAS[clave]:
             r = afd.ejecutar(cadena)
-            ok = "✔" if r.aceptada == esperado else "✘ NO COINCIDE"
+            ok = "[OK]" if r.aceptada == esperado else "[NO COINCIDE]"
             eventos = " → ".join(afd.eventos(cadena)) if cadena else "ε"
             out.append(f"{ok} '{cadena or 'ε'}' [{eventos}] -> {'ACEPTA' if r.aceptada else 'RECHAZA'} · {r.motivo}")
             out.append(f"     {explicacion}")

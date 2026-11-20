@@ -26,7 +26,7 @@ def main() -> None:
             f"Archivo: `{clave}.jff` · entradas: `entradas_{clave}.txt`\n\n"
             "Σ: " + ", ".join(f"`{s}` = {e}" for s, e in afd.alfabeto.items()) + "\n\n"
             + "\n".join(esperado) + "\n", encoding="utf-8")
-        print(f"✔ {ruta.relative_to(RAIZ)}")
+        print(f"OK {ruta.relative_to(RAIZ)}")
 
 
 if __name__ == "__main__":

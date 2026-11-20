@@ -94,12 +94,12 @@ def renderizar(nombre: str, fuente: str, motor: str = "dot") -> None:
     ruta_dot = SALIDA / f"{nombre}.dot"
     ruta_dot.write_text(fuente, encoding="utf-8")
     if shutil.which(motor) is None:
-        print(f"⚠ Graphviz no instalado: solo se escribió {ruta_dot.relative_to(RAIZ)}")
+        print(f"AVISO Graphviz no instalado: solo se escribió {ruta_dot.relative_to(RAIZ)}")
         return
     for fmt in ("png", "svg"):
         subprocess.run([motor, f"-T{fmt}", "-Gdpi=150" if fmt == "png" else "-Gdpi=72",
                         str(ruta_dot), "-o", str(SALIDA / f"{nombre}.{fmt}")], check=True)
-    print(f"✔ docs/diagramas/{nombre}.png / .svg")
+    print(f"OK docs/diagramas/{nombre}.png / .svg")
 
 
 def main() -> None:

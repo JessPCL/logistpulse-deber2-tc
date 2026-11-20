@@ -35,7 +35,7 @@ Remitente · Grupo (A/B/C) · Clasificación propuesta · Responsable
 | **B · NP** | Problema de decisión + certificado + verificador polinómico (en el tamaño de la entrada) + por qué esto prueba pertenencia a NP pero **no** prueba que el problema esté fuera de P ni que sea NP-completo. |
 | **C · NPC** | ∈ NP (certificado + verificador) + problema NP-completo de origen + reducción **CONOCIDO ≤p NUESTRO** (construcción, correctitud ⇔ y tiempo polinómico de la transformación) + consecuencia práctica para el tamaño de la instancia. |
 
-## ✅ Lista de verificación (pegarla al final de cada ficha y marcarla)
+## Lista de verificación (pegarla al final de cada ficha y marcarla)
 - [ ] Resumen fiel al correo; ninguna condición ni dato cambiado; ambigüedades señaladas con la lectura elegida
 - [ ] Pregunta de decisión explícita (lenguaje L); si el correo pide optimización, la clasificación se hace sobre la versión de decisión y está escrito
 - [ ] Entrada con su **tamaño** definido (en bits si hay números: el valor B ≠ el tamaño log₂B)
@@ -48,5 +48,5 @@ Remitente · Grupo (A/B/C) · Clasificación propuesta · Responsable
 - [ ] Big-O respaldado por `tests/test_complejidad.py` (conteo de operaciones y/o tiempo real)
 - [ ] Respuesta al correo (sección 0) y tabla "¿Qué concluimos?" completas
 - [ ] No se afirma P ≠ NP · P ⊆ NP · "NP" no significa "no polinómico" · grupo B no dice "NP-completo"
-- [ ] Sin marcas ✍️ pendientes
+- [ ] Sin secciones pendientes por redactar (marcas [POR REDACTAR]) y sin emojis
 - [ ] 3 preguntas de defensa oral con su respuesta

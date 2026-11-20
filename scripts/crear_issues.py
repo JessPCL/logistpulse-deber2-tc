@@ -28,8 +28,8 @@ def filas_backlog():
             id_, correo, clase, resp, sprint, ficha, codigo, pruebas, _estado = celdas
             titulo = f"[{id_}] {correo} ({clase})"
             cuerpo = (f"**Unidad de trabajo del correo {id_[2:]}** · Responsable: {resp} · Sprint {sprint}\n\n"
-                      f"- Ficha: {ficha}\n- Código: {codigo}\n- Pruebas: {pruebas}\n\n"
-                      "Hecho cuando: ficha sin marcas ✍️, lista de verificación marcada, "
+                      f"- Ficha: {ficha}\n- Código: {codigo.replace('`casos/', '`logistpulse/casos/')}\n- Pruebas: {pruebas.replace('`test_', '`tests/test_')}\n\n"
+                      "Hecho cuando: ficha sin secciones pendientes por redactar, lista de verificación marcada, "
                       "`python scripts/verificar_entrega.py` sin pendientes de esta ficha y PR revisado por otro integrante.")
         else:
             id_, historia, fase, resp, sprint, est, _estado, evidencia = celdas
@@ -49,9 +49,9 @@ def main() -> int:
         if crear:
             r = subprocess.run(["gh", "issue", "create", "--title", titulo, "--body", cuerpo],
                                cwd=RAIZ, capture_output=True, text=True)
-            print(("✔ " + r.stdout.strip()) if r.returncode == 0 else f"✘ {titulo}: {r.stderr.strip()}")
+            print(("OK " + r.stdout.strip()) if r.returncode == 0 else f"ERROR {titulo}: {r.stderr.strip()}")
         else:
-            print(f"· {titulo}")
+            print(f"- {titulo}")
     if not crear:
         print(f"\n{len(issues)} Issues listos. Para crearlos: python scripts/crear_issues.py --crear")
     return 0

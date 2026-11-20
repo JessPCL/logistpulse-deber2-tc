@@ -372,7 +372,7 @@ OK
 2. **¿Cómo saben que BFS siempre termina?** Cada vértice entra a la cola una sola vez, así que hay como máximo V extracciones y cada una revisa una lista finita. El total está acotado por V + E pasos. Además lo medimos: el contador nunca pasa de V extracciones ni de E aristas.
 3. **¿Por qué no usaron Dijkstra?** El correo pregunta si existe una ruta, no cuánto cuesta, y no hay pesos. Dijkstra resolvería lo mismo con un factor log extra; BFS es suficiente y además da la ruta con menos tramos.
 
-### ✅ Lista de verificación (docs/PLANTILLA_FICHA.md)
+### Lista de verificación (docs/PLANTILLA_FICHA.md)
 - [x] Resumen fiel al correo; ninguna condición ni dato cambiado; ambigüedades señaladas
 - [x] Pregunta de decisión explícita; si es optimización, clasificada por su versión de decisión
 - [x] Entrada con su tamaño definido (bits si hay números)
@@ -394,10 +394,10 @@ OK
 > **Solicitud operativa:** ¿Existe ruta CD Quito ⇝ CD Guayaquil con tiempo total ≤ K?
 
 ### 0. Respuesta al correo (para Marco Cedeño)
-✍️ 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
+[POR REDACTAR] 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
 
 ### 1. Resumen del correo
-✍️ (2–4 líneas, sin cambiar condiciones del problema)
+[POR REDACTAR] (2–4 líneas, sin cambiar condiciones del problema)
 ![](../diagramas/caso_p2.png)
 
 ### 2. Entrada, salida y restricciones
@@ -405,7 +405,7 @@ OK
 - **Entrada:** Grafo dirigido con tiempos w(e) ≥ 0, origen s, destino t (y K en la versión de decisión).
 - **Salida:** Tiempo mínimo a cada nodo + ruta reconstruida con predecesores.
 - **Versión analizada:** Optimización (camino mínimo); decisión asociada con cota K.
-- ✍️ Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
+- [POR REDACTAR] Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
 
 ### 3. Clasificación y evidencia
 - **Clase:** P
@@ -413,23 +413,23 @@ OK
 - **Certificado / verificador:** —
 - **Reducción:** —
 
-✍️ Justificación formal (ver guía del grupo arriba).
+[POR REDACTAR] Justificación formal (ver guía del grupo arriba).
 
 ### 4. Decidibilidad y computabilidad
 - **Modelo de cómputo supuesto:** máquina de Turing determinista (equivalente: modelo RAM con enteros codificados en binario).
 - **¿Decidible?** Sí: cada vértice se finaliza una vez; ≤ E inserciones en el heap.
-- ✍️ Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
+- [POR REDACTAR] Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
 
 ### 5. Algoritmo seleccionado
 - **Algoritmo:** Dijkstra (heap binario)
 - **Tipo de solución:** Exacto
-- ✍️ Por qué este algoritmo y qué garantiza.
+- [POR REDACTAR] Por qué este algoritmo y qué garantiza.
 
 ### 6. Complejidad (Big-O)
 - **Variables:** V = centros, E = conexiones
 - **Tiempo:** O((V + E) log V)
 - **Espacio:** O(V + E)
-- ✍️ Justificación de la cota (de dónde sale cada factor).
+- [POR REDACTAR] Justificación de la cota (de dónde sale cada factor).
 
 ### 7. Código, pruebas y salida observada
 - **Código:** `logistpulse/casos/p2_ruta_minima.py`
@@ -454,12 +454,12 @@ Costo 8 con EMPATE: Quito→Latacunga→Guayaquil y Quito→Ambato→Guayaquil. 
 ### ¿Qué concluimos?
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
-| ✍️ (¿siempre termina y responde Sí/No?) | ✍️ (¿qué función/relación calcula y con qué modelo?) | P · O((V + E) log V) |
+| [POR REDACTAR] (¿siempre termina y responde Sí/No?) | [POR REDACTAR] (¿qué función/relación calcula y con qué modelo?) | P · O((V + E) log V) |
 
 ### Preguntas para la defensa oral
-✍️ 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
+[POR REDACTAR] 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
 
-### ✅ Lista de verificación (docs/PLANTILLA_FICHA.md)
+### Lista de verificación (docs/PLANTILLA_FICHA.md)
 - [ ] Resumen fiel al correo; ninguna condición ni dato cambiado; ambigüedades señaladas
 - [ ] Pregunta de decisión explícita; si es optimización, clasificada por su versión de decisión
 - [ ] Entrada con su tamaño definido (bits si hay números)
@@ -470,7 +470,7 @@ Costo 8 con EMPATE: Quito→Latacunga→Guayaquil y Quito→Ambato→Guayaquil. 
 - [ ] Código + pruebas + salida observada real · Big-O respaldado por tests/test_complejidad.py
 - [ ] Respuesta al correo (sección 0) y tabla "¿Qué concluimos?" completas
 - [ ] No se afirma P ≠ NP; P ⊆ NP; "NP" ≠ "no polinómico"
-- [ ] Sin marcas ✍️ pendientes · 3 preguntas de defensa respondidas
+- [ ] Sin marcas [POR REDACTAR] pendientes · 3 preguntas de defensa respondidas
 
 ## Ficha p3 · Máximo de camiones hacia clientes
 
@@ -481,10 +481,10 @@ Costo 8 con EMPATE: Quito→Latacunga→Guayaquil y Quito→Ambato→Guayaquil. 
 > **Solicitud operativa:** ¿Se pueden enviar al menos K camiones/día de Planta a Clientes sin exceder capacidades?
 
 ### 0. Respuesta al correo (para Luis Vaca)
-✍️ 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
+[POR REDACTAR] 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
 
 ### 1. Resumen del correo
-✍️ (2–4 líneas, sin cambiar condiciones del problema)
+[POR REDACTAR] (2–4 líneas, sin cambiar condiciones del problema)
 ![](../diagramas/caso_p3.png)
 
 ### 2. Entrada, salida y restricciones
@@ -492,7 +492,7 @@ Costo 8 con EMPATE: Quito→Latacunga→Guayaquil y Quito→Ambato→Guayaquil. 
 - **Entrada:** Red dirigida con capacidades enteras c(e) ≥ 0, fuente s, sumidero t.
 - **Salida:** Valor del flujo máximo, flujo por tramo y corte mínimo.
 - **Versión analizada:** Optimización (flujo máximo); decisión asociada flujo ≥ K.
-- ✍️ Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
+- [POR REDACTAR] Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
 
 ### 3. Clasificación y evidencia
 - **Clase:** P
@@ -500,23 +500,23 @@ Costo 8 con EMPATE: Quito→Latacunga→Guayaquil y Quito→Ambato→Guayaquil. 
 - **Certificado / verificador:** Flujo factible (capacidad + conservación) verificable en O(V + E).
 - **Reducción:** —
 
-✍️ Justificación formal (ver guía del grupo arriba).
+[POR REDACTAR] Justificación formal (ver guía del grupo arriba).
 
 ### 4. Decidibilidad y computabilidad
 - **Modelo de cómputo supuesto:** máquina de Turing determinista (equivalente: modelo RAM con enteros codificados en binario).
 - **¿Decidible?** Sí: a lo sumo O(V·E) aumentos, cada uno con un BFS O(E).
-- ✍️ Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
+- [POR REDACTAR] Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
 
 ### 5. Algoritmo seleccionado
 - **Algoritmo:** Edmonds–Karp (Ford–Fulkerson con BFS)
 - **Tipo de solución:** Exacto
-- ✍️ Por qué este algoritmo y qué garantiza.
+- [POR REDACTAR] Por qué este algoritmo y qué garantiza.
 
 ### 6. Complejidad (Big-O)
 - **Variables:** V = nodos, E = tramos
 - **Tiempo:** O(V·E²)
 - **Espacio:** O(V + E)
-- ✍️ Justificación de la cota (de dónde sale cada factor).
+- [POR REDACTAR] Justificación de la cota (de dónde sale cada factor).
 
 ### 7. Código, pruebas y salida observada
 - **Código:** `logistpulse/casos/p3_flujo_maximo.py`
@@ -553,12 +553,12 @@ Flujo máximo = 10 aunque la salida de Planta suma 12 (cuello en los tramos haci
 ### ¿Qué concluimos?
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
-| ✍️ (¿siempre termina y responde Sí/No?) | ✍️ (¿qué función/relación calcula y con qué modelo?) | P · O(V·E²) |
+| [POR REDACTAR] (¿siempre termina y responde Sí/No?) | [POR REDACTAR] (¿qué función/relación calcula y con qué modelo?) | P · O(V·E²) |
 
 ### Preguntas para la defensa oral
-✍️ 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
+[POR REDACTAR] 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
 
-### ✅ Lista de verificación (docs/PLANTILLA_FICHA.md)
+### Lista de verificación (docs/PLANTILLA_FICHA.md)
 - [ ] Resumen fiel al correo; ninguna condición ni dato cambiado; ambigüedades señaladas
 - [ ] Pregunta de decisión explícita; si es optimización, clasificada por su versión de decisión
 - [ ] Entrada con su tamaño definido (bits si hay números)
@@ -569,7 +569,7 @@ Flujo máximo = 10 aunque la salida de Planta suma 12 (cuello en los tramos haci
 - [ ] Código + pruebas + salida observada real · Big-O respaldado por tests/test_complejidad.py
 - [ ] Respuesta al correo (sección 0) y tabla "¿Qué concluimos?" completas
 - [ ] No se afirma P ≠ NP; P ⊆ NP; "NP" ≠ "no polinómico"
-- [ ] Sin marcas ✍️ pendientes · 3 preguntas de defensa respondidas
+- [ ] Sin marcas [POR REDACTAR] pendientes · 3 preguntas de defensa respondidas
 
 ## Ficha n1 · Comparar topologías equivalentes
 
@@ -580,17 +580,17 @@ Flujo máximo = 10 aunque la salida de Planta suma 12 (cuello en los tramos haci
 > **Solicitud operativa:** ¿Existe una biyección entre nodos que preserve todas las conexiones (A ≅ B)?
 
 ### 0. Respuesta al correo (para Elena Ruiz)
-✍️ 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
+[POR REDACTAR] 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
 
 ### 1. Resumen del correo
-✍️ (2–4 líneas, sin cambiar condiciones del problema)
+[POR REDACTAR] (2–4 líneas, sin cambiar condiciones del problema)
 
 ### 2. Entrada, salida y restricciones
 - **Pregunta de decisión:** ¿Existe una biyección entre nodos que preserve todas las conexiones (A ≅ B)?
 - **Entrada:** Dos matrices de adyacencia n×n (grafos no dirigidos simples).
 - **Salida:** Sí/No + permutación π como evidencia.
 - **Versión analizada:** Decisión.
-- ✍️ Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
+- [POR REDACTAR] Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
 
 ### 3. Clasificación y evidencia
 - **Clase:** NP
@@ -598,23 +598,23 @@ Flujo máximo = 10 aunque la salida de Planta suma 12 (cuello en los tramos haci
 - **Certificado / verificador:** Permutación π de {0..n−1}; verificar A[i][j] = B[π(i)][π(j)] ∀ i,j.
 - **Reducción:** —
 
-✍️ Justificación formal (ver guía del grupo arriba).
+[POR REDACTAR] Justificación formal (ver guía del grupo arriba).
 
 ### 4. Decidibilidad y computabilidad
 - **Modelo de cómputo supuesto:** máquina de Turing determinista (equivalente: modelo RAM con enteros codificados en binario).
 - **¿Decidible?** Sí: el conjunto de permutaciones es finito.
-- ✍️ Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
+- [POR REDACTAR] Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
 
 ### 5. Algoritmo seleccionado
 - **Algoritmo:** Búsqueda exhaustiva de permutaciones (+ poda por grados)
 - **Tipo de solución:** Exacto
-- ✍️ Por qué este algoritmo y qué garantiza.
+- [POR REDACTAR] Por qué este algoritmo y qué garantiza.
 
 ### 6. Complejidad (Big-O)
 - **Variables:** n = nodos
 - **Tiempo:** O(n!·n²)
 - **Espacio:** O(n²) entrada + O(n) extra
-- ✍️ Justificación de la cota (de dónde sale cada factor).
+- [POR REDACTAR] Justificación de la cota (de dónde sale cada factor).
 
 ### 7. Código, pruebas y salida observada
 - **Código:** `logistpulse/casos/n1_isomorfismo.py`
@@ -638,12 +638,12 @@ No se afirma NPC: no se conoce reducción desde un NPC; Babai (2015) cuasi-polin
 ### ¿Qué concluimos?
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
-| ✍️ (¿siempre termina y responde Sí/No?) | ✍️ (¿qué función/relación calcula y con qué modelo?) | NP · O(n!·n²) |
+| [POR REDACTAR] (¿siempre termina y responde Sí/No?) | [POR REDACTAR] (¿qué función/relación calcula y con qué modelo?) | NP · O(n!·n²) |
 
 ### Preguntas para la defensa oral
-✍️ 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
+[POR REDACTAR] 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
 
-### ✅ Lista de verificación (docs/PLANTILLA_FICHA.md)
+### Lista de verificación (docs/PLANTILLA_FICHA.md)
 - [ ] Resumen fiel al correo; ninguna condición ni dato cambiado; ambigüedades señaladas
 - [ ] Pregunta de decisión explícita; si es optimización, clasificada por su versión de decisión
 - [ ] Entrada con su tamaño definido (bits si hay números)
@@ -654,7 +654,7 @@ No se afirma NPC: no se conoce reducción desde un NPC; Babai (2015) cuasi-polin
 - [ ] Código + pruebas + salida observada real · Big-O respaldado por tests/test_complejidad.py
 - [ ] Respuesta al correo (sección 0) y tabla "¿Qué concluimos?" completas
 - [ ] No se afirma P ≠ NP; P ⊆ NP; "NP" ≠ "no polinómico"
-- [ ] Sin marcas ✍️ pendientes · 3 preguntas de defensa respondidas
+- [ ] Sin marcas [POR REDACTAR] pendientes · 3 preguntas de defensa respondidas
 
 ## Ficha n2 · ¿Tiene N un factor en este intervalo?
 
@@ -665,17 +665,17 @@ No se afirma NPC: no se conoce reducción desde un NPC; Babai (2015) cuasi-polin
 > **Solicitud operativa:** ¿Existe d con 2 ≤ d ≤ B que divida a N?
 
 ### 0. Respuesta al correo (para Andrés Molina)
-✍️ 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
+[POR REDACTAR] 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
 
 ### 1. Resumen del correo
-✍️ (2–4 líneas, sin cambiar condiciones del problema)
+[POR REDACTAR] (2–4 líneas, sin cambiar condiciones del problema)
 
 ### 2. Entrada, salida y restricciones
 - **Pregunta de decisión:** ¿Existe d con 2 ≤ d ≤ B que divida a N?
 - **Entrada:** Enteros N y B en binario (L ≈ log₂N + log₂B bits).
 - **Salida:** Sí/No + divisor d como evidencia.
 - **Versión analizada:** Decisión.
-- ✍️ Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
+- [POR REDACTAR] Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
 
 ### 3. Clasificación y evidencia
 - **Clase:** NP
@@ -683,23 +683,23 @@ No se afirma NPC: no se conoce reducción desde un NPC; Babai (2015) cuasi-polin
 - **Certificado / verificador:** d; verificar 2 ≤ d ≤ B y N mod d = 0.
 - **Reducción:** —
 
-✍️ Justificación formal (ver guía del grupo arriba).
+[POR REDACTAR] Justificación formal (ver guía del grupo arriba).
 
 ### 4. Decidibilidad y computabilidad
 - **Modelo de cómputo supuesto:** máquina de Turing determinista (equivalente: modelo RAM con enteros codificados en binario).
 - **¿Decidible?** Sí: a lo sumo B−1 divisiones.
-- ✍️ Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
+- [POR REDACTAR] Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
 
 ### 5. Algoritmo seleccionado
 - **Algoritmo:** Prueba por división exhaustiva
 - **Tipo de solución:** Exacto
-- ✍️ Por qué este algoritmo y qué garantiza.
+- [POR REDACTAR] Por qué este algoritmo y qué garantiza.
 
 ### 6. Complejidad (Big-O)
 - **Variables:** L = bits de la entrada, B = cota (valor)
 - **Tiempo:** O(B·L²) — exponencial en L si B ≈ √N
 - **Espacio:** O(L)
-- ✍️ Justificación de la cota (de dónde sale cada factor).
+- [POR REDACTAR] Justificación de la cota (de dónde sale cada factor).
 
 ### 7. Código, pruebas y salida observada
 - **Código:** `logistpulse/casos/n2_factor_rango.py`
@@ -723,12 +723,12 @@ O(B) NO es polinomial: B vale hasta 2^{log B}. Está en NP ∩ coNP ⇒ improbab
 ### ¿Qué concluimos?
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
-| ✍️ (¿siempre termina y responde Sí/No?) | ✍️ (¿qué función/relación calcula y con qué modelo?) | NP · O(B·L²) — exponencial en L si B ≈ √N |
+| [POR REDACTAR] (¿siempre termina y responde Sí/No?) | [POR REDACTAR] (¿qué función/relación calcula y con qué modelo?) | NP · O(B·L²) — exponencial en L si B ≈ √N |
 
 ### Preguntas para la defensa oral
-✍️ 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
+[POR REDACTAR] 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
 
-### ✅ Lista de verificación (docs/PLANTILLA_FICHA.md)
+### Lista de verificación (docs/PLANTILLA_FICHA.md)
 - [ ] Resumen fiel al correo; ninguna condición ni dato cambiado; ambigüedades señaladas
 - [ ] Pregunta de decisión explícita; si es optimización, clasificada por su versión de decisión
 - [ ] Entrada con su tamaño definido (bits si hay números)
@@ -739,7 +739,7 @@ O(B) NO es polinomial: B vale hasta 2^{log B}. Está en NP ∩ coNP ⇒ improbab
 - [ ] Código + pruebas + salida observada real · Big-O respaldado por tests/test_complejidad.py
 - [ ] Respuesta al correo (sección 0) y tabla "¿Qué concluimos?" completas
 - [ ] No se afirma P ≠ NP; P ⊆ NP; "NP" ≠ "no polinómico"
-- [ ] Sin marcas ✍️ pendientes · 3 preguntas de defensa respondidas
+- [ ] Sin marcas [POR REDACTAR] pendientes · 3 preguntas de defensa respondidas
 
 ## Ficha n3 · ¿Existe exponente x que produzca h?
 
@@ -750,17 +750,17 @@ O(B) NO es polinomial: B vale hasta 2^{log B}. Está en NP ∩ coNP ⇒ improbab
 > **Solicitud operativa:** ¿Existe x con 0 ≤ x ≤ B y g^x ≡ h (mod p)?
 
 ### 0. Respuesta al correo (para Paola León)
-✍️ 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
+[POR REDACTAR] 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
 
 ### 1. Resumen del correo
-✍️ (2–4 líneas, sin cambiar condiciones del problema)
+[POR REDACTAR] (2–4 líneas, sin cambiar condiciones del problema)
 
 ### 2. Entrada, salida y restricciones
 - **Pregunta de decisión:** ¿Existe x con 0 ≤ x ≤ B y g^x ≡ h (mod p)?
 - **Entrada:** p primo, g, h, B en binario.
 - **Salida:** Sí/No + exponente x como evidencia.
 - **Versión analizada:** Decisión.
-- ✍️ Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
+- [POR REDACTAR] Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
 
 ### 3. Clasificación y evidencia
 - **Clase:** NP
@@ -768,23 +768,23 @@ O(B) NO es polinomial: B vale hasta 2^{log B}. Está en NP ∩ coNP ⇒ improbab
 - **Certificado / verificador:** x; verificar 0 ≤ x ≤ B y pow(g, x, p) = h en O(log B·M(log p)).
 - **Reducción:** —
 
-✍️ Justificación formal (ver guía del grupo arriba).
+[POR REDACTAR] Justificación formal (ver guía del grupo arriba).
 
 ### 4. Decidibilidad y computabilidad
 - **Modelo de cómputo supuesto:** máquina de Turing determinista (equivalente: modelo RAM con enteros codificados en binario).
 - **¿Decidible?** Sí: a lo sumo B+1 candidatos.
-- ✍️ Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
+- [POR REDACTAR] Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
 
 ### 5. Algoritmo seleccionado
 - **Algoritmo:** Búsqueda exhaustiva con exponenciación modular (alternativa: baby-step giant-step)
 - **Tipo de solución:** Exacto
-- ✍️ Por qué este algoritmo y qué garantiza.
+- [POR REDACTAR] Por qué este algoritmo y qué garantiza.
 
 ### 6. Complejidad (Big-O)
 - **Variables:** p = módulo, B = cota del exponente, M(k) = costo de multiplicar k bits
 - **Tiempo:** O(B·M(log p)) lineal · O(√B·M(log p)) BSGS
 - **Espacio:** O(1) lineal · O(√B) BSGS
-- ✍️ Justificación de la cota (de dónde sale cada factor).
+- [POR REDACTAR] Justificación de la cota (de dónde sale cada factor).
 
 ### 7. Código, pruebas y salida observada
 - **Código:** `logistpulse/casos/n3_log_discreto.py`
@@ -808,12 +808,12 @@ Ambos métodos son exponenciales en log B; el verificador sí es polinómico.
 ### ¿Qué concluimos?
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
-| ✍️ (¿siempre termina y responde Sí/No?) | ✍️ (¿qué función/relación calcula y con qué modelo?) | NP · O(B·M(log p)) lineal · O(√B·M(log p)) BSGS |
+| [POR REDACTAR] (¿siempre termina y responde Sí/No?) | [POR REDACTAR] (¿qué función/relación calcula y con qué modelo?) | NP · O(B·M(log p)) lineal · O(√B·M(log p)) BSGS |
 
 ### Preguntas para la defensa oral
-✍️ 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
+[POR REDACTAR] 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
 
-### ✅ Lista de verificación (docs/PLANTILLA_FICHA.md)
+### Lista de verificación (docs/PLANTILLA_FICHA.md)
 - [ ] Resumen fiel al correo; ninguna condición ni dato cambiado; ambigüedades señaladas
 - [ ] Pregunta de decisión explícita; si es optimización, clasificada por su versión de decisión
 - [ ] Entrada con su tamaño definido (bits si hay números)
@@ -824,7 +824,7 @@ Ambos métodos son exponenciales en log B; el verificador sí es polinómico.
 - [ ] Código + pruebas + salida observada real · Big-O respaldado por tests/test_complejidad.py
 - [ ] Respuesta al correo (sección 0) y tabla "¿Qué concluimos?" completas
 - [ ] No se afirma P ≠ NP; P ⊆ NP; "NP" ≠ "no polinómico"
-- [ ] Sin marcas ✍️ pendientes · 3 preguntas de defensa respondidas
+- [ ] Sin marcas [POR REDACTAR] pendientes · 3 preguntas de defensa respondidas
 
 ## Ficha n4 · ¿La topología tiene una simetría?
 
@@ -835,17 +835,17 @@ Ambos métodos son exponenciales en log B; el verificador sí es polinómico.
 > **Solicitud operativa:** ¿Existe una permutación π ≠ identidad que preserve las adyacencias?
 
 ### 0. Respuesta al correo (para Santiago Jaramillo)
-✍️ 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
+[POR REDACTAR] 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
 
 ### 1. Resumen del correo
-✍️ (2–4 líneas, sin cambiar condiciones del problema)
+[POR REDACTAR] (2–4 líneas, sin cambiar condiciones del problema)
 
 ### 2. Entrada, salida y restricciones
 - **Pregunta de decisión:** ¿Existe una permutación π ≠ identidad que preserve las adyacencias?
 - **Entrada:** Matriz de adyacencia n×n.
 - **Salida:** Sí/No + π como evidencia.
 - **Versión analizada:** Decisión.
-- ✍️ Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
+- [POR REDACTAR] Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
 
 ### 3. Clasificación y evidencia
 - **Clase:** NP
@@ -853,23 +853,23 @@ Ambos métodos son exponenciales en log B; el verificador sí es polinómico.
 - **Certificado / verificador:** π ≠ id; verificar G[i][j] = G[π(i)][π(j)] ∀ i,j.
 - **Reducción:** —
 
-✍️ Justificación formal (ver guía del grupo arriba).
+[POR REDACTAR] Justificación formal (ver guía del grupo arriba).
 
 ### 4. Decidibilidad y computabilidad
 - **Modelo de cómputo supuesto:** máquina de Turing determinista (equivalente: modelo RAM con enteros codificados en binario).
 - **¿Decidible?** Sí: se agotan las n! permutaciones.
-- ✍️ Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
+- [POR REDACTAR] Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
 
 ### 5. Algoritmo seleccionado
 - **Algoritmo:** Permutaciones + verificación de adyacencia
 - **Tipo de solución:** Exacto
-- ✍️ Por qué este algoritmo y qué garantiza.
+- [POR REDACTAR] Por qué este algoritmo y qué garantiza.
 
 ### 6. Complejidad (Big-O)
 - **Variables:** n = vértices
 - **Tiempo:** O(n!·n²)
 - **Espacio:** O(n) extra
-- ✍️ Justificación de la cota (de dónde sale cada factor).
+- [POR REDACTAR] Justificación de la cota (de dónde sale cada factor).
 
 ### 7. Código, pruebas y salida observada
 - **Código:** `logistpulse/casos/n4_automorfismo.py`
@@ -892,12 +892,12 @@ Triángulo: Sí (π = (0,2,1)). Grafo asimétrico de 6 vértices: No tras 720 pe
 ### ¿Qué concluimos?
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
-| ✍️ (¿siempre termina y responde Sí/No?) | ✍️ (¿qué función/relación calcula y con qué modelo?) | NP · O(n!·n²) |
+| [POR REDACTAR] (¿siempre termina y responde Sí/No?) | [POR REDACTAR] (¿qué función/relación calcula y con qué modelo?) | NP · O(n!·n²) |
 
 ### Preguntas para la defensa oral
-✍️ 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
+[POR REDACTAR] 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
 
-### ✅ Lista de verificación (docs/PLANTILLA_FICHA.md)
+### Lista de verificación (docs/PLANTILLA_FICHA.md)
 - [ ] Resumen fiel al correo; ninguna condición ni dato cambiado; ambigüedades señaladas
 - [ ] Pregunta de decisión explícita; si es optimización, clasificada por su versión de decisión
 - [ ] Entrada con su tamaño definido (bits si hay números)
@@ -908,7 +908,7 @@ Triángulo: Sí (π = (0,2,1)). Grafo asimétrico de 6 vértices: No tras 720 pe
 - [ ] Código + pruebas + salida observada real · Big-O respaldado por tests/test_complejidad.py
 - [ ] Respuesta al correo (sección 0) y tabla "¿Qué concluimos?" completas
 - [ ] No se afirma P ≠ NP; P ⊆ NP; "NP" ≠ "no polinómico"
-- [ ] Sin marcas ✍️ pendientes · 3 preguntas de defensa respondidas
+- [ ] Sin marcas [POR REDACTAR] pendientes · 3 preguntas de defensa respondidas
 
 ## Ficha c1 · ¿Hay una asignación que cumpla todas las reglas?
 
@@ -919,17 +919,17 @@ Triángulo: Sí (π = (0,2,1)). Grafo asimétrico de 6 vértices: No tras 720 pe
 > **Solicitud operativa:** ¿Existe una asignación verdadero/falso que satisfaga todas las cláusulas?
 
 ### 0. Respuesta al correo (para Mónica Ruiz)
-✍️ 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
+[POR REDACTAR] 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
 
 ### 1. Resumen del correo
-✍️ (2–4 líneas, sin cambiar condiciones del problema)
+[POR REDACTAR] (2–4 líneas, sin cambiar condiciones del problema)
 
 ### 2. Entrada, salida y restricciones
 - **Pregunta de decisión:** ¿Existe una asignación verdadero/falso que satisfaga todas las cláusulas?
 - **Entrada:** Fórmula CNF: n variables, m cláusulas (≤ k literales c/u).
 - **Salida:** Sí/No + asignación como evidencia.
 - **Versión analizada:** Decisión.
-- ✍️ Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
+- [POR REDACTAR] Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
 
 ### 3. Clasificación y evidencia
 - **Clase:** NP-completo
@@ -937,23 +937,23 @@ Triángulo: Sí (π = (0,2,1)). Grafo asimétrico de 6 vértices: No tras 720 pe
 - **Certificado / verificador:** Asignación de n bits.
 - **Reducción:** 3-SAT ≤p DESPACHO-SAT (reducción identidad). SAT NPC por Cook–Levin; 3-SAT por Karp.
 
-✍️ Justificación formal (ver guía del grupo arriba).
+[POR REDACTAR] Justificación formal (ver guía del grupo arriba).
 
 ### 4. Decidibilidad y computabilidad
 - **Modelo de cómputo supuesto:** máquina de Turing determinista (equivalente: modelo RAM con enteros codificados en binario).
 - **¿Decidible?** Sí: 2ⁿ asignaciones finitas.
-- ✍️ Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
+- [POR REDACTAR] Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
 
 ### 5. Algoritmo seleccionado
 - **Algoritmo:** DPLL (propagación unitaria + literal puro)
 - **Tipo de solución:** Exacto
-- ✍️ Por qué este algoritmo y qué garantiza.
+- [POR REDACTAR] Por qué este algoritmo y qué garantiza.
 
 ### 6. Complejidad (Big-O)
 - **Variables:** n = variables, m = cláusulas, k = literales por cláusula
 - **Tiempo:** DPLL O(2ⁿ·n·m·k) peor caso (fuerza bruta O(2ⁿ·m·k))
 - **Espacio:** O(n·m·k) (una copia simplificada por nivel de recursión)
-- ✍️ Justificación de la cota (de dónde sale cada factor).
+- [POR REDACTAR] Justificación de la cota (de dónde sale cada factor).
 
 ### 7. Código, pruebas y salida observada
 - **Código:** `logistpulse/casos/c1_sat.py`
@@ -978,12 +978,12 @@ La instancia del simulador es 2-CNF ⇒ esa instancia cae en 2-SAT ∈ P (resuel
 ### ¿Qué concluimos?
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
-| ✍️ (¿siempre termina y responde Sí/No?) | ✍️ (¿qué función/relación calcula y con qué modelo?) | NP-completo · DPLL O(2ⁿ·n·m·k) peor caso (fuerza bruta O(2ⁿ·m·k)) |
+| [POR REDACTAR] (¿siempre termina y responde Sí/No?) | [POR REDACTAR] (¿qué función/relación calcula y con qué modelo?) | NP-completo · DPLL O(2ⁿ·n·m·k) peor caso (fuerza bruta O(2ⁿ·m·k)) |
 
 ### Preguntas para la defensa oral
-✍️ 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
+[POR REDACTAR] 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
 
-### ✅ Lista de verificación (docs/PLANTILLA_FICHA.md)
+### Lista de verificación (docs/PLANTILLA_FICHA.md)
 - [ ] Resumen fiel al correo; ninguna condición ni dato cambiado; ambigüedades señaladas
 - [ ] Pregunta de decisión explícita; si es optimización, clasificada por su versión de decisión
 - [ ] Entrada con su tamaño definido (bits si hay números)
@@ -994,7 +994,7 @@ La instancia del simulador es 2-CNF ⇒ esa instancia cae en 2-SAT ∈ P (resuel
 - [ ] Código + pruebas + salida observada real · Big-O respaldado por tests/test_complejidad.py
 - [ ] Respuesta al correo (sección 0) y tabla "¿Qué concluimos?" completas
 - [ ] No se afirma P ≠ NP; P ⊆ NP; "NP" ≠ "no polinómico"
-- [ ] Sin marcas ✍️ pendientes · 3 preguntas de defensa respondidas
+- [ ] Sin marcas [POR REDACTAR] pendientes · 3 preguntas de defensa respondidas
 
 ## Ficha c2 · ¿Existe una ruta hamiltoniana dentro del presupuesto?
 
@@ -1005,17 +1005,17 @@ La instancia del simulador es 2-CNF ⇒ esa instancia cae en 2-SAT ∈ P (resuel
 > **Solicitud operativa:** ¿Existe un ciclo que visite cada centro una vez y vuelva al inicio con costo ≤ L?
 
 ### 0. Respuesta al correo (para Jorge Tapia)
-✍️ 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
+[POR REDACTAR] 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
 
 ### 1. Resumen del correo
-✍️ (2–4 líneas, sin cambiar condiciones del problema)
+[POR REDACTAR] (2–4 líneas, sin cambiar condiciones del problema)
 
 ### 2. Entrada, salida y restricciones
 - **Pregunta de decisión:** ¿Existe un ciclo que visite cada centro una vez y vuelva al inicio con costo ≤ L?
 - **Entrada:** Matriz de distancias n×n (≥ 0) y presupuesto L.
 - **Salida:** Sí/No + tour como evidencia (optimización aparte).
 - **Versión analizada:** Decisión (TSP-DEC); la optimización se trata por separado con Held–Karp.
-- ✍️ Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
+- [POR REDACTAR] Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
 
 ### 3. Clasificación y evidencia
 - **Clase:** NP-completo
@@ -1023,23 +1023,23 @@ La instancia del simulador es 2-CNF ⇒ esa instancia cae en 2-SAT ∈ P (resuel
 - **Certificado / verificador:** Orden de visita (tour).
 - **Reducción:** HAM-CYCLE ≤p TSP-DEC en O(n²) (Karp 1972).
 
-✍️ Justificación formal (ver guía del grupo arriba).
+[POR REDACTAR] Justificación formal (ver guía del grupo arriba).
 
 ### 4. Decidibilidad y computabilidad
 - **Modelo de cómputo supuesto:** máquina de Turing determinista (equivalente: modelo RAM con enteros codificados en binario).
 - **¿Decidible?** Sí: (n−1)! tours finitos.
-- ✍️ Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
+- [POR REDACTAR] Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
 
 ### 5. Algoritmo seleccionado
 - **Algoritmo:** Enumeración de permutaciones (decisión) · Held–Karp (optimización) · vecino más cercano (heurística)
 - **Tipo de solución:** Exacto (enumeración, Held–Karp) / heurístico (vecino más cercano)
-- ✍️ Por qué este algoritmo y qué garantiza.
+- [POR REDACTAR] Por qué este algoritmo y qué garantiza.
 
 ### 6. Complejidad (Big-O)
 - **Variables:** n = centros
 - **Tiempo:** O(n!·n) · Held–Karp O(n²·2ⁿ)
 - **Espacio:** O(n) · Held–Karp O(n·2ⁿ)
-- ✍️ Justificación de la cota (de dónde sale cada factor).
+- [POR REDACTAR] Justificación de la cota (de dónde sale cada factor).
 
 ### 7. Código, pruebas y salida observada
 - **Código:** `logistpulse/casos/c2_tsp_decision.py`
@@ -1064,12 +1064,12 @@ Con L = 20: Sí (Planta→Quito→Guayaquil→Planta = 15). Con L = 14: No.
 ### ¿Qué concluimos?
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
-| ✍️ (¿siempre termina y responde Sí/No?) | ✍️ (¿qué función/relación calcula y con qué modelo?) | NP-completo · O(n!·n) · Held–Karp O(n²·2ⁿ) |
+| [POR REDACTAR] (¿siempre termina y responde Sí/No?) | [POR REDACTAR] (¿qué función/relación calcula y con qué modelo?) | NP-completo · O(n!·n) · Held–Karp O(n²·2ⁿ) |
 
 ### Preguntas para la defensa oral
-✍️ 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
+[POR REDACTAR] 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
 
-### ✅ Lista de verificación (docs/PLANTILLA_FICHA.md)
+### Lista de verificación (docs/PLANTILLA_FICHA.md)
 - [ ] Resumen fiel al correo; ninguna condición ni dato cambiado; ambigüedades señaladas
 - [ ] Pregunta de decisión explícita; si es optimización, clasificada por su versión de decisión
 - [ ] Entrada con su tamaño definido (bits si hay números)
@@ -1080,7 +1080,7 @@ Con L = 20: Sí (Planta→Quito→Guayaquil→Planta = 15). Con L = 14: No.
 - [ ] Código + pruebas + salida observada real · Big-O respaldado por tests/test_complejidad.py
 - [ ] Respuesta al correo (sección 0) y tabla "¿Qué concluimos?" completas
 - [ ] No se afirma P ≠ NP; P ⊆ NP; "NP" ≠ "no polinómico"
-- [ ] Sin marcas ✍️ pendientes · 3 preguntas de defensa respondidas
+- [ ] Sin marcas [POR REDACTAR] pendientes · 3 preguntas de defensa respondidas
 
 ## Ficha c3 · ¿Bastan k almacenes/equipos para cubrir todo?
 
@@ -1091,10 +1091,10 @@ Con L = 20: Sí (Planta→Quito→Guayaquil→Planta = 15). Con L = 14: No.
 > **Solicitud operativa:** ¿Existe S con |S| ≤ k que toque cada corredor (arista)?
 
 ### 0. Respuesta al correo (para Carla Núñez)
-✍️ 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
+[POR REDACTAR] 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
 
 ### 1. Resumen del correo
-✍️ (2–4 líneas, sin cambiar condiciones del problema)
+[POR REDACTAR] (2–4 líneas, sin cambiar condiciones del problema)
 ![](../diagramas/caso_c3.png)
 
 ### 2. Entrada, salida y restricciones
@@ -1102,7 +1102,7 @@ Con L = 20: Sí (Planta→Quito→Guayaquil→Planta = 15). Con L = 14: No.
 - **Entrada:** Grafo no dirigido G=(V,E) y entero k.
 - **Salida:** Sí/No + conjunto S como evidencia.
 - **Versión analizada:** Decisión.
-- ✍️ Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
+- [POR REDACTAR] Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
 
 ### 3. Clasificación y evidencia
 - **Clase:** NP-completo
@@ -1110,23 +1110,23 @@ Con L = 20: Sí (Planta→Quito→Guayaquil→Planta = 15). Con L = 14: No.
 - **Certificado / verificador:** Conjunto S ⊆ V.
 - **Reducción:** IS ≤p VC: <G,k> ∈ IS ⇔ <G,|V|−k> ∈ VC (Karp 1972).
 
-✍️ Justificación formal (ver guía del grupo arriba).
+[POR REDACTAR] Justificación formal (ver guía del grupo arriba).
 
 ### 4. Decidibilidad y computabilidad
 - **Modelo de cómputo supuesto:** máquina de Turing determinista (equivalente: modelo RAM con enteros codificados en binario).
 - **¿Decidible?** Sí: árbol de búsqueda de profundidad ≤ k (o 2^V subconjuntos).
-- ✍️ Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
+- [POR REDACTAR] Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
 
 ### 5. Algoritmo seleccionado
 - **Algoritmo:** Backtracking / ramificación acotada (exacto) · 2-aproximación por emparejamiento (heurística)
 - **Tipo de solución:** Exacto (ramificación) / aproximado (factor 2)
-- ✍️ Por qué este algoritmo y qué garantiza.
+- [POR REDACTAR] Por qué este algoritmo y qué garantiza.
 
 ### 6. Complejidad (Big-O)
 - **Variables:** V = zonas, E = corredores, k = equipos
 - **Tiempo:** O(2^k·(V + E)) ramificación · O(V + E) aproximación
 - **Espacio:** O(k·(V + E)) (lista de aristas por nivel)
-- ✍️ Justificación de la cota (de dónde sale cada factor).
+- [POR REDACTAR] Justificación de la cota (de dónde sale cada factor).
 
 ### 7. Código, pruebas y salida observada
 - **Código:** `logistpulse/casos/c3_vertex_cover.py`
@@ -1150,12 +1150,12 @@ El correo describe Vertex Cover (corredores); la ficha del simulador menciona 'p
 ### ¿Qué concluimos?
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
-| ✍️ (¿siempre termina y responde Sí/No?) | ✍️ (¿qué función/relación calcula y con qué modelo?) | NP-completo · O(2^k·(V + E)) ramificación · O(V + E) aproximación |
+| [POR REDACTAR] (¿siempre termina y responde Sí/No?) | [POR REDACTAR] (¿qué función/relación calcula y con qué modelo?) | NP-completo · O(2^k·(V + E)) ramificación · O(V + E) aproximación |
 
 ### Preguntas para la defensa oral
-✍️ 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
+[POR REDACTAR] 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
 
-### ✅ Lista de verificación (docs/PLANTILLA_FICHA.md)
+### Lista de verificación (docs/PLANTILLA_FICHA.md)
 - [ ] Resumen fiel al correo; ninguna condición ni dato cambiado; ambigüedades señaladas
 - [ ] Pregunta de decisión explícita; si es optimización, clasificada por su versión de decisión
 - [ ] Entrada con su tamaño definido (bits si hay números)
@@ -1166,7 +1166,7 @@ El correo describe Vertex Cover (corredores); la ficha del simulador menciona 'p
 - [ ] Código + pruebas + salida observada real · Big-O respaldado por tests/test_complejidad.py
 - [ ] Respuesta al correo (sección 0) y tabla "¿Qué concluimos?" completas
 - [ ] No se afirma P ≠ NP; P ⊆ NP; "NP" ≠ "no polinómico"
-- [ ] Sin marcas ✍️ pendientes · 3 preguntas de defensa respondidas
+- [ ] Sin marcas [POR REDACTAR] pendientes · 3 preguntas de defensa respondidas
 
 # 6. Fase E · Implementación y validación
 
@@ -1559,23 +1559,23 @@ q0 = Borrador
 F  = {Entregado, Cancelado}
 |δ declarada| = 9 transiciones (el resto va a ERROR)
 
-✔ 'criedn' [confirmar → reservar → iniciar_picking → empacar → despachar → entregar] -> ACEPTA · Entregado ∈ F.
+[OK] 'criedn' [confirmar → reservar → iniciar_picking → empacar → despachar → entregar] -> ACEPTA · Entregado ∈ F.
      [ENUNCIADO] Borrador→Confirmado→Reservado→Preparacion→Empacado→Despachado→Entregado
-✔ 'x' [cancelar] -> ACEPTA · Cancelado ∈ F.
+[OK] 'x' [cancelar] -> ACEPTA · Cancelado ∈ F.
      Cancelación desde Borrador: cierre legítimo
-✔ 'crx' [confirmar → reservar → cancelar] -> ACEPTA · Cancelado ∈ F.
+[OK] 'crx' [confirmar → reservar → cancelar] -> ACEPTA · Cancelado ∈ F.
      Se cancela un pedido reservado: libera la reserva y cierra en Cancelado
-✔ 'd' [despachar] -> RECHAZA · Paso 1: δ(Borrador, d='despachar') no está definida -> sumidero ERROR.
+[OK] 'd' [despachar] -> RECHAZA · Paso 1: δ(Borrador, d='despachar') no está definida -> sumidero ERROR.
      [ENUNCIADO] Borrador→Despachado: δ(Borrador,d) no existe; no se despacha sin confirmar, reservar, preparar y empacar
-✔ 'crid' [confirmar → reservar → iniciar_picking → despachar] -> RECHAZA · Paso 4: δ(Preparacion, d='despachar') no está definida -> sumidero ERROR.
+[OK] 'crid' [confirmar → reservar → iniciar_picking → despachar] -> RECHAZA · Paso 4: δ(Preparacion, d='despachar') no está definida -> sumidero ERROR.
      Despachar desde Preparacion sin empacar: δ(Preparacion,d) no existe
-✔ 'crix' [confirmar → reservar → iniciar_picking → cancelar] -> RECHAZA · Paso 4: δ(Preparacion, x='cancelar') no está definida -> sumidero ERROR.
+[OK] 'crix' [confirmar → reservar → iniciar_picking → cancelar] -> RECHAZA · Paso 4: δ(Preparacion, x='cancelar') no está definida -> sumidero ERROR.
      Cancelar durante el picking no está permitido en el modelo: δ(Preparacion,x) no existe
-✔ 'cried' [confirmar → reservar → iniciar_picking → empacar → despachar] -> RECHAZA · Despachado ∉ F: la secuencia termina en un estado no final (proceso incompleto).
+[OK] 'cried' [confirmar → reservar → iniciar_picking → empacar → despachar] -> RECHAZA · Despachado ∉ F: la secuencia termina en un estado no final (proceso incompleto).
      Termina en Despachado ∉ F: falta la entrega
-✔ 'criednd' [confirmar → reservar → iniciar_picking → empacar → despachar → entregar → despachar] -> RECHAZA · Paso 7: δ(Entregado, d='despachar') no está definida -> sumidero ERROR.
+[OK] 'criednd' [confirmar → reservar → iniciar_picking → empacar → despachar → entregar → despachar] -> RECHAZA · Paso 7: δ(Entregado, d='despachar') no está definida -> sumidero ERROR.
      Evento después del estado final Entregado
-✔ 'ε' [ε] -> RECHAZA · Borrador ∉ F: la secuencia termina en un estado no final (proceso incompleto).
+[OK] 'ε' [ε] -> RECHAZA · Borrador ∉ F: la secuencia termina en un estado no final (proceso incompleto).
      Cadena vacía ε: Borrador ∉ F
 
 ==============================================================================
@@ -1588,23 +1588,23 @@ q0 = Solicitada
 F  = {Consumida, Liberada, Expirada, Rechazada}
 |δ declarada| = 6 transiciones (el resto va a ERROR)
 
-✔ 'vcp' [validar → confirmar → picking] -> ACEPTA · Consumida ∈ F.
+[OK] 'vcp' [validar → confirmar → picking] -> ACEPTA · Consumida ∈ F.
      [ENUNCIADO] Solicitada→Validada→Reservada→Consumida
-✔ 's' [sin_stock] -> ACEPTA · Rechazada ∈ F.
+[OK] 's' [sin_stock] -> ACEPTA · Rechazada ∈ F.
      Sin stock: Solicitada→Rechazada
-✔ 'vcx' [validar → confirmar → cancelar] -> ACEPTA · Liberada ∈ F.
+[OK] 'vcx' [validar → confirmar → cancelar] -> ACEPTA · Liberada ∈ F.
      Reserva cancelada: Reservada→Liberada
-✔ 'vct' [validar → confirmar → vence_plazo] -> ACEPTA · Expirada ∈ F.
+[OK] 'vct' [validar → confirmar → vence_plazo] -> ACEPTA · Expirada ∈ F.
      Vence el plazo: Reservada→Expirada
-✔ 'vp' [validar → picking] -> RECHAZA · Paso 2: δ(Validada, p='picking') no está definida -> sumidero ERROR.
+[OK] 'vp' [validar → picking] -> RECHAZA · Paso 2: δ(Validada, p='picking') no está definida -> sumidero ERROR.
      Consumir una reserva que nunca fue confirmada: δ(Validada,p) no existe
-✔ 'p' [picking] -> RECHAZA · Paso 1: δ(Solicitada, p='picking') no está definida -> sumidero ERROR.
+[OK] 'p' [picking] -> RECHAZA · Paso 1: δ(Solicitada, p='picking') no está definida -> sumidero ERROR.
      Picking directo desde Solicitada
-✔ 'vcpx' [validar → confirmar → picking → cancelar] -> RECHAZA · Paso 4: δ(Consumida, x='cancelar') no está definida -> sumidero ERROR.
+[OK] 'vcpx' [validar → confirmar → picking → cancelar] -> RECHAZA · Paso 4: δ(Consumida, x='cancelar') no está definida -> sumidero ERROR.
      Cancelar una reserva ya consumida
-✔ 'vc' [validar → confirmar] -> RECHAZA · Reservada ∉ F: la secuencia termina en un estado no final (proceso incompleto).
+[OK] 'vc' [validar → confirmar] -> RECHAZA · Reservada ∉ F: la secuencia termina en un estado no final (proceso incompleto).
      Termina en Reservada ∉ F: la reserva sigue abierta
-✔ 'sv' [sin_stock → validar] -> RECHAZA · Paso 2: δ(Rechazada, v='validar') no está definida -> sumidero ERROR.
+[OK] 'sv' [sin_stock → validar] -> RECHAZA · Paso 2: δ(Rechazada, v='validar') no está definida -> sumidero ERROR.
      Validar una solicitud ya rechazada
 
 ==============================================================================
@@ -1617,23 +1617,23 @@ q0 = Borrador
 F  = {Rechazada, Recibida}
 |δ declarada| = 8 transiciones (el resto va a ERROR)
 
-✔ 'saec' [solicitar_aprobacion → aprobar → emitir_orden → recibir_completa] -> ACEPTA · Recibida ∈ F.
+[OK] 'saec' [solicitar_aprobacion → aprobar → emitir_orden → recibir_completa] -> ACEPTA · Recibida ∈ F.
      Borrador→En aprobacion→Aprobada→Enviada→Recibida (recepción completa)
-✔ 'saepf' [solicitar_aprobacion → aprobar → emitir_orden → recibir_parte → completar_recepcion] -> ACEPTA · Recibida ∈ F.
+[OK] 'saepf' [solicitar_aprobacion → aprobar → emitir_orden → recibir_parte → completar_recepcion] -> ACEPTA · Recibida ∈ F.
      Una recepción parcial y luego se completa
-✔ 'saeppf' [solicitar_aprobacion → aprobar → emitir_orden → recibir_parte → recibir_parte → completar_recepcion] -> ACEPTA · Recibida ∈ F.
+[OK] 'saeppf' [solicitar_aprobacion → aprobar → emitir_orden → recibir_parte → recibir_parte → completar_recepcion] -> ACEPTA · Recibida ∈ F.
      Dos recepciones parciales (bucle) y luego se completa
-✔ 'sr' [solicitar_aprobacion → rechazar] -> ACEPTA · Rechazada ∈ F.
+[OK] 'sr' [solicitar_aprobacion → rechazar] -> ACEPTA · Rechazada ∈ F.
      Orden rechazada: cierre legítimo
-✔ 'sre' [solicitar_aprobacion → rechazar → emitir_orden] -> RECHAZA · Paso 3: δ(Rechazada, e='emitir_orden') no está definida -> sumidero ERROR.
+[OK] 'sre' [solicitar_aprobacion → rechazar → emitir_orden] -> RECHAZA · Paso 3: δ(Rechazada, e='emitir_orden') no está definida -> sumidero ERROR.
      [ENUNCIADO] Rechazada→Enviada: un estado final rechazado no habilita emisión
-✔ 'e' [emitir_orden] -> RECHAZA · Paso 1: δ(Borrador, e='emitir_orden') no está definida -> sumidero ERROR.
+[OK] 'e' [emitir_orden] -> RECHAZA · Paso 1: δ(Borrador, e='emitir_orden') no está definida -> sumidero ERROR.
      Emitir sin solicitar ni aprobar
-✔ 'sac' [solicitar_aprobacion → aprobar → recibir_completa] -> RECHAZA · Paso 3: δ(Aprobada, c='recibir_completa') no está definida -> sumidero ERROR.
+[OK] 'sac' [solicitar_aprobacion → aprobar → recibir_completa] -> RECHAZA · Paso 3: δ(Aprobada, c='recibir_completa') no está definida -> sumidero ERROR.
      Recibir mercadería de una orden aprobada pero nunca emitida
-✔ 'saep' [solicitar_aprobacion → aprobar → emitir_orden → recibir_parte] -> RECHAZA · Recepcion parcial ∉ F: la secuencia termina en un estado no final (proceso incompleto).
+[OK] 'saep' [solicitar_aprobacion → aprobar → emitir_orden → recibir_parte] -> RECHAZA · Recepcion parcial ∉ F: la secuencia termina en un estado no final (proceso incompleto).
      Termina en Recepcion parcial ∉ F: falta completar la recepción
-✔ 'saecp' [solicitar_aprobacion → aprobar → emitir_orden → recibir_completa → recibir_parte] -> RECHAZA · Paso 5: δ(Recibida, p='recibir_parte') no está definida -> sumidero ERROR.
+[OK] 'saecp' [solicitar_aprobacion → aprobar → emitir_orden → recibir_completa → recibir_parte] -> RECHAZA · Paso 5: δ(Recibida, p='recibir_parte') no está definida -> sumidero ERROR.
      Recibir después de Recibida
 ```
 
