@@ -5,7 +5,7 @@
 - la planta modelada como grafo ponderado (Dijkstra y BFS);
 - FEFO con sus 3 políticas y la regla de reposición;
 - los 10 casos del simulador (P / NP / NP-completo), con verificadores y reducciones ejecutables;
-- **141 pruebas reproducibles**, entre ellas pruebas que **atan cada Big-O al código** contando operaciones y midiendo tiempos.
+- **más de 140 pruebas reproducibles**, entre ellas pruebas que **atan cada Big-O al código** contando operaciones y midiendo tiempos.
 
 Equipo: **Camila · Luis · Jessica**. Los roles, los roles rotativos y los prompts están en [`equipo/ROLES_Y_PROMPTS.md`](equipo/ROLES_Y_PROMPTS.md), y el flujo de trabajo en [`equipo/GUIA_CODESPACES.md`](equipo/GUIA_CODESPACES.md).
 **Cómo sabemos que cumple el enunciado:** [`docs/MATRIZ_TRAZABILIDAD.md`](docs/MATRIZ_TRAZABILIDAD.md) (cada requisito → archivo → prueba) y `python scripts/verificar_entrega.py`.
@@ -29,7 +29,7 @@ Repo → **Code → Codespaces → Create codespace on main**. El `.devcontainer
 
 ### Opción C · Comandos (terminal del Codespace o local; Python ≥ 3.8, solo biblioteca estándar; probado en 3.8, 3.10, 3.11, 3.12 y 3.13)
 ```bash
-python -m unittest discover -s tests -v     # 141 pruebas: funcionales + complejidad (conteo y tiempo)
+python -m unittest discover -s tests -v     # más de 140 pruebas: funcionales + complejidad (conteo y tiempo)
 python -m logistpulse                       # demo completa (o una sección: automatas | rutas | inventario | casos)
 python scripts/generar_jflap.py             # jflap/*.jff + entradas para Multiple Run
 python scripts/generar_diagramas.py         # docs/diagramas (requiere Graphviz; en Codespaces y Colab ya está)
@@ -73,7 +73,7 @@ jflap/     .jff + entradas para Multiple Run + resultados esperados + guía + ca
 docs/      DECISIONES_Y_HALLAZGOS.md (leer primero) · MATRIZ_TRAZABILIDAD.md · PLANTILLA_FICHA.md
            fase_A/B/C/E/F · fichas/ · sprints/ · conclusiones.md · referencias/ · diagramas/ · generado/
 scripts/   generadores (.jff, diagramas, docs, informe), medición de tiempos y revisión de la entrega
-tests/     141 pruebas unittest (también corren con pytest)
+tests/     más de 140 pruebas unittest (también corren con pytest)
 ```
 
 ---
@@ -96,7 +96,7 @@ tests/     141 pruebas unittest (también corren con pytest)
 - Cierre: `git tag -a v1.0 -m "Entrega final Deber 2"` → `git push origin v1.0` → *Release* en GitHub.
 
 ## Declaración de uso de IA
-(Completar con lo que pida el curso: qué partes se hicieron con apoyo de IA, cómo se verificaron —141 pruebas automáticas, pruebas de complejidad, JFLAP, revisión cruzada por PR— y qué revisó y defiende cada integrante.)
+(Completar con lo que pida el curso: qué partes se hicieron con apoyo de IA, cómo se verificaron —más de 140 pruebas automáticas, pruebas de complejidad, JFLAP, revisión cruzada por PR— y qué revisó y defiende cada integrante.)
 
 ## Referencias
 Sipser, *Introduction to the Theory of Computation*, 3.ª ed. (caps. 1, 4, 5 y 7) · CLRS (caminos mínimos, flujo máximo, NP-completitud) · Cook (1971) · Karp (1972) · JFLAP: https://www.jflap.org

@@ -142,7 +142,7 @@ def chk_nota_parada():
 
 
 def chk_sprints():
-    pend = [f"sprint_{i}" for i in (1, 2, 3) if "(completar)" in leer(f"docs/sprints/sprint_{i}.md")]
+    pend = [f"sprint_{i}" for i in (1, 2, 3) if "(completar" in leer(f"docs/sprints/sprint_{i}.md")]
     pend += [f"sprint_{i} sin roles rotativos" for i in (1, 2, 3) if "Roles de este sprint" not in leer(f"docs/sprints/sprint_{i}.md")]
     backlog = leer("docs/sprints/backlog.md")
     if backlog.count("C-") < 10:
