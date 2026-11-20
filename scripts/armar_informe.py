@@ -12,6 +12,7 @@ Uso:  python scripts/armar_informe.py
 import re
 import shutil
 import subprocess
+from urllib.parse import quote
 
 import _bootstrap  # noqa: F401
 from _bootstrap import RAIZ
@@ -63,6 +64,34 @@ def sin_mermaid(texto: str, imagen: str = "") -> str:
     return re.sub(r"```mermaid\n.*?```\n", reemplazo, texto, flags=re.S)
 
 
+IMAGENES = (".png", ".jpg", ".jpeg")
+ETAPAS = {"s1": "Sprint 1", "s2": "Sprint 2", "s3": "Sprint 3", "final": "Entrega final"}
+
+
+def pie_de_foto(nombre: str) -> str:
+    """s1_04_pr_sin_emojis → 'Sprint 1 · pr sin emojis' (el pie sale del nombre del archivo)."""
+    partes = nombre.split("_")
+    etapa = ETAPAS.get(partes[0].lower(), "")
+    resto = [p for p in (partes[1:] if etapa else partes) if not re.fullmatch(r"\d+[a-z]?", p)]
+    texto = " ".join(resto) or nombre
+    return f"{etapa} · {texto}" if etapa else texto
+
+
+def evidencias_gestion() -> str:
+    """Capturas de docs/evidencias/ (ruleset, Issues, PR aprobados, Actions, release), en orden."""
+    carpeta = DOCS / "evidencias"
+    orden = list(ETAPAS)  # s1, s2, s3 y al final "final" (no alfabético)
+
+    def clave(p):
+        etapa = p.stem.split("_")[0].lower()
+        return (orden.index(etapa) if etapa in orden else len(orden), p.name.lower())
+    imgs = sorted((p for p in carpeta.iterdir() if p.suffix.lower() in IMAGENES), key=clave) if carpeta.exists() else []
+    if not imgs:
+        return "## Evidencias de gestión\n\n_(todavía no hay capturas en docs/evidencias)_\n"
+    return "## Evidencias de gestión\n\n" + "\n".join(
+        f"![{pie_de_foto(p.stem)}](../evidencias/{quote(p.name)})\n" for p in imgs)
+
+
 def seccion_readme(titulo: str) -> str:
     t = leer("README.md")
     m = re.search(rf"## [^\n]*{titulo}[^\n]*\n(.*?)(?=\n## |\Z)", t, re.S)
@@ -104,6 +133,7 @@ def main() -> None:
         "# 8. Gestión del proyecto\n",
         bajar_titulos(leer("docs/sprints/backlog.md")),
         *(bajar_titulos(leer(f"docs/sprints/sprint_{i}.md")) for i in (1, 2, 3)),
+        evidencias_gestion(),
         "# 9. Supuestos, límites y conclusiones\n",
         bajar_titulos(leer("docs/conclusiones.md")),
         "# 10. Declaración de uso de IA\n",

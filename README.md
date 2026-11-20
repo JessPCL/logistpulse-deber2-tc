@@ -7,6 +7,8 @@
 - los 10 casos del simulador (P / NP / NP-completo), con verificadores y reducciones ejecutables;
 - **más de 140 pruebas reproducibles**, entre ellas pruebas que **atan cada Big-O al código** contando operaciones y midiendo tiempos.
 
+**Si es tu primera vez en el repo, lee [`docs/EMPIEZA_AQUI.md`](docs/EMPIEZA_AQUI.md):** explica el deber desde cero, qué es cada cosa de GitHub y qué capturas tomar.
+
 Equipo: **Camila · Luis · Jessica**. Los roles, los roles rotativos y los prompts están en [`equipo/ROLES_Y_PROMPTS.md`](equipo/ROLES_Y_PROMPTS.md), y el flujo de trabajo en [`equipo/GUIA_CODESPACES.md`](equipo/GUIA_CODESPACES.md).
 **Cómo sabemos que cumple el enunciado:** [`docs/MATRIZ_TRAZABILIDAD.md`](docs/MATRIZ_TRAZABILIDAD.md) (cada requisito → archivo → prueba) y `python scripts/verificar_entrega.py`.
 
