@@ -80,7 +80,7 @@ def main() -> None:
     salida = RAIZ / "docs" / "generado" / "crecimiento.md"
     salida.parent.mkdir(parents=True, exist_ok=True)
     salida.write_text("\n".join(lineas), encoding="utf-8")
-    print(f"✔ {salida.relative_to(RAIZ)}")
+    print(f"OK {salida.relative_to(RAIZ)}")
 
 
 if __name__ == "__main__":

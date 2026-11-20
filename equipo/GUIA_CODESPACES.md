@@ -23,11 +23,15 @@
    git push
    ```
 5. **Recrea el Codespace** para que se instale el entorno del repo (`.devcontainer`): Code → Codespaces → `…` → *Delete*, y luego *Create codespace on main* otra vez. Al crearlo corre solo las pruebas; en el registro de creación debe decir `OK`.
-6. **Protege `main`** para que todo pase por revisión: *Settings → Rules → Rulesets → New branch ruleset* (o *Settings → Branches → Add rule*), con destino `main`:
-   - marca **Require a pull request before merging** con **1 approval**;
-   - marca **Require status checks to pass** y elige los checks de **Pruebas**. Aparecen después de la primera vez que corre Actions, que es justo tras el push del paso 4.
+6. **Protege `main`**: *Settings → Rules → Rulesets → New ruleset → New branch ruleset*.
+   - *Ruleset name*: `proteger-main` · *Enforcement status*: cambia **Disabled → Active** (si no, la regla no hace nada).
+   - *Bypass list*: vacía.
+   - *Target branches → Add target → **Include default branch*** (esa es `main`).
+   - Marca **Require a pull request before merging** → *Required approvals*: **1**.
+   - Marca **Require status checks to pass** → *Add checks* → escribe `pruebas` → elige **`pruebas (3.10)`** y **`pruebas (3.12)`** (se llaman como el *job* del workflow más la versión de Python).
+   - Deja marcados *Restrict deletions* y *Block force pushes* → **Create**.
+   - Prueba que funciona: `git checkout main && git commit --allow-empty -m "prueba" && git push` debe ser **rechazado**; deshazlo con `git reset --hard origin/main`.
 
-   Así nadie sube a `main` sin un PR aprobado y con pruebas en verde: es la evidencia de "revisiones" de la rúbrica.
 7. Crea los Issues del backlog (uno por correo y uno por historia de fase):
    ```bash
    python scripts/crear_issues.py           # revisar la lista
@@ -54,7 +58,7 @@
    git push -u origin camila/fase-a-fichas-np
    gh pr create --base main --fill
    ```
-6. En el PR, GitHub Actions corre las pruebas solo (pestaña **Checks**, con Python 3.10 y 3.12). **No se aprueba un PR con ❌.**
+6. En el PR, GitHub Actions corre las pruebas solo (pestaña **Checks**, con Python 3.10 y 3.12). **No se aprueba un PR con el check en rojo (fallido).**
 7. **Revisión cruzada** (Camila revisa a Luis, Luis a Jessica, Jessica a Camila). Quien revisa:
    ```bash
    gh pr list
@@ -107,8 +111,8 @@ Para cuidarse frente a copias:
 | Síntoma | Solución |
 |---|---|
 | `Permission denied` al hacer push | Aún no aceptaste la invitación de colaborador (también pasa con repo público: leer ≠ escribir). |
-| El PR no deja hacer merge | Falta 1 aprobación o el check de **Pruebas** está en ❌: la protección de `main` está funcionando. |
-| Actions en ❌ pero en el Codespace pasa | Abre el log del check; casi siempre es un archivo que no se subió (`git status`). |
+| El PR no deja hacer merge | Falta 1 aprobación o los checks `pruebas (3.10)` / `pruebas (3.12)` están en rojo: la protección de `main` está funcionando. |
+| Actions en rojo pero en el Codespace pasa | Abre el log del check; casi siempre es un archivo que no se subió (`git status`). |
 | Falla solo una prueba de **tiempo** | El Codespace estaba ocupado: vuelve a correr. Las pruebas de conteo no fallan por azar. |
 | No se ven los diagramas Mermaid | Abre la vista previa del Markdown (`Ctrl+Shift+V`); la extensión ya está instalada. |
 | `dot: command not found` o no hay `pandoc` | El Codespace se creó antes del `.devcontainer`: `sudo apt-get install -y graphviz pandoc` o recréalo. |

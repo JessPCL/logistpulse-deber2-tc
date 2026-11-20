@@ -1,8 +1,9 @@
 """Revisión automática ANTES de entregar, criterio por criterio de la rúbrica.
 
 Comprueba lo que una máquina sí puede comprobar: pruebas, archivos, coherencia
-.jff ⇄ Python, salidas regeneradas, marcas pendientes (✍️ / PENDIENTE / casillas
-sin marcar), historial Git (commits, autores, tag v1.0) y el PDF del informe.
+.jff ⇄ Python, salidas regeneradas, marcas pendientes ([POR REDACTAR] / PENDIENTE /
+casillas sin marcar), emojis en los entregables, historial Git (commits, autores,
+tag v1.0) y el PDF del informe.
 NO califica la calidad de la redacción: eso lo revisa el equipo con la lista de
 verificación de docs/PLANTILLA_FICHA.md.
 
@@ -19,7 +20,7 @@ from contextlib import redirect_stdout
 import _bootstrap  # noqa: F401
 from _bootstrap import RAIZ
 
-OK, PEND, MAL = "✅", "🟡", "❌"
+OK, PEND, MAL = "[OK]", "[PENDIENTE]", "[ERROR]"
 
 
 def leer(rel: str) -> str:
@@ -114,7 +115,7 @@ def chk_fichas():
     pend = []
     for p in sorted((RAIZ / "docs" / "fichas").glob("*.md")):
         t = p.read_text(encoding="utf-8")
-        if re.search(r"^\s*(-\s*)?✍️", t, re.M) or "- [ ]" in t:  # sección por redactar o casilla sin marcar
+        if re.search(r"^\s*(-\s*)?(\u270d|\[POR REDACTAR\])", t, re.M) or "- [ ]" in t:  # sección por redactar o casilla sin marcar
             pend.append(p.stem)
     if len(list((RAIZ / "docs" / "fichas").glob("*.md"))) != 10:
         return MAL, "no hay exactamente 10 fichas"
@@ -176,6 +177,24 @@ def chk_git():
     return (OK, detalle) if not falta else (PEND, detalle + " → " + "; ".join(falta))
 
 
+EMOJI = re.compile("[\U0001F300-\U0001FAFF\u2600-\u27BF\u2B50\u25B6\u2139]")
+ENTREGABLES = ["README.md", "docs/MATRIZ_TRAZABILIDAD.md", "docs/DECISIONES_Y_HALLAZGOS.md", "docs/conclusiones.md",
+               "docs/presentacion_guion.md", "docs/fase_A_automatas.md", "docs/fase_B_rutas.md",
+               "docs/fase_C_fefo_reposicion.md", "docs/fase_E_implementacion.md", "docs/fase_F_nota_parada.md"]
+
+
+def chk_sin_emojis():
+    """Los documentos que se entregan no llevan emojis."""
+    rutas = ENTREGABLES + [str(p.relative_to(RAIZ)) for p in sorted((RAIZ / "docs" / "fichas").glob("*.md"))] \
+        + [str(p.relative_to(RAIZ)) for p in sorted((RAIZ / "docs" / "sprints").glob("*.md"))]
+    con = []
+    for rel in rutas:
+        encontrados = set(EMOJI.findall(leer(rel)))
+        if encontrados:
+            con.append(f"{rel} ({' '.join(sorted(encontrados))})")
+    return (OK, "documentos entregables sin emojis") if not con else (PEND, "quitar emojis en: " + "; ".join(con))
+
+
 def chk_informe():
     pdfs = [p for p in RAIZ.rglob("*.pdf") if ".git" not in p.parts]
     if pdfs:
@@ -233,6 +252,7 @@ CRITERIOS = [
         ("Supuestos, límites y conclusiones", lambda: doc_redactado("docs/conclusiones.md", "Jessica")),
         ("Declaración de uso de IA", chk_declaracion_ia),
         ("Guion de la presentación", chk_presentacion),
+        ("Documentos sin emojis", chk_sin_emojis),
     ]),
 ]
 

@@ -137,23 +137,23 @@ def ficha(c) -> str:
 
 > Esqueleto generado desde el código. Los datos técnicos ya están verificados con pruebas.
 > Formato y profundidad a imitar: docs/fichas/p1.md (ficha modelo terminada).
-> Las secciones marcadas ✍️ las redacta {quien} (con su IA) sin cambiar las condiciones del correo.
+> Las secciones marcadas [POR REDACTAR] las redacta {quien} (con su IA) sin cambiar las condiciones del correo.
 > Lo que debe establecer este grupo: {GUIA_GRUPO[c.grupo]}
 
 > **Solicitud operativa:** {c.pregunta}
 
 ## 0. Respuesta al correo (para {c.remitente.split(' · ')[0]})
-✍️ 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
+[POR REDACTAR] 2–3 líneas en lenguaje operativo, basadas en la salida observada de la sección 7 (primera línea).
 
 ## 1. Resumen del correo
-✍️ (2–4 líneas, sin cambiar condiciones del problema)
+[POR REDACTAR] (2–4 líneas, sin cambiar condiciones del problema)
 {mermaid(c)}
 ## 2. Entrada, salida y restricciones
 - **Pregunta de decisión:** {c.pregunta}
 - **Entrada:** {c.entrada}
 - **Salida:** {c.salida}
 - **Versión analizada:** {c.version}
-- ✍️ Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
+- [POR REDACTAR] Restricciones del correo (pesos ≥ 0, binario, presupuesto, etc.)
 
 ## 3. Clasificación y evidencia
 - **Clase:** {c.clase}
@@ -161,23 +161,23 @@ def ficha(c) -> str:
 - **Certificado / verificador:** {c.certificado}
 - **Reducción:** {c.reduccion}
 
-✍️ Justificación formal (ver guía del grupo arriba).
+[POR REDACTAR] Justificación formal (ver guía del grupo arriba).
 
 ## 4. Decidibilidad y computabilidad
 - **Modelo de cómputo supuesto:** máquina de Turing determinista (equivalente: modelo RAM con enteros codificados en binario).
 - **¿Decidible?** {c.decidible}
-- ✍️ Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
+- [POR REDACTAR] Qué función/relación se computa y por qué el procedimiento termina para TODA entrada válida.
 
 ## 5. Algoritmo seleccionado
 - **Algoritmo:** {c.algoritmo}
 - **Tipo de solución:** {c.tipo}
-- ✍️ Por qué este algoritmo y qué garantiza.
+- [POR REDACTAR] Por qué este algoritmo y qué garantiza.
 
 ## 6. Complejidad (Big-O)
 - **Variables:** {c.variables}
 - **Tiempo:** {c.tiempo}
 - **Espacio:** {c.espacio}
-- ✍️ Justificación de la cota (de dónde sale cada factor).
+- [POR REDACTAR] Justificación de la cota (de dónde sale cada factor).
 
 ## 7. Código, pruebas y salida observada
 - **Código:** `{c.modulo}`
@@ -194,12 +194,12 @@ def ficha(c) -> str:
 ## ¿Qué concluimos?
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
-| ✍️ (¿siempre termina y responde Sí/No?) | ✍️ (¿qué función/relación calcula y con qué modelo?) | {c.clase} · {c.tiempo} |
+| [POR REDACTAR] (¿siempre termina y responde Sí/No?) | [POR REDACTAR] (¿qué función/relación calcula y con qué modelo?) | {c.clase} · {c.tiempo} |
 
 ## Preguntas para la defensa oral
-✍️ 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
+[POR REDACTAR] 3 preguntas que podría hacer el profesor + respuesta en 2–3 frases.
 
-## ✅ Lista de verificación (docs/PLANTILLA_FICHA.md)
+## Lista de verificación (docs/PLANTILLA_FICHA.md)
 - [ ] Resumen fiel al correo; ninguna condición ni dato cambiado; ambigüedades señaladas
 - [ ] Pregunta de decisión explícita; si es optimización, clasificada por su versión de decisión
 - [ ] Entrada con su tamaño definido (bits si hay números)
@@ -210,7 +210,7 @@ def ficha(c) -> str:
 - [ ] Código + pruebas + salida observada real · Big-O respaldado por tests/test_complejidad.py
 - [ ] Respuesta al correo (sección 0) y tabla "¿Qué concluimos?" completas
 - [ ] No se afirma P ≠ NP; P ⊆ NP; "NP" ≠ "no polinómico"
-- [ ] Sin marcas ✍️ pendientes · 3 preguntas de defensa respondidas
+- [ ] Sin marcas [POR REDACTAR] pendientes · 3 preguntas de defensa respondidas
 """
 
 
@@ -255,22 +255,22 @@ def main() -> None:
     (GEN / "salidas_observadas.md").write_text(salidas(), encoding="utf-8")
     (GEN / "tablas_transiciones.md").write_text(tablas_transiciones(), encoding="utf-8")
     (GEN / "inventario_pruebas.md").write_text(inventario_pruebas(), encoding="utf-8")
-    print("✔ docs/generado/{tabla_resumen, salidas_observadas, tablas_transiciones, inventario_pruebas}.md")
+    print("OK docs/generado/{tabla_resumen, salidas_observadas, tablas_transiciones, inventario_pruebas}.md")
     for c in CASOS:
         ruta = FICHAS / f"{c.id}.md"
         if not ruta.exists():
             ruta.write_text(ficha(c), encoding="utf-8")
-            print(f"✔ {ruta.relative_to(RAIZ)} (esqueleto nuevo)")
+            print(f"OK {ruta.relative_to(RAIZ)} (esqueleto nuevo)")
             continue
         viejo = ruta.read_text(encoding="utf-8")
         nuevo = actualizar_salida(viejo, c)
         if INICIO not in viejo:
-            print(f"⚠ {ruta.relative_to(RAIZ)}: sin marcas SALIDA; su salida observada no se puede actualizar sola")
+            print(f"AVISO {ruta.relative_to(RAIZ)}: sin marcas SALIDA; su salida observada no se puede actualizar sola")
         elif nuevo != viejo:
             ruta.write_text(nuevo, encoding="utf-8")
-            print(f"✔ {ruta.relative_to(RAIZ)}: salida observada actualizada (redacción intacta)")
+            print(f"OK {ruta.relative_to(RAIZ)}: salida observada actualizada (redacción intacta)")
         else:
-            print(f"· {ruta.relative_to(RAIZ)}: salida observada al día")
+            print(f"- {ruta.relative_to(RAIZ)}: salida observada al día")
 
 
 if __name__ == "__main__":

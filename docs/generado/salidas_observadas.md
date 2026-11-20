@@ -16,23 +16,23 @@ q0 = Borrador
 F  = {Entregado, Cancelado}
 |δ declarada| = 9 transiciones (el resto va a ERROR)
 
-✔ 'criedn' [confirmar → reservar → iniciar_picking → empacar → despachar → entregar] -> ACEPTA · Entregado ∈ F.
+[OK] 'criedn' [confirmar → reservar → iniciar_picking → empacar → despachar → entregar] -> ACEPTA · Entregado ∈ F.
      [ENUNCIADO] Borrador→Confirmado→Reservado→Preparacion→Empacado→Despachado→Entregado
-✔ 'x' [cancelar] -> ACEPTA · Cancelado ∈ F.
+[OK] 'x' [cancelar] -> ACEPTA · Cancelado ∈ F.
      Cancelación desde Borrador: cierre legítimo
-✔ 'crx' [confirmar → reservar → cancelar] -> ACEPTA · Cancelado ∈ F.
+[OK] 'crx' [confirmar → reservar → cancelar] -> ACEPTA · Cancelado ∈ F.
      Se cancela un pedido reservado: libera la reserva y cierra en Cancelado
-✔ 'd' [despachar] -> RECHAZA · Paso 1: δ(Borrador, d='despachar') no está definida -> sumidero ERROR.
+[OK] 'd' [despachar] -> RECHAZA · Paso 1: δ(Borrador, d='despachar') no está definida -> sumidero ERROR.
      [ENUNCIADO] Borrador→Despachado: δ(Borrador,d) no existe; no se despacha sin confirmar, reservar, preparar y empacar
-✔ 'crid' [confirmar → reservar → iniciar_picking → despachar] -> RECHAZA · Paso 4: δ(Preparacion, d='despachar') no está definida -> sumidero ERROR.
+[OK] 'crid' [confirmar → reservar → iniciar_picking → despachar] -> RECHAZA · Paso 4: δ(Preparacion, d='despachar') no está definida -> sumidero ERROR.
      Despachar desde Preparacion sin empacar: δ(Preparacion,d) no existe
-✔ 'crix' [confirmar → reservar → iniciar_picking → cancelar] -> RECHAZA · Paso 4: δ(Preparacion, x='cancelar') no está definida -> sumidero ERROR.
+[OK] 'crix' [confirmar → reservar → iniciar_picking → cancelar] -> RECHAZA · Paso 4: δ(Preparacion, x='cancelar') no está definida -> sumidero ERROR.
      Cancelar durante el picking no está permitido en el modelo: δ(Preparacion,x) no existe
-✔ 'cried' [confirmar → reservar → iniciar_picking → empacar → despachar] -> RECHAZA · Despachado ∉ F: la secuencia termina en un estado no final (proceso incompleto).
+[OK] 'cried' [confirmar → reservar → iniciar_picking → empacar → despachar] -> RECHAZA · Despachado ∉ F: la secuencia termina en un estado no final (proceso incompleto).
      Termina en Despachado ∉ F: falta la entrega
-✔ 'criednd' [confirmar → reservar → iniciar_picking → empacar → despachar → entregar → despachar] -> RECHAZA · Paso 7: δ(Entregado, d='despachar') no está definida -> sumidero ERROR.
+[OK] 'criednd' [confirmar → reservar → iniciar_picking → empacar → despachar → entregar → despachar] -> RECHAZA · Paso 7: δ(Entregado, d='despachar') no está definida -> sumidero ERROR.
      Evento después del estado final Entregado
-✔ 'ε' [ε] -> RECHAZA · Borrador ∉ F: la secuencia termina en un estado no final (proceso incompleto).
+[OK] 'ε' [ε] -> RECHAZA · Borrador ∉ F: la secuencia termina en un estado no final (proceso incompleto).
      Cadena vacía ε: Borrador ∉ F
 
 ==============================================================================
@@ -45,23 +45,23 @@ q0 = Solicitada
 F  = {Consumida, Liberada, Expirada, Rechazada}
 |δ declarada| = 6 transiciones (el resto va a ERROR)
 
-✔ 'vcp' [validar → confirmar → picking] -> ACEPTA · Consumida ∈ F.
+[OK] 'vcp' [validar → confirmar → picking] -> ACEPTA · Consumida ∈ F.
      [ENUNCIADO] Solicitada→Validada→Reservada→Consumida
-✔ 's' [sin_stock] -> ACEPTA · Rechazada ∈ F.
+[OK] 's' [sin_stock] -> ACEPTA · Rechazada ∈ F.
      Sin stock: Solicitada→Rechazada
-✔ 'vcx' [validar → confirmar → cancelar] -> ACEPTA · Liberada ∈ F.
+[OK] 'vcx' [validar → confirmar → cancelar] -> ACEPTA · Liberada ∈ F.
      Reserva cancelada: Reservada→Liberada
-✔ 'vct' [validar → confirmar → vence_plazo] -> ACEPTA · Expirada ∈ F.
+[OK] 'vct' [validar → confirmar → vence_plazo] -> ACEPTA · Expirada ∈ F.
      Vence el plazo: Reservada→Expirada
-✔ 'vp' [validar → picking] -> RECHAZA · Paso 2: δ(Validada, p='picking') no está definida -> sumidero ERROR.
+[OK] 'vp' [validar → picking] -> RECHAZA · Paso 2: δ(Validada, p='picking') no está definida -> sumidero ERROR.
      Consumir una reserva que nunca fue confirmada: δ(Validada,p) no existe
-✔ 'p' [picking] -> RECHAZA · Paso 1: δ(Solicitada, p='picking') no está definida -> sumidero ERROR.
+[OK] 'p' [picking] -> RECHAZA · Paso 1: δ(Solicitada, p='picking') no está definida -> sumidero ERROR.
      Picking directo desde Solicitada
-✔ 'vcpx' [validar → confirmar → picking → cancelar] -> RECHAZA · Paso 4: δ(Consumida, x='cancelar') no está definida -> sumidero ERROR.
+[OK] 'vcpx' [validar → confirmar → picking → cancelar] -> RECHAZA · Paso 4: δ(Consumida, x='cancelar') no está definida -> sumidero ERROR.
      Cancelar una reserva ya consumida
-✔ 'vc' [validar → confirmar] -> RECHAZA · Reservada ∉ F: la secuencia termina en un estado no final (proceso incompleto).
+[OK] 'vc' [validar → confirmar] -> RECHAZA · Reservada ∉ F: la secuencia termina en un estado no final (proceso incompleto).
      Termina en Reservada ∉ F: la reserva sigue abierta
-✔ 'sv' [sin_stock → validar] -> RECHAZA · Paso 2: δ(Rechazada, v='validar') no está definida -> sumidero ERROR.
+[OK] 'sv' [sin_stock → validar] -> RECHAZA · Paso 2: δ(Rechazada, v='validar') no está definida -> sumidero ERROR.
      Validar una solicitud ya rechazada
 
 ==============================================================================
@@ -74,23 +74,23 @@ q0 = Borrador
 F  = {Rechazada, Recibida}
 |δ declarada| = 8 transiciones (el resto va a ERROR)
 
-✔ 'saec' [solicitar_aprobacion → aprobar → emitir_orden → recibir_completa] -> ACEPTA · Recibida ∈ F.
+[OK] 'saec' [solicitar_aprobacion → aprobar → emitir_orden → recibir_completa] -> ACEPTA · Recibida ∈ F.
      Borrador→En aprobacion→Aprobada→Enviada→Recibida (recepción completa)
-✔ 'saepf' [solicitar_aprobacion → aprobar → emitir_orden → recibir_parte → completar_recepcion] -> ACEPTA · Recibida ∈ F.
+[OK] 'saepf' [solicitar_aprobacion → aprobar → emitir_orden → recibir_parte → completar_recepcion] -> ACEPTA · Recibida ∈ F.
      Una recepción parcial y luego se completa
-✔ 'saeppf' [solicitar_aprobacion → aprobar → emitir_orden → recibir_parte → recibir_parte → completar_recepcion] -> ACEPTA · Recibida ∈ F.
+[OK] 'saeppf' [solicitar_aprobacion → aprobar → emitir_orden → recibir_parte → recibir_parte → completar_recepcion] -> ACEPTA · Recibida ∈ F.
      Dos recepciones parciales (bucle) y luego se completa
-✔ 'sr' [solicitar_aprobacion → rechazar] -> ACEPTA · Rechazada ∈ F.
+[OK] 'sr' [solicitar_aprobacion → rechazar] -> ACEPTA · Rechazada ∈ F.
      Orden rechazada: cierre legítimo
-✔ 'sre' [solicitar_aprobacion → rechazar → emitir_orden] -> RECHAZA · Paso 3: δ(Rechazada, e='emitir_orden') no está definida -> sumidero ERROR.
+[OK] 'sre' [solicitar_aprobacion → rechazar → emitir_orden] -> RECHAZA · Paso 3: δ(Rechazada, e='emitir_orden') no está definida -> sumidero ERROR.
      [ENUNCIADO] Rechazada→Enviada: un estado final rechazado no habilita emisión
-✔ 'e' [emitir_orden] -> RECHAZA · Paso 1: δ(Borrador, e='emitir_orden') no está definida -> sumidero ERROR.
+[OK] 'e' [emitir_orden] -> RECHAZA · Paso 1: δ(Borrador, e='emitir_orden') no está definida -> sumidero ERROR.
      Emitir sin solicitar ni aprobar
-✔ 'sac' [solicitar_aprobacion → aprobar → recibir_completa] -> RECHAZA · Paso 3: δ(Aprobada, c='recibir_completa') no está definida -> sumidero ERROR.
+[OK] 'sac' [solicitar_aprobacion → aprobar → recibir_completa] -> RECHAZA · Paso 3: δ(Aprobada, c='recibir_completa') no está definida -> sumidero ERROR.
      Recibir mercadería de una orden aprobada pero nunca emitida
-✔ 'saep' [solicitar_aprobacion → aprobar → emitir_orden → recibir_parte] -> RECHAZA · Recepcion parcial ∉ F: la secuencia termina en un estado no final (proceso incompleto).
+[OK] 'saep' [solicitar_aprobacion → aprobar → emitir_orden → recibir_parte] -> RECHAZA · Recepcion parcial ∉ F: la secuencia termina en un estado no final (proceso incompleto).
      Termina en Recepcion parcial ∉ F: falta completar la recepción
-✔ 'saecp' [solicitar_aprobacion → aprobar → emitir_orden → recibir_completa → recibir_parte] -> RECHAZA · Paso 5: δ(Recibida, p='recibir_parte') no está definida -> sumidero ERROR.
+[OK] 'saecp' [solicitar_aprobacion → aprobar → emitir_orden → recibir_completa → recibir_parte] -> RECHAZA · Paso 5: δ(Recibida, p='recibir_parte') no está definida -> sumidero ERROR.
      Recibir después de Recibida
 ```
 

@@ -39,7 +39,7 @@ def bajar_titulos(texto: str, niveles: int = 1) -> str:
     return "\n".join(out) + "\n"
 
 
-NOTAS_INTERNAS = re.compile(r"^> (✅ FICHA MODELO|Esqueleto generado|Formato y profundidad|Las secciones marcadas|"
+NOTAS_INTERNAS = re.compile(r"^> ((\u2705 )?FICHA MODELO|Esqueleto generado|Formato y profundidad|Las secciones marcadas|"
                             r"Lo que debe establecer|PENDIENTE: redactar)", re.M)
 
 
@@ -47,6 +47,14 @@ def sin_notas_internas(texto: str) -> str:
     """Quita las instrucciones para el equipo (no van en el informe que se entrega)."""
     return "\n".join(l for l in texto.splitlines()
                      if not NOTAS_INTERNAS.match(l) and not l.startswith(("_Generada por", "_Generado por", "_Generadas desde"))) + "\n"
+
+
+EMOJI = re.compile("[\U0001F300-\U0001FAFF\u2600-\u27BF\u2B50\u25B6\u2139\uFE0F]")
+
+
+def sin_emojis(texto: str) -> str:
+    """El informe que se entrega no lleva emojis (las marcas pendientes se cuentan aparte)."""
+    return EMOJI.sub("", texto)
 
 
 def sin_mermaid(texto: str, imagen: str = "") -> str:
@@ -105,15 +113,15 @@ def main() -> None:
         "# Anexo B · Salidas observadas\n",
         bajar_titulos(leer("docs/generado/salidas_observadas.md")),
     ]
-    texto = sin_notas_internas("\n".join(partes))
+    texto = sin_emojis(sin_notas_internas("\n".join(partes)))
     SALIDA.mkdir(parents=True, exist_ok=True)
     md = SALIDA / "INFORME.md"
     md.write_text(texto, encoding="utf-8")
-    print(f"✔ {md.relative_to(RAIZ)} ({len(texto.split())} palabras)")
+    print(f"OK {md.relative_to(RAIZ)} ({len(texto.split())} palabras)")
 
-    marcas = len(re.findall(r"^\s*(-\s*)?✍️", texto, re.M)) + texto.count("PENDIENTE") + texto.count("- [ ]")
+    marcas = len(re.findall(r"^\s*(-\s*)?\[POR REDACTAR\]", texto, re.M)) + texto.count("PENDIENTE") + texto.count("- [ ]")
     if marcas:
-        print(f"⚠ El informe todavía tiene {marcas} marcas pendientes (✍️ / PENDIENTE / casillas). "
+        print(f"AVISO El informe todavía tiene {marcas} marcas pendientes ([POR REDACTAR] / PENDIENTE / casillas). "
               "Corre scripts/verificar_entrega.py para ver cuáles.")
 
     pandoc = shutil.which("pandoc")
@@ -124,17 +132,17 @@ def main() -> None:
         except Exception:
             pandoc = None
     if pandoc is None:
-        print("ℹ No hay pandoc: abre INFORME.md en Google Docs (Archivo → Abrir) o instala `pip install pypandoc_binary`.")
+        print("INFO No hay pandoc: abre INFORME.md en Google Docs (Archivo → Abrir) o instala `pip install pypandoc_binary`.")
         return
     docx = SALIDA / "INFORME.docx"
     r = subprocess.run([pandoc, str(md), "-o", str(docx), "--toc", "--toc-depth=2", "-M", "toc-title=Índice",
                         f"--resource-path={SALIDA}", "-f", "markdown-yaml_metadata_block+yaml_metadata_block"],
                        capture_output=True, text=True)
     if r.returncode == 0:
-        print(f"✔ {docx.relative_to(RAIZ)} → ábrelo en Word/Google Docs y expórtalo a PDF "
+        print(f"OK {docx.relative_to(RAIZ)} → ábrelo en Word/Google Docs y expórtalo a PDF "
               "como docs/INFORME_Deber2_LOGISTPULSE.pdf")
     else:
-        print(f"⚠ pandoc falló: {r.stderr.strip()[:300]}")
+        print(f"AVISO pandoc falló: {r.stderr.strip()[:300]}")
 
 
 if __name__ == "__main__":

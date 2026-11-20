@@ -12,7 +12,7 @@ Equipo: **Camila · Luis · Jessica**. Los roles, los roles rotativos y los prom
 
 ---
 
-## ▶ Cómo ejecutarlo
+## Cómo ejecutarlo
 
 ### Opción A · GitHub Codespaces (recomendada para el equipo · repo público)
 Repo → **Code → Codespaces → Create codespace on main**. El `.devcontainer/` instala Python 3.12, Graphviz, pandoc, GitHub CLI y las extensiones de Python, Jupyter y Mermaid, y corre las pruebas al crear el Codespace.
@@ -25,7 +25,7 @@ Repo → **Code → Codespaces → Create codespace on main**. El `.devcontainer
 ### Opción B · Google Colab (para correr algo rápido sin abrir el Codespace)
 1. Abre `LOGISTPULSE_Deber2_Colab.ipynb` en Colab (`Archivo → Subir notebook`).
 2. Ejecuta la celda 1 y sube el **zip del repo**. Si el repo ya está en GitHub, usa la celda 1-B con `git clone`.
-3. Ejecuta el resto: pruebas, demo, diagramas, tus propias pruebas (✏️), tiempos reales, revisión contra la rúbrica e informe.
+3. Ejecuta el resto: pruebas, demo, diagramas, tus propias pruebas (celdas editables), tiempos reales, revisión contra la rúbrica e informe.
 
 ### Opción C · Comandos (terminal del Codespace o local; Python ≥ 3.8, solo biblioteca estándar; probado en 3.8, 3.10, 3.11, 3.12 y 3.13)
 ```bash
@@ -37,14 +37,14 @@ python scripts/generar_docs.py              # tabla resumen, salidas observadas,
                                             #   y el bloque SALIDA de cada ficha (no toca lo redactado)
 python scripts/medir_crecimiento.py         # tiempos REALES: n! vs Held–Karp vs heurística vs Dijkstra (Fase F)
 python scripts/armar_informe.py             # junta todo en docs/generado/INFORME.md (+ .docx si hay pandoc)
-python scripts/verificar_entrega.py         # ✅/🟡/❌ por criterio de la rúbrica: qué falta y de quién
+python scripts/verificar_entrega.py         # listo / pendiente / error por criterio de la rúbrica
 python scripts/crear_issues.py [--crear]    # un Issue de GitHub por correo y por historia del backlog
 ```
 Todos los comandos se ejecutan **desde la carpeta raíz del repo**. Si la máquina está muy cargada y una prueba de *tiempo* falla por ruido, usa `LOGISTPULSE_SIN_TIEMPOS=1`; las pruebas de *conteo* siguen probando las cotas.
 
 ---
 
-## 📁 Dónde está cada entregable
+## Dónde está cada entregable
 
 | Entregable del enunciado | Archivo(s) | Responsable |
 |---|---|---|
@@ -78,7 +78,7 @@ tests/     141 pruebas unittest (también corren con pytest)
 
 ---
 
-## 🔑 Resultados clave (detalle en `docs/DECISIONES_Y_HALLAZGOS.md`)
+## Resultados clave (detalle en `docs/DECISIONES_Y_HALLAZGOS.md`)
 - **Planta:** Dijkstra R→D = **11 m** por R→B→A→E→D. La ruta de la Figura 5 (R→B→A→P→E→D) **empata** en 11 m. Con el pasillo A bloqueado: 12 m. Con Empaque bloqueado: no hay ruta.
 - **FEFO:** un pedido de 80 toma L-001:30, L-002:25 (empatan en fecha y desempata el código) y L-003:25. Si falta stock: PARCIAL, RECHAZADO o EN_ESPERA según la política.
 - **Reposición:** el ejemplo del enunciado da posición 23 y sugerencia **27**. No hay sugerencias duplicadas si ya existe una orden abierta.
@@ -87,7 +87,7 @@ tests/     141 pruebas unittest (también corren con pytest)
 
 ---
 
-## 🌿 Flujo de trabajo Git (3 sprints)
+## Flujo de trabajo Git (3 sprints)
 - `main` está protegida: todo entra por **Pull Request** con **1 aprobación de otro integrante** y el check de **GitHub Actions** en verde.
 - Ramas: `camila/fase-a-fichas-np`, `luis/fase-bc-fichas-p`, `jessica/fase-df-gestion`. Cada persona edita **sus** archivos (tabla de arriba).
 - Un *Issue* por correo y por historia del backlog (`python scripts/crear_issues.py --crear`); el PR lo cierra con `Closes #N`.
@@ -95,7 +95,7 @@ tests/     141 pruebas unittest (también corren con pytest)
 - Si cambian el código: pruebas en OK → `python scripts/generar_docs.py`. Antes de cada PR y antes de entregar: `python scripts/verificar_entrega.py`.
 - Cierre: `git tag -a v1.0 -m "Entrega final Deber 2"` → `git push origin v1.0` → *Release* en GitHub.
 
-## 🤖 Declaración de uso de IA
+## Declaración de uso de IA
 (Completar con lo que pida el curso: qué partes se hicieron con apoyo de IA, cómo se verificaron —141 pruebas automáticas, pruebas de complejidad, JFLAP, revisión cruzada por PR— y qué revisó y defiende cada integrante.)
 
 ## Referencias
