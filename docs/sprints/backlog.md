@@ -27,5 +27,5 @@ El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su fic
 | C-n3 | Logaritmo discreto acotado | NP | Camila | 3 | `docs/fichas/n3.md` | `casos/n3_log_discreto.py` | `test_casos_np.py::TestN3` | Por hacer |
 | C-n4 | Simetría de la topología | NP | Camila | 3 | `docs/fichas/n4.md` | `casos/n4_automorfismo.py` | `test_casos_np.py::TestN4` | Por hacer |
 | C-c1 | Asignación que cumpla las reglas (SAT) | NPC | Jessica | 3 | `docs/fichas/c1.md` | `casos/c1_sat.py` | `test_casos_npc.py::TestC1` | Por hacer |
-| C-c2 | Recorrido dentro del presupuesto (TSP) | NPC | Jessica | 1 (adelantada) | `docs/fichas/c2.md` | `casos/c2_tsp_decision.py` | `test_casos_npc.py::TestC2` | En revisión |
+| C-c2 | Recorrido dentro del presupuesto (TSP) | NPC | Jessica | 1 (adelantada) | `docs/fichas/c2.md` | `casos/c2_tsp_decision.py` | `test_casos_npc.py::TestC2` | Hecho(20/11) |
 | C-c3 | Cobertura con k equipos (Vertex Cover) | NPC | Jessica | 3 | `docs/fichas/c3.md` | `casos/c3_vertex_cover.py` | `test_casos_npc.py::TestC3` | Por hacer |

@@ -35,8 +35,12 @@
 7. Crea los Issues del backlog (uno por correo y uno por historia de fase):
    ```bash
    python scripts/crear_issues.py           # revisar la lista
-   python scripts/crear_issues.py --crear   # crearlos (una sola vez)
+   python scripts/crear_issues.py --crear   # crea solo los que faltan (repetirlo no duplica)
+   python scripts/crear_issues.py --asignar Camila=usuario1 Luis=usuario2 Jessica=usuario3
    ```
+   `--asignar` pone a cada Issue su responsable según el backlog (usuarios de GitHub; cada uno tiene que haber aceptado la invitación).
+
+> **Capturas de gestión:** van en `docs/evidencias/` con el prefijo del sprint (`s1_`, `s2_`, `s3_`, `final_`). La lista, con el momento de cada una, está en `docs/EMPIEZA_AQUI.md`, sección 8.
 
 ## 2. Cada integrante (Camila, Luis, Jessica)
 1. Repo → **Code → Codespaces → Create codespace on main** (cada uno el suyo; consume la cuota de su propia cuenta).

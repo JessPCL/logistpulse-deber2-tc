@@ -152,6 +152,25 @@ def chk_sprints():
     return (OK, "backlog y 3 sprints documentados") if not pend else (PEND, f"pendiente: {', '.join(pend)} (Jessica)")
 
 
+ETAPAS_EVIDENCIA = ("s1", "s2", "s3", "final")
+NOMBRE_EVIDENCIA = re.compile(r"(s[123]|final)_[A-Za-z0-9_\-]+\.(png|jpe?g)", re.I)
+
+
+def chk_evidencias():
+    """Capturas de gestión en docs/evidencias/: una o más por etapa, con nombres sin espacios."""
+    carpeta = RAIZ / "docs" / "evidencias"
+    imgs = sorted(p.name for p in carpeta.iterdir()
+                  if p.suffix.lower() in (".png", ".jpg", ".jpeg")) if carpeta.exists() else []
+    malos = [n for n in imgs if not NOMBRE_EVIDENCIA.fullmatch(n)]
+    if malos:
+        return PEND, ("renombrar con prefijo s1_/s2_/s3_/final_ y sin espacios ni tildes: " + ", ".join(malos))
+    faltan = [e for e in ETAPAS_EVIDENCIA if not any(n.lower().startswith(e + "_") for n in imgs)]
+    if faltan:
+        return PEND, (f"{len(imgs)} capturas en docs/evidencias; faltan las de: {', '.join(faltan)} "
+                      "(lista y momento de cada una: docs/EMPIEZA_AQUI.md, sección 8)")
+    return OK, f"{len(imgs)} capturas de gestión (s1, s2, s3 y final)"
+
+
 def chk_git():
     if not (RAIZ / ".git").exists() or shutil.which("git") is None:
         return PEND, "todavía no es un repositorio Git (Jessica: ver equipo/GUIA_CODESPACES.md, paso 1)"
@@ -180,7 +199,8 @@ def chk_git():
 EMOJI = re.compile("[\U0001F300-\U0001FAFF\u2600-\u27BF\u2B50\u25B6\u2139]")
 ENTREGABLES = ["README.md", "docs/MATRIZ_TRAZABILIDAD.md", "docs/DECISIONES_Y_HALLAZGOS.md", "docs/conclusiones.md",
                "docs/presentacion_guion.md", "docs/fase_A_automatas.md", "docs/fase_B_rutas.md",
-               "docs/fase_C_fefo_reposicion.md", "docs/fase_E_implementacion.md", "docs/fase_F_nota_parada.md"]
+               "docs/fase_C_fefo_reposicion.md", "docs/fase_E_implementacion.md", "docs/fase_F_nota_parada.md",
+               "docs/EMPIEZA_AQUI.md", "docs/evidencias/LEEME.md"]
 
 
 def chk_sin_emojis():
@@ -246,6 +266,7 @@ CRITERIOS = [
     ("Gestión del proyecto y versiones", "1,0", [
         ("Backlog y sprints", chk_sprints),
         ("Historial Git y release", chk_git),
+        ("Capturas de gestión", chk_evidencias),
     ]),
     ("Comunicación y reflexión", "1,0", [
         ("Informe PDF", chk_informe),
