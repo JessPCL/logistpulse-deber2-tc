@@ -200,7 +200,7 @@ EMOJI = re.compile("[\U0001F300-\U0001FAFF\u2600-\u27BF\u2B50\u25B6\u2139]")
 ENTREGABLES = ["README.md", "docs/MATRIZ_TRAZABILIDAD.md", "docs/DECISIONES_Y_HALLAZGOS.md", "docs/conclusiones.md",
                "docs/presentacion_guion.md", "docs/fase_A_automatas.md", "docs/fase_B_rutas.md",
                "docs/fase_C_fefo_reposicion.md", "docs/fase_E_implementacion.md", "docs/fase_F_nota_parada.md",
-               "docs/EMPIEZA_AQUI.md", "docs/evidencias/LEEME.md"]
+               "docs/EMPIEZA_AQUI.md", "docs/evidencias/LEEME.md", "docs/QUE_PIDE_CADA_CORREO.md"]
 
 
 def chk_sin_emojis():

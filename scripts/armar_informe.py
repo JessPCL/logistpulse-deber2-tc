@@ -50,6 +50,30 @@ def sin_notas_internas(texto: str) -> str:
                      if not NOTAS_INTERNAS.match(l) and not l.startswith(("_Generada por", "_Generado por", "_Generadas desde"))) + "\n"
 
 
+CHECKLIST = re.compile(r"^(#{1,6}) (Checklist|Lista de verificación)\b")
+
+
+def sin_checklists(texto: str) -> str:
+    """Quita las secciones "Checklist" / "Lista de verificación": son control interno del equipo,
+    no contenido del informe (verificar_entrega.py las sigue revisando en los .md)."""
+    out, nivel_cortado, en_codigo = [], None, False
+    for linea in texto.splitlines():
+        if linea.startswith("```"):
+            en_codigo = not en_codigo
+        m = CHECKLIST.match(linea) if not en_codigo else None
+        if m:
+            nivel_cortado = len(m.group(1))
+            continue
+        if nivel_cortado is not None:
+            t = re.match(r"^(#{1,6}) ", linea) if not en_codigo else None
+            if t and len(t.group(1)) <= nivel_cortado:
+                nivel_cortado = None
+            else:
+                continue
+        out.append(linea)
+    return "\n".join(out) + "\n"
+
+
 EMOJI = re.compile("[\U0001F300-\U0001FAFF\u2600-\u27BF\u2B50\u25B6\u2139\uFE0F]")
 
 
@@ -92,6 +116,12 @@ def evidencias_gestion() -> str:
         f"![{pie_de_foto(p.stem)}](../evidencias/{quote(p.name)})\n" for p in imgs)
 
 
+def sin_titulo(texto: str) -> str:
+    """Quita el título "# ..." de la primera línea: el informe ya pone su propio encabezado numerado."""
+    lineas = texto.splitlines()
+    return "\n".join(lineas[1:] if lineas and lineas[0].startswith("# ") else lineas) + "\n"
+
+
 def seccion_readme(titulo: str) -> str:
     t = leer("README.md")
     m = re.search(rf"## [^\n]*{titulo}[^\n]*\n(.*?)(?=\n## |\Z)", t, re.S)
@@ -110,14 +140,14 @@ def main() -> None:
         bajar_titulos("## 1. Decisiones de modelado" + leer("docs/DECISIONES_Y_HALLAZGOS.md")
                       .split("## 1. Decisiones de modelado", 1)[1].split("## 4. Qué seleccionar en el simulador")[0]),
         "# 2. Fase A · Autómatas\n",
-        bajar_titulos(leer("docs/fase_A_automatas.md")),
+        bajar_titulos(sin_titulo(leer("docs/fase_A_automatas.md"))),
         "".join(f"![AFD {k}](../diagramas/afd_{k}.png)\n\n" for k in ("pedido", "reserva", "orden_compra")),
         bajar_titulos(leer("docs/generado/tablas_transiciones.md")),
         "# 3. Fase B · Planta y rutas\n",
         "![Planta con la ruta encontrada](../diagramas/planta_ruta.png)\n\n",
-        bajar_titulos(leer("docs/fase_B_rutas.md")),
+        bajar_titulos(sin_titulo(leer("docs/fase_B_rutas.md"))),
         "# 4. Fase C · FEFO y reposición\n",
-        bajar_titulos(leer("docs/fase_C_fefo_reposicion.md")),
+        bajar_titulos(sin_titulo(leer("docs/fase_C_fefo_reposicion.md"))),
         "# 5. Fase D · Clasificación de los diez correos\n",
         bajar_titulos(leer("docs/generado/tabla_resumen.md")),
     ]
@@ -126,16 +156,16 @@ def main() -> None:
         partes.append(bajar_titulos(sin_mermaid(leer(f"docs/fichas/{c.id}.md"), img)))
     partes += [
         "# 6. Fase E · Implementación y validación\n",
-        bajar_titulos(leer("docs/fase_E_implementacion.md")),
+        bajar_titulos(sin_titulo(leer("docs/fase_E_implementacion.md"))),
         bajar_titulos(leer("docs/generado/crecimiento.md")),
         "# 7. Fase F · Decidibilidad y el problema de la parada\n",
-        bajar_titulos(leer("docs/fase_F_nota_parada.md")),
+        bajar_titulos(sin_titulo(leer("docs/fase_F_nota_parada.md"))),
         "# 8. Gestión del proyecto\n",
         bajar_titulos(leer("docs/sprints/backlog.md")),
         *(bajar_titulos(leer(f"docs/sprints/sprint_{i}.md")) for i in (1, 2, 3)),
         evidencias_gestion(),
         "# 9. Supuestos, límites y conclusiones\n",
-        bajar_titulos(leer("docs/conclusiones.md")),
+        bajar_titulos(sin_titulo(leer("docs/conclusiones.md"))),
         "# 10. Declaración de uso de IA\n",
         seccion_readme("Declaración de uso de IA"),
         "# Anexo A · Inventario de pruebas\n",
@@ -143,13 +173,15 @@ def main() -> None:
         "# Anexo B · Salidas observadas\n",
         bajar_titulos(leer("docs/generado/salidas_observadas.md")),
     ]
-    texto = sin_emojis(sin_notas_internas("\n".join(partes)))
+    completo = sin_emojis(sin_notas_internas("\n".join(partes)))
+    texto = sin_checklists(completo)
     SALIDA.mkdir(parents=True, exist_ok=True)
     md = SALIDA / "INFORME.md"
     md.write_text(texto, encoding="utf-8")
     print(f"OK {md.relative_to(RAIZ)} ({len(texto.split())} palabras)")
 
-    marcas = len(re.findall(r"^\s*(-\s*)?\[POR REDACTAR\]", texto, re.M)) + texto.count("PENDIENTE") + texto.count("- [ ]")
+    marcas = (len(re.findall(r"^\s*(-\s*)?\[POR REDACTAR\]", completo, re.M)) + completo.count("PENDIENTE")
+              + completo.count("- [ ]"))
     if marcas:
         print(f"AVISO El informe todavía tiene {marcas} marcas pendientes ([POR REDACTAR] / PENDIENTE / casillas). "
               "Corre scripts/verificar_entrega.py para ver cuáles.")
@@ -166,7 +198,7 @@ def main() -> None:
         return
     docx = SALIDA / "INFORME.docx"
     r = subprocess.run([pandoc, str(md), "-o", str(docx), "--toc", "--toc-depth=2", "-M", "toc-title=Índice",
-                        f"--resource-path={SALIDA}", "-f", "markdown-yaml_metadata_block+yaml_metadata_block"],
+                        f"--resource-path={SALIDA}", "-f", "markdown-yaml_metadata_block+yaml_metadata_block+lists_without_preceding_blankline"],
                        capture_output=True, text=True)
     if r.returncode == 0:
         print(f"OK {docx.relative_to(RAIZ)} → ábrelo en Word/Google Docs y expórtalo a PDF "

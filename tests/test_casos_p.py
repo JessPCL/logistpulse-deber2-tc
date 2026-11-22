@@ -2,6 +2,7 @@
 Datos de los expedientes: data/casos_simulador.json (leídos con io_datos.cargar_casos)."""
 
 import unittest
+from pathlib import Path
 
 from logistpulse.casos import p1_alcanzabilidad as p1
 from logistpulse.casos import p2_ruta_minima as p2
@@ -23,6 +24,32 @@ class TestP1(unittest.TestCase):
     def test_no_alcanzable_con_cierre(self):
         self.assertIsNone(p1.resolver(self.c["red_con_cierre"], "Durán", "Norte"))
         self.assertFalse(p1.decidir(self.c["red_con_cierre"], "Durán", "Norte"))
+
+    def test_programa_con_lista_de_conexiones(self):
+        """El correo pide un programa que se ejecute con una lista de conexiones: ejemplo con ruta y sin ruta."""
+        import contextlib
+        import io
+        from logistpulse.__main__ import main
+        ej = Path(__file__).resolve().parent.parent / "data" / "ejemplos"
+        for archivo, esperado in (("p1_con_ruta.txt", "Sí: existe ruta Durán → Norte"),
+                                  ("p1_sin_ruta.txt", "No: no existe ruta Durán → Norte")):
+            salida = io.StringIO()
+            with contextlib.redirect_stdout(salida):
+                codigo = main(["p1", str(ej / archivo), "Durán", "Norte"])
+            self.assertEqual(codigo, 0)
+            self.assertIn(esperado, salida.getvalue())
+
+    def test_lectura_de_conexiones_invalida(self):
+        import tempfile
+        from logistpulse.io_datos import cargar_conexiones
+        with tempfile.TemporaryDirectory() as d:
+            malo = Path(d) / "malo.txt"
+            malo.write_text("Durán Quito\n", encoding="utf-8")  # sin separador
+            with self.assertRaises(ValueError):
+                cargar_conexiones(malo)
+            bien = Path(d) / "bien.txt"
+            bien.write_text("# comentario\n\nA, B\nB -> C\n", encoding="utf-8")
+            self.assertEqual(cargar_conexiones(bien), [("A", "B"), ("B", "C")])
 
     def test_grafo_dirigido_no_vuelve(self):
         self.assertFalse(p1.decidir(self.c["red"], "Norte", "Durán"))

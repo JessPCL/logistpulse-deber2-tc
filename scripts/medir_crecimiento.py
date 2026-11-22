@@ -1,7 +1,7 @@
 """Mide tiempos REALES para ilustrar "decidible ≠ resoluble en tiempo útil" (Fase F, c1, c2 y c3).
 
 Compara el crecimiento polinómico (Dijkstra) con el factorial/exponencial
-(TSP-decisión por enumeración y Held–Karp) y extrapola a tamaños de almacén reales.
+(TSP-decisión por enumeración y Held–Karp) y extrapola a tamaños reales de la operación.
 Los tiempos dependen de la máquina: el informe debe citarlos como "medidos en Colab".
 
 Uso:  python scripts/medir_crecimiento.py      -> imprime y guarda docs/generado/crecimiento.md
@@ -75,11 +75,11 @@ def seccion_sat(rnd) -> list:
 def seccion_vertex_cover() -> list:
     """c3: ramificación en el peor caso (k+1 aristas disjuntas con presupuesto k ⇒ No, árbol completo)."""
     lineas = ["## Vertex Cover (c3): ramificación en el peor caso (respuesta No) y 2-aproximación", "",
-              "| k almacenes | nodos 2^(k+1)−1 | ramificación (s) |", "|---|---|---|"]
+              "| k equipos | nodos 2^(k+1)−1 | ramificación (s) |", "|---|---|---|"]
     por_nodo = None
     for k in (10, 12, 14, 16):
         ady = {}
-        for i in range(k + 1):  # k + 1 pares de zonas disjuntos: con k almacenes no alcanza
+        for i in range(k + 1):  # k + 1 pares de zonas disjuntos: con k equipos no alcanza
             ady[f"a{i}"], ady[f"b{i}"] = [f"b{i}"], [f"a{i}"]
         c = Contador()
         t0 = time.perf_counter()
@@ -89,7 +89,7 @@ def seccion_vertex_cover() -> list:
         lineas.append(f"| {k} | {c['nodo']:,} | {t:.3f} |")
         print(lineas[-1])
     lineas += ["", "### Extrapolación de la ramificación (con el costo por nodo medido en k = 16)", "",
-               "| k almacenes | nodos | tiempo estimado |", "|---|---|---|"]
+               "| k equipos | nodos | tiempo estimado |", "|---|---|---|"]
     for k in (30, 40, 60, 100):
         lineas.append(f"| {k} | {2 ** (k + 1) - 1:.2e} | {anios((2 ** (k + 1) - 1) * por_nodo)} |")
     V = 100_000
@@ -99,9 +99,9 @@ def seccion_vertex_cover() -> list:
         ady[f"v{i + 1}"].append(f"v{i}")
     t = cronometrar(c3.aproximacion_2, ady)
     lineas += ["", f"2-aproximación en un camino de {V:,} zonas: {t:.3f} s (O(V + E), garantiza |S| ≤ 2·ÓPTIMO).", "",
-               "Conclusión: con pocos almacenes (k pequeño) la ramificación exacta es rápida aunque haya muchas zonas; "
-               "el costo explota con k (cada almacén extra duplica el árbol). Para k grandes se usa la 2-aproximación, "
-               "que es instantánea pero puede usar hasta el doble de almacenes.", ""]
+               "Conclusión: con pocos equipos (k pequeño) la ramificación exacta es rápida aunque haya muchas zonas; "
+               "el costo explota con k (cada equipo extra duplica el árbol). Para k grandes se usa la 2-aproximación, "
+               "que es instantánea pero puede usar hasta el doble de equipos.", ""]
     return lineas
 
 

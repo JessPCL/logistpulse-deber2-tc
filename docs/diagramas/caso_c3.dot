@@ -2,7 +2,7 @@ graph c3 {
   rankdir=LR; fontname=Helvetica;
   node [shape=ellipse, style=filled, fillcolor="#eef4fc", color="#7f9cc4", fontname=Helvetica];
   edge [fontname=Helvetica, color="#4b5d78"];
-  label="c3 · zonas adyacentes (aristas)"; labelloc=t;
+  label="c3 · corredores entre zonas"; labelloc=t;
   "A" -- "B";
   "B" -- "C";
 }

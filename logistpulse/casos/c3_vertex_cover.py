@@ -1,10 +1,12 @@
 """c3 · ¿Bastan k almacenes para cubrir todas las zonas?  (Carla Núñez · Red logística)
 
 Decisión: VERTEX-COVER = {<G, k> : ∃ S ⊆ V, |S| ≤ k, toda arista (u,v) tiene u ∈ S o v ∈ S}.
-(El correo nombra Vertex Cover y pregunta "¿Cubre toda arista?", pero también dice
-"zona cubierta por un almacén propio o vecino", que sería Dominating Set. Seguimos
-Vertex Cover (etiqueta, datos y código del correo; hallazgo H7). Ambos son NP-completos.)
-Vocabulario: vértice = zona; arista = par de zonas adyacentes; S = zonas con almacén.
+El cuerpo del correo pide desplegar hasta k equipos de inspección de modo que cada
+corredor de transferencia tenga un equipo en al menos uno de sus extremos: Vertex Cover.
+(El asunto y la ficha del simulador hablan de "almacenes" y de "zona cubierta por un
+almacén propio o vecino", que sería Dominating Set; seguimos el cuerpo del correo,
+hallazgo H7. Ambos son NP-completos.)
+Vocabulario: vértice = zona; arista = corredor; S = zonas con equipo de inspección.
 
 ∈ NP: certificado = S; verificador O(V + E).
 NP-difícil: INDEPENDENT-SET ≤p VERTEX-COVER: S es cobertura ⇔ V∖S es independiente,
@@ -25,16 +27,16 @@ from ..conteo import contador_o_nulo
 
 
 def ady_desde_aristas(aristas: Iterable[Sequence[str]], vertices: Iterable[str] = ()) -> Dict[str, List[str]]:
-    """Lista de adyacencias [u, v] entre zonas -> lista de adyacencia no dirigida. O(V + E)."""
+    """Lista de corredores [u, v] entre zonas -> lista de adyacencia no dirigida. O(V + E)."""
     ady: Dict[str, List[str]] = {v: [] for v in vertices}
     for a in aristas:
         if len(a) != 2:
-            raise ValueError(f"Arista inválida {a!r} (se esperan dos zonas)")
+            raise ValueError(f"Corredor inválido {a!r} (se esperan dos zonas)")
         u, v = a
         ady.setdefault(u, [])
         ady.setdefault(v, [])
         if v in ady[u]:
-            raise ValueError(f"Adyacencia repetida {u}-{v}")
+            raise ValueError(f"Corredor repetido {u}-{v}")
         ady[u].append(v)
         ady[v].append(u)
     return ady

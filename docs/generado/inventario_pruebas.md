@@ -1,6 +1,6 @@
 # Inventario de pruebas
 
-_Generado por `scripts/generar_docs.py`. Total: 143 métodos de prueba (complejidad (conteo): 16 · complejidad (tiempo): 4 · inválida: 33 · límite: 19 · normal: 71). Muchos métodos agrupan varios casos con `subTest`. La categoría se asigna por el nombre del método._
+_Generado por `scripts/generar_docs.py`. Total: 146 métodos de prueba (complejidad (conteo): 16 · complejidad (tiempo): 4 · inválida: 34 · límite: 19 · normal: 73). Muchos métodos agrupan varios casos con `subTest`. La categoría se asigna por el nombre del método._
 
 | Archivo | Prueba | Categoría | Descripción |
 |---|---|---|---|
@@ -41,6 +41,7 @@ _Generado por `scripts/generar_docs.py`. Total: 143 métodos de prueba (compleji
 | `test_casos_np` | `TestN4.test_triangulo_tiene_simetria` | normal |  |
 | `test_casos_np` | `TestN4.test_verificador_rechaza_identidad_y_falsos` | inválida |  |
 | `test_casos_npc` | `TestC1.test_3cnf_satisfacible_e_insatisfacible` | normal |  |
+| `test_casos_npc` | `TestC1.test_comprobacion_clausula_por_clausula` | normal | El correo pide validar CADA cláusula: el detalle dice qué literal la cumple (o None). |
 | `test_casos_npc` | `TestC1.test_instancia_simulador` | normal |  |
 | `test_casos_npc` | `TestC1.test_instancia_simulador_es_2cnf` | normal |  |
 | `test_casos_npc` | `TestC1.test_invalidos` | inválida |  |
@@ -65,8 +66,10 @@ _Generado por `scripts/generar_docs.py`. Total: 143 métodos de prueba (compleji
 | `test_casos_p` | `TestP1.test_alcanzable` | normal |  |
 | `test_casos_p` | `TestP1.test_grafo_dirigido_no_vuelve` | normal |  |
 | `test_casos_p` | `TestP1.test_invalidos` | inválida |  |
+| `test_casos_p` | `TestP1.test_lectura_de_conexiones_invalida` | inválida |  |
 | `test_casos_p` | `TestP1.test_limite_origen_igual_destino` | límite |  |
 | `test_casos_p` | `TestP1.test_no_alcanzable_con_cierre` | normal |  |
+| `test_casos_p` | `TestP1.test_programa_con_lista_de_conexiones` | normal | El correo pide un programa que se ejecute con una lista de conexiones: ejemplo con ruta y sin ruta. |
 | `test_casos_p` | `TestP1.test_traza_bfs_por_niveles` | normal |  |
 | `test_casos_p` | `TestP1.test_verificador_de_camino` | normal |  |
 | `test_casos_p` | `TestP2.test_bellman_ford_detecta_ciclo_negativo` | inválida |  |

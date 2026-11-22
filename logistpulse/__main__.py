@@ -1,6 +1,7 @@
 """Demo completa:  python -m logistpulse   (o  python -m logistpulse casos)
 
 Secciones: automatas | rutas | inventario | casos | todo (por defecto)
+Correo p1 con tu propia lista de conexiones:  python -m logistpulse p1 ARCHIVO ORIGEN DESTINO
 """
 
 from __future__ import annotations
@@ -9,8 +10,8 @@ import sys
 
 from . import presentacion as pr
 from .casos import CASOS
-from .io_datos import cargar_casos
-from .presentacion_casos import DEMOS
+from .io_datos import cargar_casos, cargar_conexiones
+from .presentacion_casos import DEMOS, respuesta_p1
 from .inventario import emitir_orden, seleccionar_fefo, sugerencias, sugerir
 from .io_datos import cargar_lotes, cargar_planta, cargar_skus
 from .rutas import bfs_ruta, dijkstra, ruta_minima, todas_las_rutas_minimas
@@ -70,8 +71,25 @@ SECCIONES = {
 }
 
 
+def main_p1(argv) -> int:
+    """python -m logistpulse p1 ARCHIVO ORIGEN DESTINO   (correo p1: ejecutar con una lista de conexiones)"""
+    if len(argv) != 3:
+        print("Uso: python -m logistpulse p1 ARCHIVO_DE_CONEXIONES ORIGEN DESTINO\n"
+              "     ejemplo: python -m logistpulse p1 data/ejemplos/p1_con_ruta.txt Durán Norte")
+        return 2
+    archivo, origen, destino = argv
+    try:
+        print(respuesta_p1(cargar_conexiones(archivo), origen, destino))
+    except (OSError, ValueError) as e:
+        print(f"Error: {e}")
+        return 2
+    return 0
+
+
 def main(argv=None) -> int:
     argv = sys.argv[1:] if argv is None else argv
+    if argv[:1] == ["p1"]:
+        return main_p1(argv[1:])
     elegidas = argv or list(SECCIONES)
     for nombre in elegidas:
         if nombre not in SECCIONES:

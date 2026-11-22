@@ -176,6 +176,7 @@ Los roles de proceso rotan cada sprint (tabla en `equipo/ROLES_Y_PROMPTS.md`). E
 ## 9. Qué leer después
 
 1. `equipo/ROLES_Y_PROMPTS.md`: tu parte y tu prompt.
-2. `docs/fichas/p1.md`: cómo se ve una ficha terminada.
-3. `docs/DECISIONES_Y_HALLAZGOS.md`: las decisiones del modelo y los hallazgos (empates, ambigüedades de los correos).
-4. `equipo/GUIA_CODESPACES.md`: los comandos exactos de Git y GitHub.
+2. `docs/QUE_PIDE_CADA_CORREO.md`: qué pide cada correo (el cuerpo completo, no solo el asunto), de dónde salen los números del simulador y qué falta en cada ficha.
+3. `docs/fichas/p1.md`: cómo se ve una ficha terminada.
+4. `docs/DECISIONES_Y_HALLAZGOS.md`: las decisiones del modelo y los hallazgos (empates, ambigüedades de los correos).
+5. `equipo/GUIA_CODESPACES.md`: los comandos exactos de Git y GitHub.

@@ -1,0 +1,7 @@
+# Correo p1 · ejemplo SIN ruta: el cierre de vías de anoche dejó fuera de servicio Quito -> Norte.
+# Solo queda el tramo de regreso Norte -> Quito (los tramos tienen sentido), así que Norte no se alcanza.
+# Ejecutar: python -m logistpulse p1 data/ejemplos/p1_sin_ruta.txt Durán Norte
+Durán, Quito
+Durán, Guayaquil
+Guayaquil, Sur
+Norte -> Quito

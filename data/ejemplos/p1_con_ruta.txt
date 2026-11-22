@@ -1,0 +1,6 @@
+# Correo p1 · ejemplo CON ruta: tramos habilitados (origen, destino), uno por línea.
+# Ejecutar: python -m logistpulse p1 data/ejemplos/p1_con_ruta.txt Durán Norte
+Durán, Quito
+Durán, Guayaquil
+Quito, Norte
+Guayaquil, Sur
