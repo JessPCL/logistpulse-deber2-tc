@@ -59,7 +59,7 @@ Todos los comandos se ejecutan **desde la carpeta raíz del repo**. Si la máqui
 | Informe sobre el problema de la parada | `docs/fase_F_nota_parada.md` (+ evidencia en `docs/generado/crecimiento.md`) | Jessica |
 | Supuestos, límites y conclusiones (rúbrica de comunicación) | `docs/conclusiones.md` | Jessica |
 | Tres sprints (roles rotativos, una unidad de trabajo por correo) + release | `docs/sprints/`, historial Git, tag `v1.0` | Rol de coordinación de cada sprint |
-| Informe PDF | `scripts/armar_informe.py` → `docs/generado/INFORME.docx` → PDF en `docs/` | Jessica |
+| Informe PDF (resume el análisis y enlaza al repositorio lo demás) | `scripts/armar_informe.py` → `docs/generado/INFORME.docx` → Word → `docs/INFORME_Deber2_LOGISTPULSE.pdf` (`--completo` = todo dentro del PDF) | Jessica |
 | Presentación de 8–10 min | `docs/presentacion_guion.md` | Todos (integra Jessica) |
 
 ```
