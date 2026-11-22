@@ -6,6 +6,8 @@ def verificar(corredores, k, S):
 
 def ramificar(corredores, k):
     """Toma un corredor sin cubrir (u, v): toda solución contiene a u o a v. Tiempo O(2^k·(V + E))."""
+    if k < 0:
+        return None
     if not corredores:
         return set()
     if k == 0:
