@@ -142,6 +142,19 @@ def demo_n4(inst: Inst) -> str:
     )
 
 
+def respuesta_p1(conexiones, origen: str, destino: str) -> str:
+    """Respuesta de p1 para CUALQUIER lista de conexiones (la pide el correo)."""
+    red = p1_alcanzabilidad.red_desde_conexiones(conexiones)
+    if origen not in red or destino not in red:
+        faltan = [x for x in (origen, destino) if x not in red]
+        return f"No: {', '.join(faltan)} no aparece en ninguna conexión."
+    camino = p1_alcanzabilidad.resolver(red, origen, destino)
+    if camino is None:
+        return f"No: no existe ruta {origen} → {destino} (BFS visitó todo lo alcanzable y no llegó)."
+    return (f"Sí: existe ruta {origen} → {destino}: {' → '.join(camino)} ({len(camino) - 1} tramos) · "
+            f"verificar camino = {p1_alcanzabilidad.verificar_camino(red, camino, origen, destino)}")
+
+
 def demo_c1(inst: Inst) -> str:
     cl, n = inst["clausulas"], inst["n"]
     c_dpll, c_fb = Contador(), Contador()
@@ -151,10 +164,22 @@ def demo_c1(inst: Inst) -> str:
     t, u = inst["tres_cnf_satisfacible"], inst["tres_cnf_insatisfacible"]
     a3 = c1_sat.dpll(t["clausulas"], t["n"])
     texto = ", ".join(f"x{i} = {'verdadero' if v else 'falso'}" for i, v in sorted(a.items())) if a else ""
+
+    def lit(l):
+        return f"x{abs(l)}" if l > 0 else f"¬x{abs(l)}"
+
+    def regla(c):
+        return "(" + " ∨ ".join(lit(l) for l in c) + ")"
+
+    detalle = "".join(
+        f"\n  Regla {i} {regla(c)}: " + (f"se cumple porque {lit(l)} es verdadero" if l is not None else "NO se cumple")
+        for i, (c, l) in enumerate(zip(cl, c1_sat.verificar_detalle(cl, a)), 1)) if a else ""
     return (
-        (f"RESPUESTA AL CORREO: Sí, hay una asignación que cumple todas las reglas: {texto} "
+        (f"RESPUESTA AL CORREO: Sí, hay un horario candidato que cumple todas las reglas: {texto} "
          f"(DPLL; comprobación independiente: verificar = {c1_sat.verificar(cl, a)}).\n"
-         if a else "RESPUESTA AL CORREO: No existe una asignación que cumpla todas las reglas a la vez.\n") +
+         f"Comprobación cláusula por cláusula:{detalle}\n"
+         if a else "RESPUESTA AL CORREO: No existe una asignación que cumpla todas las reglas; "
+         "el equipo deberá renegociar la ventana de despacho.\n") +
         f"DPLL: {c_dpll['nodo']} nodo(s) del árbol · fuerza bruta (referencia): {a_fb}, probó {c_fb['asignacion']} "
         f"de 2^{n} = {2 ** n} asignaciones (crece como 2ⁿ)\n"
         f"La instancia es 2-CNF = {c1_sat.es_2cnf(cl)} ⇒ 2-SAT lineal -> {a2} · verificar = {c1_sat.verificar(cl, a2)}\n"
@@ -191,12 +216,12 @@ def demo_c3(inst: Inst) -> str:
     ady, k = inst["ady"], inst["k"]
     S = c3_vertex_cover.ramificacion(ady, k)
     if S is None:
-        return f"RESPUESTA AL CORREO: No, con k = {k} almacenes no se cubren todas las adyacencias entre zonas."
+        return f"RESPUESTA AL CORREO: No, con k = {k} equipos de inspección no se pueden cubrir todos los corredores."
     est = c3_vertex_cover.estrella(5)
     G2, kvc = c3_vertex_cover.reducir_is_a_vc(ady, 2)
     return (
-        f"RESPUESTA AL CORREO: Sí, basta con {len(S)} almacén(es) (k = {k}): en la(s) zona(s) {sorted(S)}; "
-        f"toda adyacencia entre zonas queda cubierta (verificar = {c3_vertex_cover.verificar(ady, k, S)}).\n"
+        f"RESPUESTA AL CORREO: Sí, basta con {len(S)} equipo(s) de inspección (k = {k}): selección {sorted(S)}; "
+        f"cubre todos los corredores (verificar = {c3_vertex_cover.verificar(ady, k, S)}).\n"
         f"verificar({{'A'}}) = {c3_vertex_cover.verificar(ady, k, {'A'})} · con k = 0: {c3_vertex_cover.ramificacion(ady, 0)} (No)\n"
         f"Estrella de 5 hojas: óptimo = {c3_vertex_cover.minimo_por_subconjuntos(est)} · "
         f"2-aproximación = {sorted(c3_vertex_cover.aproximacion_2(est))} (tamaño 2 ≤ 2·1)\n"

@@ -177,7 +177,7 @@ CASOS: List[Caso] = [
     ),
     Caso(
         "c3", "C", "NP-completo", "¿Bastan k almacenes para cubrir todas las zonas?", "Carla Núñez · Red logística",
-        "¿Existe un conjunto S de a lo sumo k zonas con almacén tal que toda adyacencia entre zonas (arista) tenga un almacén en uno de sus extremos?",
+        "¿Existe una selección S de a lo sumo k zonas (equipos de inspección) tal que cada corredor (arista) tenga un equipo en al menos uno de sus extremos?",
         "Grafo no dirigido G=(V,E) y entero k.",
         "Sí/No + conjunto S como evidencia.",
         "Decisión.",
@@ -185,12 +185,12 @@ CASOS: List[Caso] = [
         "Conjunto S ⊆ V.", "IS ≤p VC: <G,k> ∈ IS ⇔ <G,|V|−k> ∈ VC (Karp 1972).",
         "Backtracking / ramificación acotada (exacto) · 2-aproximación por emparejamiento (heurística)",
         "Exacto (ramificación) / aproximado (factor 2)",
-        "O(2^k·(V + E)) ramificación · O(V + E) aproximación", "O(k·(V + E)) (lista de aristas por nivel)", "V = zonas, E = adyacencias entre zonas, k = almacenes",
+        "O(2^k·(V + E)) ramificación · O(V + E) aproximación", "O(k·(V + E)) (lista de aristas por nivel)", "V = zonas, E = corredores de transferencia, k = equipos de inspección",
         "Sí: árbol de búsqueda de profundidad ≤ k (o 2^V subconjuntos).",
         "logistpulse/casos/c3_vertex_cover.py",
-        "El correo mezcla dos definiciones: 'zona cubierta por un almacén propio o vecino' (Dominating Set) y "
-        "'Vertex Cover' / '¿Cubre toda arista?'. Se sigue Vertex Cover (etiqueta, datos y código del correo). "
-        "Ambos son NP-completos y en esta instancia dan la misma respuesta (S = {B}).",
+        "El asunto y la ficha del simulador hablan de 'k almacenes' y de 'zona cubierta por un almacén propio o vecino' "
+        "(Dominating Set); el cuerpo del correo pide k equipos de inspección con un equipo en un extremo de cada corredor "
+        "(Vertex Cover). Se sigue el cuerpo del correo. Ambos son NP-completos y aquí dan la misma respuesta (S = {B}).",
     ),
 ]
 

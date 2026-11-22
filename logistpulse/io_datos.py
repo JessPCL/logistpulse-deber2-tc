@@ -86,6 +86,37 @@ def _matriz_desde_aristas(n: int, aristas) -> List[List[int]]:
     return M
 
 
+def cargar_conexiones(ruta: Union[str, Path]) -> List[Tuple[str, str]]:
+    """Lista de conexiones para p1: una por línea, "origen, destino" (o "origen -> destino").
+
+    Se ignoran las líneas vacías y las que empiezan con #. También acepta un .json con
+    una lista de pares [["Durán", "Quito"], ...].
+    """
+    ruta = Path(ruta)
+    if not ruta.exists():
+        raise FileNotFoundError(f"No existe el archivo de conexiones: {ruta}")
+    if ruta.suffix.lower() == ".json":
+        pares = json.loads(ruta.read_text(encoding="utf-8"))
+        if not isinstance(pares, list):
+            raise ValueError(f"{ruta}: se esperaba una lista de pares [origen, destino]")
+        return [tuple(p) for p in pares]
+    conexiones = []
+    for num, linea in enumerate(ruta.read_text(encoding="utf-8").splitlines(), 1):
+        linea = linea.strip()
+        if not linea or linea.startswith("#"):
+            continue
+        for sep in ("->", "→", ",", "\t"):
+            if sep in linea:
+                partes = [x.strip() for x in linea.split(sep)]
+                break
+        else:
+            raise ValueError(f"{ruta}, línea {num}: usa 'origen, destino' (o 'origen -> destino')")
+        if len(partes) != 2 or not all(partes):
+            raise ValueError(f"{ruta}, línea {num}: se esperaban exactamente dos nombres")
+        conexiones.append((partes[0], partes[1]))
+    return conexiones
+
+
 def cargar_casos(ruta: Union[str, Path] = DATA / "casos_simulador.json") -> Dict[str, Dict[str, Any]]:
     """Lee data/casos_simulador.json y devuelve cada instancia ya validada y en la
     estructura que usa su algoritmo. Toda la LECTURA de datos de los casos pasa por aquí."""

@@ -18,7 +18,7 @@ TRES_SAT = SIM["tres_cnf_satisfacible"]
 TRES_UNSAT = SIM["tres_cnf_insatisfacible"]
 DIST, L = CASOS["c2"]["D"], CASOS["c2"]["L"]
 TRAMPA = CASOS["c2"]["trampa_heuristica"]
-ADYACENCIAS, K = CASOS["c3"]["ady"], CASOS["c3"]["k"]
+CORREDORES, K = CASOS["c3"]["ady"], CASOS["c3"]["k"]
 
 
 class TestC1(unittest.TestCase):
@@ -39,6 +39,16 @@ class TestC1(unittest.TestCase):
         self.assertTrue(c1.verificar(t["clausulas"], c1.dpll(t["clausulas"], t["n"])))
         self.assertIsNone(c1.dpll(u["clausulas"], u["n"]))
         self.assertIsNone(c1.fuerza_bruta(u["clausulas"], u["n"]))
+
+    def test_comprobacion_clausula_por_clausula(self):
+        """El correo pide validar CADA cláusula: el detalle dice qué literal la cumple (o None)."""
+        cl, n = SIM["clausulas"], SIM["n"]
+        self.assertEqual(c1.verificar_detalle(cl, c1.dpll(cl, n)), [1, 3])  # x1 cumple la regla 1; x3 la 2
+        self.assertEqual(c1.verificar_detalle(cl, {1: False, 2: True, 3: False}), [None, 2])  # incumple la regla 1
+        rnd = random.Random(7)
+        for _ in range(200):
+            asig = {i: rnd.random() < 0.5 for i in range(1, n + 1)}
+            self.assertEqual(c1.verificar(cl, asig), None not in c1.verificar_detalle(cl, asig))
 
     def test_verificador_rechaza(self):
         self.assertFalse(c1.verificar([[1, -2], [2, 3]], {1: False, 2: True, 3: False}))
@@ -129,18 +139,18 @@ class TestC2(unittest.TestCase):
 
 class TestC3(unittest.TestCase):
     def test_instancia(self):
-        S = c3.ramificacion(ADYACENCIAS, K)
+        S = c3.ramificacion(CORREDORES, K)
         self.assertEqual(S, {"B"})
-        self.assertTrue(c3.verificar(ADYACENCIAS, 1, S))
+        self.assertTrue(c3.verificar(CORREDORES, 1, S))
 
     def test_limites(self):
-        self.assertIsNone(c3.ramificacion(ADYACENCIAS, 0))
+        self.assertIsNone(c3.ramificacion(CORREDORES, 0))
         self.assertEqual(c3.ramificacion({"a": [], "b": []}, 0), set())  # sin aristas
 
     def test_verificador_rechaza(self):
-        self.assertFalse(c3.verificar(ADYACENCIAS, 1, {"A"}))
-        self.assertFalse(c3.verificar(ADYACENCIAS, 1, {"A", "C"}))   # cubre pero |S| > k
-        self.assertFalse(c3.verificar(ADYACENCIAS, 2, {"B", "Z"}))   # Z ∉ V
+        self.assertFalse(c3.verificar(CORREDORES, 1, {"A"}))
+        self.assertFalse(c3.verificar(CORREDORES, 1, {"A", "C"}))   # cubre pero |S| > k
+        self.assertFalse(c3.verificar(CORREDORES, 2, {"B", "Z"}))   # Z ∉ V
 
     def _aleatorio(self, rnd, n):
         vs = [f"v{i}" for i in range(n)]
@@ -175,7 +185,7 @@ class TestC3(unittest.TestCase):
 
     def test_reduccion_k_mayor_que_V_da_no(self):
         """Con k > |V| no hay conjunto independiente de ese tamaño: la reducción produce una instancia No."""
-        G2, k_vc = c3.reducir_is_a_vc(ADYACENCIAS, 4)  # A-B-C tiene 3 zonas
+        G2, k_vc = c3.reducir_is_a_vc(CORREDORES, 4)  # A-B-C tiene 3 zonas
         self.assertIsNone(c3.ramificacion(G2, k_vc))
 
     def test_invalidos(self):
@@ -184,7 +194,7 @@ class TestC3(unittest.TestCase):
         with self.assertRaises(ValueError):
             c3.ramificacion({"a": ["a"]}, 1)
         with self.assertRaises(ValueError):
-            c3.ramificacion(ADYACENCIAS, -1)
+            c3.ramificacion(CORREDORES, -1)
 
 
 if __name__ == "__main__":

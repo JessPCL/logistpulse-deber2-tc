@@ -58,7 +58,7 @@ Conclusión: SAT es **decidible** (hay 2ⁿ asignaciones finitas), pero la fuerz
 
 ## Vertex Cover (c3): ramificación en el peor caso (respuesta No) y 2-aproximación
 
-| k almacenes | nodos 2^(k+1)−1 | ramificación (s) |
+| k equipos | nodos 2^(k+1)−1 | ramificación (s) |
 |---|---|---|
 | 10 | 2,047 | 0.001 |
 | 12 | 8,191 | 0.006 |
@@ -67,7 +67,7 @@ Conclusión: SAT es **decidible** (hay 2ⁿ asignaciones finitas), pero la fuerz
 
 ### Extrapolación de la ramificación (con el costo por nodo medido en k = 16)
 
-| k almacenes | nodos | tiempo estimado |
+| k equipos | nodos | tiempo estimado |
 |---|---|---|
 | 30 | 2.15e+09 | 1.60e+03 s ≈ 5.08e-05 años |
 | 40 | 2.20e+12 | 1.64e+06 s ≈ 5.20e-02 años |
@@ -76,7 +76,7 @@ Conclusión: SAT es **decidible** (hay 2ⁿ asignaciones finitas), pero la fuerz
 
 2-aproximación en un camino de 100,000 zonas: 0.223 s (O(V + E), garantiza |S| ≤ 2·ÓPTIMO).
 
-Conclusión: con pocos almacenes (k pequeño) la ramificación exacta es rápida aunque haya muchas zonas; el costo explota con k (cada almacén extra duplica el árbol). Para k grandes se usa la 2-aproximación, que es instantánea pero puede usar hasta el doble de almacenes.
+Conclusión: con pocos equipos (k pequeño) la ramificación exacta es rápida aunque haya muchas zonas; el costo explota con k (cada equipo extra duplica el árbol). Para k grandes se usa la 2-aproximación, que es instantánea pero puede usar hasta el doble de equipos.
 
 ## Dijkstra (polinómico) en grafos aleatorios con E ≈ 4V
 

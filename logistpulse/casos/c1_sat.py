@@ -52,6 +52,18 @@ def verificar(clausulas: Clausulas, asignacion: Asignacion, contar=None) -> bool
     return True
 
 
+def verificar_detalle(clausulas: Clausulas, asignacion: Asignacion) -> List[Optional[int]]:
+    """Comprobación independiente CLÁUSULA POR CLÁUSULA (lo que pide el correo c1).
+
+    Devuelve, para cada cláusula, el primer literal que la hace verdadera, o None si la
+    asignación la incumple. La asignación es válida ⇔ ningún elemento es None. O(m·k).
+    """
+    detalle: List[Optional[int]] = []
+    for c in clausulas:
+        detalle.append(next((l for l in c if asignacion[abs(l)] == (l > 0)), None))
+    return detalle
+
+
 def fuerza_bruta(clausulas: Clausulas, n: int, contar=None) -> Optional[Asignacion]:
     """Enumera las 2ⁿ asignaciones ("asignacion" ≤ 2ⁿ): O(2ⁿ·m·k)."""
     contar = contador_o_nulo(contar)
