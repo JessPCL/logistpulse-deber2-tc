@@ -87,7 +87,7 @@ python scripts/armar_informe.py                   # docs/generado/INFORME.docx (
 python scripts/armar_informe.py --completo        # (alternativa) todo dentro del PDF, unas 110 páginas
 ```
 1. Descarga `INFORME.docx` (clic derecho → *Download*) y ábrelo en **Word** (de escritorio o en office.com con la cuenta USFQ): Word muestra bien las fórmulas; Google Docs y LibreOffice pueden perderlas. Si pregunta por actualizar campos, **Sí**; si el índice sale vacío, clic en él → *Actualizar tabla*. Exporta a PDF.
-2. Arrastra el PDF a `docs/` con el nombre `INFORME_Deber2_LOGISTPULSE.pdf`, haz commit y PR.
+2. Arrastra el PDF a `docs/` con el nombre `INFORME_Deber2_LOGISTPULSE.pdf`. Git lo ignora (`*.pdf` en `.gitignore`, por su peso): no entra al commit; lo usa el release. Haz commit y PR del resto (`docs/generado/INFORME.md`, capturas, sprint).
 3. Cuando `verificar_entrega.py` quede sin pendientes:
    ```bash
    git checkout main && git pull
@@ -96,7 +96,7 @@ python scripts/armar_informe.py --completo        # (alternativa) todo dentro de
    gh release create v1.0 docs/INFORME_Deber2_LOGISTPULSE.pdf --title "Deber 2 · v1.0" --notes "Entrega final: código, JFLAP, informe y fichas"
    ```
 4. **Acceso del profesor:** abre el enlace del repo en una ventana de incógnito. Como es público, tiene que verse sin iniciar sesión, con el check verde de Actions en el último commit.
-5. En el espacio del curso suben el **enlace al repositorio** y el **PDF**.
+5. En el espacio del curso suben el **enlace al repositorio** y el **PDF** (el mismo que va adjunto al release `v1.0`).
 
 ## Repo público: qué implica
 | Aspecto | Con repo público |

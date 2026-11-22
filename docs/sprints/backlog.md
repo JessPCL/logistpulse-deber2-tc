@@ -16,7 +16,7 @@ El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su fic
 | F-C1 | Pseudocódigo + Big-O de FEFO y reposición | C | Luis | 2 | 3 | Hecho (22/11, #26) | `docs/fase_C_fefo_reposicion.md` |
 | F-E1 | Revisión cruzada de código y pruebas (PR) | E | Rol de validación | 2 | 2 | Hecho (22/11, revisiones cruzadas #20–#32) | `tests/`, `scripts/verificar_entrega.py` |
 | F-F1 | Nota sobre el problema de la parada | F | Jessica | 2 | 2 | Hecho (22/11, #27) | `docs/fase_F_nota_parada.md` |
-| F-G1 | Informe PDF + release v1.0 + presentación | — | Jessica (integra) | 3 | 3 | En curso | `docs/generado/INFORME.md`, tag `v1.0` |
+| F-G1 | Informe PDF + release v1.0 + presentación | — | Jessica (integra) | 3 | 3 | Hecho (22/11): informe PDF y release `v1.0`; exposición: ensayo el 23/11 | `docs/generado/INFORME.md`; PDF adjunto al release `v1.0` |
 
 ## Una unidad de trabajo por correo
 | ID | Correo | Clase | Responsable | Sprint | Ficha | Código | Pruebas | Estado |
