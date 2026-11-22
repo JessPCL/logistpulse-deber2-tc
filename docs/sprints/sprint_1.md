@@ -1,5 +1,5 @@
 # Sprint 1
-**Fechas:** lunes 17 al domingo 23 de noviembre de 2026 · **Objetivo:** Modelar pedidos, reservas y compras con autómatas; definir el grafo de la planta y los casos de ruta.
+**Fechas:** martes 17 al lunes 23 de noviembre de 2026 · **Objetivo:** Modelar pedidos, reservas y compras con autómatas; definir el grafo de la planta y los casos de ruta.
 **Evidencia de revisión que pide el enunciado:** Diagramas de estados y grafo con entradas, eventos y supuestos.
 
 ## Roles de este sprint (rotativos)
@@ -15,8 +15,10 @@
 | F-A1, F-A2, F-A3 · Autómatas de pedido, reserva y orden de compra: redacción + capturas JFLAP | Camila | `camila/fase-a-fichas-np` | Jessica | En curso |
 | F-B1 · Grafo de la planta, escenarios de ruta y redacción de la Fase B | Luis | `luis/fase-bc-fichas-p` | Camila | En curso |
 | C-c2 · Ficha c2 (TSP de decisión), adelantada para la exposición | Jessica | `jessica/fase-df-gestion` · PR #18 | Luis | Hecho (20/11) |
+| C-c1 · Ficha c1 (SAT), adelantada | Jessica | `jessica/fase-df-gestion` | Luis | En revisión |
+| C-c3 · Ficha c3 (Vertex Cover), adelantada | Jessica | `jessica/fase-df-gestion` | Luis | En revisión |
 
-## Revisión (demo del sprint) · domingo 23/11
+## Revisión (demo del sprint) · lunes 23/11
 - Qué se mostró: (completar el 23/11: p. ej., Multiple Run de los 3 autómatas en JFLAP; ruta R→D de 11 m y el empate con la Figura 5)
 - Comentarios del revisor: (completar el 23/11, con lo que se dijo en los PR)
 - Estado de `python scripts/verificar_entrega.py` al cierre: (completar el 23/11)

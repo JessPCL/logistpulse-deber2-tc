@@ -18,7 +18,7 @@ TRES_SAT = SIM["tres_cnf_satisfacible"]
 TRES_UNSAT = SIM["tres_cnf_insatisfacible"]
 DIST, L = CASOS["c2"]["D"], CASOS["c2"]["L"]
 TRAMPA = CASOS["c2"]["trampa_heuristica"]
-CORREDORES, K = CASOS["c3"]["ady"], CASOS["c3"]["k"]
+ADYACENCIAS, K = CASOS["c3"]["ady"], CASOS["c3"]["k"]
 
 
 class TestC1(unittest.TestCase):
@@ -129,18 +129,18 @@ class TestC2(unittest.TestCase):
 
 class TestC3(unittest.TestCase):
     def test_instancia(self):
-        S = c3.ramificacion(CORREDORES, K)
+        S = c3.ramificacion(ADYACENCIAS, K)
         self.assertEqual(S, {"B"})
-        self.assertTrue(c3.verificar(CORREDORES, 1, S))
+        self.assertTrue(c3.verificar(ADYACENCIAS, 1, S))
 
     def test_limites(self):
-        self.assertIsNone(c3.ramificacion(CORREDORES, 0))
+        self.assertIsNone(c3.ramificacion(ADYACENCIAS, 0))
         self.assertEqual(c3.ramificacion({"a": [], "b": []}, 0), set())  # sin aristas
 
     def test_verificador_rechaza(self):
-        self.assertFalse(c3.verificar(CORREDORES, 1, {"A"}))
-        self.assertFalse(c3.verificar(CORREDORES, 1, {"A", "C"}))   # cubre pero |S| > k
-        self.assertFalse(c3.verificar(CORREDORES, 2, {"B", "Z"}))   # Z ∉ V
+        self.assertFalse(c3.verificar(ADYACENCIAS, 1, {"A"}))
+        self.assertFalse(c3.verificar(ADYACENCIAS, 1, {"A", "C"}))   # cubre pero |S| > k
+        self.assertFalse(c3.verificar(ADYACENCIAS, 2, {"B", "Z"}))   # Z ∉ V
 
     def _aleatorio(self, rnd, n):
         vs = [f"v{i}" for i in range(n)]
@@ -173,13 +173,18 @@ class TestC3(unittest.TestCase):
                 G2, k_vc = c3.reducir_is_a_vc(g, k)
                 self.assertEqual(hay_is, c3.ramificacion(G2, k_vc) is not None)
 
+    def test_reduccion_k_mayor_que_V_da_no(self):
+        """Con k > |V| no hay conjunto independiente de ese tamaño: la reducción produce una instancia No."""
+        G2, k_vc = c3.reducir_is_a_vc(ADYACENCIAS, 4)  # A-B-C tiene 3 zonas
+        self.assertIsNone(c3.ramificacion(G2, k_vc))
+
     def test_invalidos(self):
         with self.assertRaises(ValueError):
             c3.ramificacion({"a": ["b"], "b": []}, 1)  # no simétrica
         with self.assertRaises(ValueError):
             c3.ramificacion({"a": ["a"]}, 1)
         with self.assertRaises(ValueError):
-            c3.ramificacion(CORREDORES, -1)
+            c3.ramificacion(ADYACENCIAS, -1)
 
 
 if __name__ == "__main__":
