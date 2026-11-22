@@ -9,11 +9,11 @@ def verificar(dist, L, ruta):
     """Visita cada centro una vez, vuelve a la salida y cuesta <= L. O(n)."""
     n = len(dist)
     return (len(ruta) == n + 1 and ruta[0] == ruta[-1] == 0
-            and sorted(ruta[:-1]) == list(range(n)) and costo(dist, ruta) <= L)
+            and set(ruta[:-1]) == set(range(n)) and costo(dist, ruta) <= L)
 
 
 def buscar(dist, L):
-    """Pregunta de DECISIÓN: ¿existe un recorrido con costo <= L? Prueba los (n-1)! órdenes: O(n!·n)."""
+    """Pregunta de DECISIÓN: ¿existe un recorrido con costo <= L? Prueba los (n-1)! órdenes: O(n!)."""
     n = len(dist)
     for orden in permutations(range(1, n)):
         ruta = (0,) + orden + (0,)

@@ -24,7 +24,7 @@ Se genera con `python scripts/armar_simulador.py`, que antes ejecuta los 10 prog
 **Computabilidad** (pegar en el primer recuadro):
 
 ```text
-Sí existe un procedimiento efectivo: BFS desde Durán sobre los tramos habilitados. Termina porque cada zona entra a la cola a lo sumo una vez y cada tramo se revisa una vez; si la cola se vacía sin llegar a Norte, la respuesta es No. Es un problema de decisión (¿existe ruta?) y el camino encontrado sirve como evidencia.
+Sí, hay una ruta activa: Durán, Quito, Norte. BFS explora los tramos habilitados. Termina porque cada zona entra a la cola a lo sumo una vez y cada tramo se revisa una vez; si la cola se vacía sin llegar a Norte, la respuesta es No. Es un problema de decisión (¿existe ruta?) y el camino encontrado sirve como evidencia.
 ```
 
 **Complejidad** (pegar en el segundo recuadro):
@@ -96,7 +96,7 @@ Dijkstra es un procedimiento efectivo cuando los tiempos son no negativos, y aqu
 **Complejidad** (pegar en el segundo recuadro):
 
 ```text
-Entrada: V centros y E tramos con tiempos >= 0. Con heap binario y listas de adyacencia hay a lo sumo E + 1 inserciones y extracciones de costo O(log V): tiempo O((V + E) log V) y espacio O(V + E). Es polinomial, en P. Resultado: Quito -> Latacunga -> Guayaquil = 8, que empata con Quito -> Ambato -> Guayaquil = 8.
+Entrada: V centros y E tramos dirigidos con tiempos no negativos. Un tiempo entero de B bits ocupa B bits, no su valor numérico. Con heap binario y listas de adyacencia hay a lo sumo E + 1 inserciones y extracciones de costo O(log V): tiempo O((V + E) log V) y espacio O(V + E). La decisión (¿hay ruta con costo a lo sumo K?) está en P: se compara el costo mínimo con K. Resultado: Quito -> Latacunga -> Guayaquil = 8, que empata con Quito -> Ambato -> Guayaquil = 8.
 ```
 
 **Código** (pegar en el recuadro de código):
@@ -113,6 +113,7 @@ def dijkstra(tramos, origen):
             raise ValueError("Dijkstra exige tiempos no negativos")
         ady.setdefault(u, []).append((v, w))
         ady.setdefault(v, [])
+    ady.setdefault(origen, [])
     dist = {x: float("inf") for x in ady}
     pred = {x: None for x in ady}  # lo que el sistema debe conservar para reconstruir la ruta
     dist[origen] = 0
@@ -129,7 +130,9 @@ def dijkstra(tramos, origen):
     return dist, pred
 
 
-def ruta(pred, destino):
+def ruta(dist, pred, destino):
+    if dist.get(destino, float("inf")) == float("inf"):
+        return None
     camino = []
     while destino is not None:
         camino.append(destino)
@@ -140,16 +143,19 @@ def ruta(pred, destino):
 # Entrada: tiempos nuevos del expediente (tramos con sentido)
 tramos = [("Quito", "Latacunga", 2), ("Quito", "Ambato", 5), ("Latacunga", "Guayaquil", 6), ("Ambato", "Guayaquil", 3)]
 dist, pred = dijkstra(tramos, "Quito")
-print("Tiempo mínimo Quito -> Guayaquil:", dist["Guayaquil"], "| ruta:", " -> ".join(ruta(pred, "Guayaquil")))
+print("Tiempo mínimo Quito -> Guayaquil:", dist["Guayaquil"], "| ruta:", " -> ".join(ruta(dist, pred, "Guayaquil")))
 
 # Pruebas: tiempos a cada nodo, empate en 8 y rechazo de pesos negativos
 assert dist == {"Quito": 0, "Latacunga": 2, "Ambato": 5, "Guayaquil": 8}
-assert ruta(pred, "Guayaquil") == ["Quito", "Latacunga", "Guayaquil"]  # Quito -> Ambato -> Guayaquil también suma 8
+assert ruta(dist, pred, "Guayaquil") == ["Quito", "Latacunga", "Guayaquil"]  # Quito -> Ambato -> Guayaquil también suma 8
 try:
     dijkstra([("S", "A", 2), ("S", "B", 3), ("B", "A", -2)], "S")
     raise AssertionError("debía rechazar el peso negativo")
 except ValueError:
     pass  # con pesos negativos Dijkstra no garantiza el mínimo (se usaría Bellman-Ford)
+sin_ruta, precedentes = dijkstra([("A", "B", 2)], "B")
+assert ruta(sin_ruta, precedentes, "A") is None
+assert ruta(sin_ruta, precedentes, "B") == ["B"]
 print("Pruebas OK")
 ```
 
@@ -167,80 +173,186 @@ Pruebas OK
 **Computabilidad** (pegar en el primer recuadro):
 
 ```text
-Edmonds-Karp es un procedimiento efectivo: busca con BFS un camino con capacidad residual y lo satura. Termina porque cada aumento suma al menos 1 camión (capacidades enteras) y además hace a lo sumo O(V·E) aumentos, sin depender del valor de las capacidades. El registro muestra cómo cambian los tramos usados y disponibles. Resultado: 10 camiones/día, aunque lo que sale de la Planta suma 12.
+Edmonds-Karp es un procedimiento efectivo: busca con BFS un camino con capacidad residual positiva y aumenta el flujo hasta saturar al menos un tramo de ese camino. Termina porque cada aumento suma al menos 1 camión (capacidades enteras) y además hace a lo sumo O(V·E) aumentos, sin depender del valor de las capacidades. El registro muestra cómo cambian los tramos usados y disponibles. Resultado: 10 camiones/día, aunque lo que sale de la Planta suma 12.
 ```
 
 **Complejidad** (pegar en el segundo recuadro):
 
 ```text
-Entrada: V nodos y E tramos con capacidades enteras. Hay a lo sumo O(V·E) aumentos y cada BFS cuesta O(E): tiempo O(V·E²) y espacio O(V + E) para la red residual. Es polinomial e independiente del tamaño de las capacidades, por eso está en P.
+Entrada: V nodos y E tramos con capacidades enteras en binario. Hay O(V·E) aumentos y cada BFS cuesta O(E): tiempo O(V·E²) en operaciones. Espacio O(V + E) de trabajo más O(R) para los R tramos anotados a lo largo del registro. La cantidad de aumentos depende de la estructura de la red. La versión de decisión (¿flujo de al menos K?) está en P: se calcula el máximo y se compara con K. Un flujo de 10 y un corte de capacidad 10 prueban el óptimo.
 ```
 
 **Código** (pegar en el recuadro de código):
 
 ```python
+from __future__ import annotations
+
 from collections import deque
+from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
+
+Capacidades = Dict[str, Dict[str, int]]
 
 
-def edmonds_karp(tramos, s, t, registro):
-    """Flujo máximo con caminos aumentantes por BFS (Edmonds-Karp). Tiempo O(V·E²), espacio O(V + E)."""
-    cap, ady = {}, {}
-    for u, v, c in tramos:
-        for a, b in ((u, v), (v, u)):
-            if (a, b) not in cap:
-                cap[(a, b)] = 0
-                ady.setdefault(a, []).append(b)
-        cap[(u, v)] += c
-    original = dict(cap)
-    flujo = 0
+def capacidades_desde_tramos(tramos: Iterable[Sequence]) -> Capacidades:
+    cap: Capacidades = {}
+    for t in tramos:
+        if len(t) != 3:
+            raise ValueError(f"Tramo inválido {t!r}: debe ser [origen, destino, capacidad]")
+        u, v, c = t
+        cap.setdefault(u, {})
+        cap.setdefault(v, {})
+        if v in cap[u]:
+            raise ValueError(f"Tramo repetido {u}→{v}")
+        cap[u][v] = c
+    return cap
+
+
+def _validar(cap: Capacidades, s: str, t: str) -> Set[str]:
+    nodos = set(cap)
+    for u, vs in cap.items():
+        nodos.update(vs)
+        for v, c in vs.items():
+            if isinstance(c, bool) or not isinstance(c, int) or c < 0:
+                raise ValueError(f"Capacidad inválida en {u}→{v}: {c!r} (entero ≥ 0)")
+            if u == v:
+                raise ValueError(f"Lazo {u}→{u} no permitido")
+            if u in cap.get(v, {}):
+                raise ValueError(f"Aristas antiparalelas {u}⇄{v}: agregue un nodo intermedio (CLRS 26.1)")
+    if s not in nodos or t not in nodos:
+        raise ValueError("s y t deben pertenecer a la red")
+    if s == t:
+        raise ValueError("s y t deben ser distintos")
+    return nodos
+
+
+def edmonds_karp(cap: Capacidades, s: str, t: str):
+    """Devuelve (valor, flujo por tramo original, lado S del corte mínimo, registro).
+
+    El registro conserva los cambios de capacidad usada y disponible por aumento.
+    """
+    nodos = _validar(cap, s, t)
+    residual: Dict[str, Dict[str, int]] = {u: {} for u in nodos}
+    flujo: Dict[Tuple[str, str], int] = {}
+    for u, vs in cap.items():
+        for v, c in vs.items():
+            residual[u][v] = c
+            residual[v].setdefault(u, 0)  # arista inversa (permite "cancelar" flujo)
+            flujo[(u, v)] = 0
+    valor, registro = 0, []
     while True:
-        padre = {s: None}
+        padre: Dict[str, Optional[str]] = {s: None}
         cola = deque([s])
-        while cola and t not in padre:
+        while cola and t not in padre:  # BFS -> camino aumentante con menos aristas
             u = cola.popleft()
-            for v in ady[u]:
-                if v not in padre and cap[(u, v)] > 0:
+            for v in residual[u]:  # orden de inserción (determinista), sin factor log
+                if residual[u][v] > 0 and v not in padre:
                     padre[v] = u
                     cola.append(v)
         if t not in padre:
-            return flujo
-        camino, v = [], t
+            break
+        camino, v = [t], t
         while padre[v] is not None:
-            camino.append((padre[v], v))
             v = padre[v]
+            camino.append(v)
         camino.reverse()
-        cuello = min(cap[e] for e in camino)
-        for u, v in camino:
-            cap[(u, v)] -= cuello
-            cap[(v, u)] += cuello
-        flujo += cuello
-        estado = [f"{u}->{v} usado {original[(u, v)] - cap[(u, v)]}/{original[(u, v)]}" for u, v in camino]
-        registro.append(f"cuello {cuello}, total {flujo}: " + "; ".join(estado))
+        cuello = min(residual[u][v] for u, v in zip(camino, camino[1:]))
+        tramos = []
+        for u, v in zip(camino, camino[1:]):
+            residual[u][v] -= cuello
+            residual[v][u] += cuello
+            if (u, v) in flujo:                       # tramo original: se usa más capacidad
+                flujo[(u, v)] += cuello
+                orig, accion = (u, v), "usar"
+            else:                                     # tramo inverso: se cancela flujo de v→u
+                flujo[(v, u)] -= cuello
+                orig, accion = (v, u), "cancelar"
+            c = cap[orig[0]][orig[1]]
+            tramos.append({"tramo": f"{orig[0]}→{orig[1]}", "accion": accion,
+                           "usado": flujo[orig], "capacidad": c, "disponible": c - flujo[orig]})
+        valor += cuello
+        registro.append({"iteracion": len(registro) + 1, "camino": camino, "cuello": cuello,
+                         "tramos": tramos, "total": valor})
+    lado_s, cola = {s}, deque([s])  # alcanzables en el residual final = lado S del corte
+    while cola:
+        u = cola.popleft()
+        for v, c in residual[u].items():
+            if c > 0 and v not in lado_s:
+                lado_s.add(v)
+                cola.append(v)
+    return valor, flujo, lado_s, registro
 
 
-# Entrada: capacidades del expediente (camiones/día por tramo)
-tramos = [("Planta", "Quito", 7), ("Planta", "Guayaquil", 5), ("Quito", "Clientes", 4),
-          ("Guayaquil", "Clientes", 6), ("Quito", "Guayaquil", 2)]
-registro = []
-maximo = edmonds_karp(tramos, "Planta", "Clientes", registro)
-print("Máximo de camiones/día:", maximo)
-for i, linea in enumerate(registro, 1):
-    print(f"  Aumento {i}: {linea}")
+def verificar_flujo(cap: Capacidades, flujo: Dict[Tuple[str, str], int], s: str, t: str) -> int:
+    """Verificador O(V + E): capacidad y conservación. Devuelve el valor del flujo."""
+    nodos = _validar(cap, s, t)
+    balance = {v: 0 for v in nodos}
+    for (u, v), f in flujo.items():
+        c = cap.get(u, {}).get(v)
+        if c is None:
+            raise ValueError(f"El flujo usa un tramo inexistente {u}→{v}")
+        if f < 0 or f > c:
+            raise ValueError(f"Flujo {f} viola la capacidad {c} en {u}→{v}")
+        balance[u] -= f
+        balance[v] += f
+    for v in nodos - {s, t}:
+        if balance[v] != 0:
+            raise ValueError(f"No se conserva el flujo en {v} (balance {balance[v]})")
+    return balance[t]
 
-# Pruebas: máximo 10 (no 12 = 7 + 5) y un caso con cuello de botella simple
-assert maximo == 10
-assert sum(c for u, v, c in tramos if u == "Planta") == 12
-assert edmonds_karp([("s", "a", 3), ("a", "t", 2)], "s", "t", []) == 2
+
+def capacidad_corte(cap: Capacidades, lado_s: Set[str]) -> int:
+    return sum(c for u, vs in cap.items() for v, c in vs.items() if u in lado_s and v not in lado_s)
+
+
+# Entrada: capacidades del expediente en camiones por día.
+tramos = [("Planta", "Quito", 7), ("Planta", "Guayaquil", 5),
+          ("Quito", "Clientes", 4), ("Guayaquil", "Clientes", 6),
+          ("Quito", "Guayaquil", 2)]
+red = capacidades_desde_tramos(tramos)
+maximo, flujo, lado_s, registro = edmonds_karp(red, "Planta", "Clientes")
+corte = capacidad_corte(red, lado_s)
+print("Máximo de camiones/día:", maximo, "| capacidad del corte:", corte)
+for aumento in registro:
+    print(f"Aumento {aumento['iteracion']}: {' -> '.join(aumento['camino'])} "
+          f"| cuello {aumento['cuello']} | total {aumento['total']}")
+    for tramo in aumento["tramos"]:
+        print(f"  {tramo['accion']} {tramo['tramo']}: "
+              f"usado {tramo['usado']}/{tramo['capacidad']} "
+              f"| disponible {tramo['disponible']}")
+
+# Pruebas: máximo, corte mínimo, registro completo y destino inalcanzable.
+assert maximo == corte == verificar_flujo(red, flujo, "Planta", "Clientes") == 10
+assert sum(red["Planta"].values()) == 12
+assert [aumento["cuello"] for aumento in registro] == [4, 5, 1]
+assert all(tramo["usado"] + tramo["disponible"] == tramo["capacidad"]
+           for aumento in registro for tramo in aumento["tramos"])
+assert edmonds_karp({"s": {"a": 3}, "a": {}, "t": {}}, "s", "t")[0] == 0
+
+# Caso general donde es necesario cancelar parte de un envío previo.
+red_cancelacion = {"s": {"a": 1, "c": 1}, "a": {"b": 1, "e": 1},
+                   "b": {"t": 1}, "c": {"b": 1}, "e": {"f": 1},
+                   "f": {"t": 1}, "t": {}}
+valor, flujo, _, registro = edmonds_karp(red_cancelacion, "s", "t")
+assert valor == 2 and flujo[("a", "b")] == 0
+assert any(tramo["accion"] == "cancelar"
+           for aumento in registro for tramo in aumento["tramos"])
 print("Pruebas OK")
 ```
 
 Salida al ejecutarlo:
 
 ```text
-Máximo de camiones/día: 10
-  Aumento 1: cuello 4, total 4: Planta->Quito usado 4/7; Quito->Clientes usado 4/4
-  Aumento 2: cuello 5, total 9: Planta->Guayaquil usado 5/5; Guayaquil->Clientes usado 5/6
-  Aumento 3: cuello 1, total 10: Planta->Quito usado 5/7; Quito->Guayaquil usado 1/2; Guayaquil->Clientes usado 6/6
+Máximo de camiones/día: 10 | capacidad del corte: 10
+Aumento 1: Planta -> Quito -> Clientes | cuello 4 | total 4
+  usar Planta→Quito: usado 4/7 | disponible 3
+  usar Quito→Clientes: usado 4/4 | disponible 0
+Aumento 2: Planta -> Guayaquil -> Clientes | cuello 5 | total 9
+  usar Planta→Guayaquil: usado 5/5 | disponible 0
+  usar Guayaquil→Clientes: usado 5/6 | disponible 1
+Aumento 3: Planta -> Quito -> Guayaquil -> Clientes | cuello 1 | total 10
+  usar Planta→Quito: usado 5/7 | disponible 2
+  usar Quito→Guayaquil: usado 1/2 | disponible 1
+  usar Guayaquil→Clientes: usado 6/6 | disponible 0
 Pruebas OK
 ```
 
@@ -251,7 +363,7 @@ Pruebas OK
 **Computabilidad** (pegar en el primer recuadro):
 
 ```text
-Sí hay un procedimiento efectivo: probar las n! correspondencias y verificar cada una. Termina porque las permutaciones de n nodos son finitas. Si la respuesta es Sí, la correspondencia es un certificado que se revisa en tiempo polinomial; por eso el problema está en NP. No afirmamos que sea NP-completo ni que se conozca un algoritmo polinomial.
+Sí, las topologías coinciden con la correspondencia (1, 0, 2). Se prueban las n! correspondencias y se verifica cada una. Termina porque las permutaciones de n nodos son finitas. Si la respuesta es Sí, la correspondencia es un certificado que se revisa en tiempo polinomial; por eso el problema está en NP. No afirmamos que sea NP-completo ni que se conozca un algoritmo polinomial.
 ```
 
 **Complejidad** (pegar en el segundo recuadro):
@@ -317,7 +429,7 @@ Sí hay un procedimiento efectivo: probar d = 2, ..., B. Termina porque el rango
 **Complejidad** (pegar en el segundo recuadro):
 
 ```text
-Entrada: N y B en binario, con log2 N y log2 B bits. Verificar: una división, polinomial en log N. Buscar: hasta B divisiones, O(B·M(log N)). Como B = 2^(log2 B), la búsqueda es exponencial en el tamaño de la entrada (pseudo-polinomial): cada bit extra de B duplica el trabajo. Resultado: N = 91 (7 bits), B = 10, d = 7.
+Entrada: N y B codificados en binario. Buscar requiere hasta O(min(B, N)) divisiones y O(1) enteros auxiliares. El rango enumerado puede crecer exponencialmente en la longitud binaria de la entrada. Verificar requiere comparar d con el límite B y una sola división para comprobar el residuo, con costo polinomial en los bits de N, B y d. Resultado: N = 91 (7 bits), B = 10 (4 bits), d = 7.
 ```
 
 **Código** (pegar en el recuadro de código):
@@ -369,7 +481,7 @@ Sí hay un procedimiento efectivo: probar x = 0, ..., B. Termina porque hay B + 
 **Complejidad** (pegar en el segundo recuadro):
 
 ```text
-Entrada: p, g, h y B en binario. Verificar: O(log x) multiplicaciones modulares. Búsqueda lineal: O(B) multiplicaciones, exponencial en los bits de B. Baby-step giant-step baja a O(raíz de B) en tiempo y espacio, pero sigue siendo exponencial en bits. Resultado: x = 6, porque 5^6 = 8 (mod 23).
+Entrada: p, g, h y B en binario. Verificar requiere O(log(x + 1) + 1) multiplicaciones modulares, con costo polinomial en la longitud binaria. Buscar requiere O(B + 1) pasos y O(1) enteros auxiliares, incluido el contador de O(log(B + 1) + 1) bits y un residuo de O(log p) bits. El número de candidatos puede crecer exponencialmente en los bits de B. Resultado con los datos ficticios: x = 6, porque 5^6 es congruente con 8 módulo 23.
 ```
 
 **Código** (pegar en el recuadro de código):
@@ -416,7 +528,7 @@ Pruebas OK
 **Computabilidad** (pegar en el primer recuadro):
 
 ```text
-Sí hay un procedimiento efectivo: probar las permutaciones distintas de la identidad y verificar cada una. Termina porque son finitas; si ninguna sirve, el programa responde No después de agotarlas todas (para el No no se conoce un certificado corto). Si la respuesta es Sí, la permutación es un certificado verificable en tiempo polinomial: el problema está en NP.
+Sí, el triángulo admite la simetría (0, 2, 1). Se prueban las permutaciones distintas de la identidad y se verifica cada una. Termina porque son finitas; si ninguna sirve, el programa responde No después de agotarlas todas (para el No no se conoce un certificado corto). Si la respuesta es Sí, la permutación es un certificado verificable en tiempo polinomial: el problema está en NP.
 ```
 
 **Complejidad** (pegar en el segundo recuadro):
@@ -480,7 +592,7 @@ Pruebas OK
 **Computabilidad** (pegar en el primer recuadro):
 
 ```text
-Sí hay un procedimiento efectivo: hay 2^n asignaciones finitas. DPLL siempre termina porque cada llamada fija al menos una variable (profundidad <= n) y prueba los dos valores de la variable elegida. La asignación (horario candidato) es un certificado y la comprobación cláusula por cláusula es polinomial. Es NP-completo: está en NP y 3SAT se reduce a este problema con la identidad (Cook-Levin).
+Sí, un horario válido es x1 = verdadero, x2 = falso, x3 = verdadero. Hay 2^n asignaciones finitas. DPLL siempre termina porque cada llamada recursiva fija al menos una variable (profundidad <= n) y prueba los dos valores de la variable elegida. La asignación (horario candidato) es un certificado y la comprobación cláusula por cláusula es polinomial. Es NP-completo: está en NP y toda fórmula 3-SAT es una instancia del problema general por reducción identidad.
 ```
 
 **Complejidad** (pegar en el segundo recuadro):
@@ -571,7 +683,7 @@ Sí hay un procedimiento efectivo: revisar los (n-1)! recorridos que salen de la
 **Complejidad** (pegar en el segundo recuadro):
 
 ```text
-Entrada: n centros y una matriz n×n de distancias. Verificar: O(n). Enumeración: (n-1)! recorridos por O(n), O(n!·n) en tiempo y O(n) en espacio. Held-Karp (optimización): O(n²·2^n) en tiempo y O(n·2^n) en espacio. Resultado: Planta -> Quito -> Guayaquil -> Planta = 15 km <= 20. Con 20 centros la enumeración tardaría miles de años.
+Entrada: n centros y una matriz n×n de distancias. Verificar: O(n). Enumeración: (n-1)! recorridos por O(n), O(n!) operaciones en tiempo y O(n) espacio auxiliar, sin contar la matriz. Si los pesos y L ocupan hasta B bits, la matriz y el umbral requieren O((n² + 1)B) bits y las sumas requieren O(B + log n) bits. Resultado: Planta -> Quito -> Guayaquil -> Planta = 15 km <= 20.
 ```
 
 **Código** (pegar en el recuadro de código):
@@ -588,11 +700,11 @@ def verificar(dist, L, ruta):
     """Visita cada centro una vez, vuelve a la salida y cuesta <= L. O(n)."""
     n = len(dist)
     return (len(ruta) == n + 1 and ruta[0] == ruta[-1] == 0
-            and sorted(ruta[:-1]) == list(range(n)) and costo(dist, ruta) <= L)
+            and set(ruta[:-1]) == set(range(n)) and costo(dist, ruta) <= L)
 
 
 def buscar(dist, L):
-    """Pregunta de DECISIÓN: ¿existe un recorrido con costo <= L? Prueba los (n-1)! órdenes: O(n!·n)."""
+    """Pregunta de DECISIÓN: ¿existe un recorrido con costo <= L? Prueba los (n-1)! órdenes: O(n!)."""
     n = len(dist)
     for orden in permutations(range(1, n)):
         ruta = (0,) + orden + (0,)
@@ -651,6 +763,8 @@ def verificar(corredores, k, S):
 
 def ramificar(corredores, k):
     """Toma un corredor sin cubrir (u, v): toda solución contiene a u o a v. Tiempo O(2^k·(V + E))."""
+    if k < 0:
+        return None
     if not corredores:
         return set()
     if k == 0:

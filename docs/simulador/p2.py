@@ -9,6 +9,7 @@ def dijkstra(tramos, origen):
             raise ValueError("Dijkstra exige tiempos no negativos")
         ady.setdefault(u, []).append((v, w))
         ady.setdefault(v, [])
+    ady.setdefault(origen, [])
     dist = {x: float("inf") for x in ady}
     pred = {x: None for x in ady}  # lo que el sistema debe conservar para reconstruir la ruta
     dist[origen] = 0
@@ -25,7 +26,9 @@ def dijkstra(tramos, origen):
     return dist, pred
 
 
-def ruta(pred, destino):
+def ruta(dist, pred, destino):
+    if dist.get(destino, float("inf")) == float("inf"):
+        return None
     camino = []
     while destino is not None:
         camino.append(destino)
@@ -36,14 +39,17 @@ def ruta(pred, destino):
 # Entrada: tiempos nuevos del expediente (tramos con sentido)
 tramos = [("Quito", "Latacunga", 2), ("Quito", "Ambato", 5), ("Latacunga", "Guayaquil", 6), ("Ambato", "Guayaquil", 3)]
 dist, pred = dijkstra(tramos, "Quito")
-print("Tiempo mínimo Quito -> Guayaquil:", dist["Guayaquil"], "| ruta:", " -> ".join(ruta(pred, "Guayaquil")))
+print("Tiempo mínimo Quito -> Guayaquil:", dist["Guayaquil"], "| ruta:", " -> ".join(ruta(dist, pred, "Guayaquil")))
 
 # Pruebas: tiempos a cada nodo, empate en 8 y rechazo de pesos negativos
 assert dist == {"Quito": 0, "Latacunga": 2, "Ambato": 5, "Guayaquil": 8}
-assert ruta(pred, "Guayaquil") == ["Quito", "Latacunga", "Guayaquil"]  # Quito -> Ambato -> Guayaquil también suma 8
+assert ruta(dist, pred, "Guayaquil") == ["Quito", "Latacunga", "Guayaquil"]  # Quito -> Ambato -> Guayaquil también suma 8
 try:
     dijkstra([("S", "A", 2), ("S", "B", 3), ("B", "A", -2)], "S")
     raise AssertionError("debía rechazar el peso negativo")
 except ValueError:
     pass  # con pesos negativos Dijkstra no garantiza el mínimo (se usaría Bellman-Ford)
+sin_ruta, precedentes = dijkstra([("A", "B", 2)], "B")
+assert ruta(sin_ruta, precedentes, "A") is None
+assert ruta(sin_ruta, precedentes, "B") == ["B"]
 print("Pruebas OK")

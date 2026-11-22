@@ -1,0 +1,577 @@
+LOGISTPULSE · LABORATORIO DE DECIDIBILIDAD, P Y NP
+Estudiante: Equipo LOGISTPULSE
+
+RÚBRICA DE REVISIÓN POR CASO: clasificación (1), algoritmo (1), decidibilidad (1), computabilidad (1), complejidad (2), código y pruebas (4).
+
+P1 · ¿Puede llegar el envío a la zona Norte?
+Clasificación: P (coincide)
+Algoritmo: BFS (coincide)
+Decidibilidad: Decidible
+Computabilidad: Sí, hay una ruta activa: Durán, Quito, Norte. BFS explora los tramos habilitados. Termina porque cada zona entra a la cola a lo sumo una vez y cada tramo se revisa una vez; si la cola se vacía sin llegar a Norte, la respuesta es No. Es un problema de decisión (¿existe ruta?) y el camino encontrado sirve como evidencia.
+Complejidad: Entrada: grafo dirigido con V zonas y E tramos (lista de conexiones). Tiempo O(V + E): cada zona se encola una vez y cada tramo se examina una vez. Espacio O(V) para la cola y los padres, más O(V + E) para la lista de adyacencia. Es polinomial, por eso el problema está en P.
+Código:
+from collections import deque
+
+
+def hay_ruta(conexiones, origen, destino):
+    """BFS sobre tramos con sentido. Devuelve el camino o None. Tiempo O(V + E), espacio O(V)."""
+    ady = {}
+    for u, v in conexiones:
+        ady.setdefault(u, []).append(v)
+        ady.setdefault(v, [])
+    if origen not in ady or destino not in ady:
+        return None
+    padre = {origen: None}
+    cola = deque([origen])
+    while cola:
+        u = cola.popleft()
+        if u == destino:
+            camino = []
+            while u is not None:
+                camino.append(u)
+                u = padre[u]
+            return camino[::-1]
+        for v in ady[u]:
+            if v not in padre:  # cada zona entra a la cola una sola vez
+                padre[v] = u
+                cola.append(v)
+    return None
+
+
+# Entrada: tramos habilitados del expediente (las flechas del mapa tienen sentido)
+tramos = [("Durán", "Quito"), ("Durán", "Guayaquil"), ("Quito", "Norte"), ("Guayaquil", "Sur")]
+print("¿Hay ruta Durán -> Norte?", hay_ruta(tramos, "Durán", "Norte"))
+
+# Pruebas: con ruta, sin ruta (cierre de Quito -> Norte) y respeto del sentido
+assert hay_ruta(tramos, "Durán", "Norte") == ["Durán", "Quito", "Norte"]
+sin_quito_norte = [t for t in tramos if t != ("Quito", "Norte")]
+assert hay_ruta(sin_quito_norte, "Durán", "Norte") is None
+assert hay_ruta(tramos, "Norte", "Durán") is None
+print("Pruebas OK")
+
+P2 · Ruta mínima entre centros de distribución
+Clasificación: P (coincide)
+Algoritmo: Dijkstra (coincide)
+Decidibilidad: Decidible
+Computabilidad: Dijkstra es un procedimiento efectivo cuando los tiempos son no negativos, y aquí lo son. Termina porque cada nodo se cierra una sola vez y cada tramo se relaja un número finito de veces; las entradas viejas del heap se descartan. El sistema debe guardar pred[v] (predecesor de cada nodo) para reconstruir la ruta. Con tiempos negativos no sería correcto y habría que usar Bellman-Ford.
+Complejidad: Entrada: V centros y E tramos dirigidos con tiempos no negativos. Un tiempo entero de B bits ocupa B bits, no su valor numérico. Con heap binario y listas de adyacencia hay a lo sumo E + 1 inserciones y extracciones de costo O(log V): tiempo O((V + E) log V) y espacio O(V + E). La decisión (¿hay ruta con costo a lo sumo K?) está en P: se compara el costo mínimo con K. Resultado: Quito -> Latacunga -> Guayaquil = 8, que empata con Quito -> Ambato -> Guayaquil = 8.
+Código:
+import heapq
+
+
+def dijkstra(tramos, origen):
+    """Tiempos mínimos desde origen con tiempos >= 0. Tiempo O((V + E) log V), espacio O(V + E)."""
+    ady = {}
+    for u, v, w in tramos:
+        if w < 0:
+            raise ValueError("Dijkstra exige tiempos no negativos")
+        ady.setdefault(u, []).append((v, w))
+        ady.setdefault(v, [])
+    ady.setdefault(origen, [])
+    dist = {x: float("inf") for x in ady}
+    pred = {x: None for x in ady}  # lo que el sistema debe conservar para reconstruir la ruta
+    dist[origen] = 0
+    heap = [(0, origen)]
+    while heap:
+        d, u = heapq.heappop(heap)
+        if d > dist[u]:
+            continue  # entrada vieja del heap
+        for v, w in ady[u]:
+            if d + w < dist[v]:
+                dist[v] = d + w
+                pred[v] = u
+                heapq.heappush(heap, (dist[v], v))
+    return dist, pred
+
+
+def ruta(dist, pred, destino):
+    if dist.get(destino, float("inf")) == float("inf"):
+        return None
+    camino = []
+    while destino is not None:
+        camino.append(destino)
+        destino = pred[destino]
+    return camino[::-1]
+
+
+# Entrada: tiempos nuevos del expediente (tramos con sentido)
+tramos = [("Quito", "Latacunga", 2), ("Quito", "Ambato", 5), ("Latacunga", "Guayaquil", 6), ("Ambato", "Guayaquil", 3)]
+dist, pred = dijkstra(tramos, "Quito")
+print("Tiempo mínimo Quito -> Guayaquil:", dist["Guayaquil"], "| ruta:", " -> ".join(ruta(dist, pred, "Guayaquil")))
+
+# Pruebas: tiempos a cada nodo, empate en 8 y rechazo de pesos negativos
+assert dist == {"Quito": 0, "Latacunga": 2, "Ambato": 5, "Guayaquil": 8}
+assert ruta(dist, pred, "Guayaquil") == ["Quito", "Latacunga", "Guayaquil"]  # Quito -> Ambato -> Guayaquil también suma 8
+try:
+    dijkstra([("S", "A", 2), ("S", "B", 3), ("B", "A", -2)], "S")
+    raise AssertionError("debía rechazar el peso negativo")
+except ValueError:
+    pass  # con pesos negativos Dijkstra no garantiza el mínimo (se usaría Bellman-Ford)
+sin_ruta, precedentes = dijkstra([("A", "B", 2)], "B")
+assert ruta(sin_ruta, precedentes, "A") is None
+assert ruta(sin_ruta, precedentes, "B") == ["B"]
+print("Pruebas OK")
+
+P3 · Máximo de camiones hacia clientes
+Clasificación: P (coincide)
+Algoritmo: Edmonds–Karp (coincide)
+Decidibilidad: Decidible
+Computabilidad: Edmonds-Karp es un procedimiento efectivo: busca con BFS un camino con capacidad residual positiva y aumenta el flujo hasta saturar al menos un tramo de ese camino. Termina porque cada aumento suma al menos 1 camión (capacidades enteras) y además hace a lo sumo O(V·E) aumentos, sin depender del valor de las capacidades. El registro muestra cómo cambian los tramos usados y disponibles. Resultado: 10 camiones/día, aunque lo que sale de la Planta suma 12.
+Complejidad: Entrada: V nodos y E tramos con capacidades enteras en binario. Hay O(V·E) aumentos y cada BFS cuesta O(E): tiempo O(V·E²) en operaciones. Espacio O(V + E) de trabajo más O(R) para los R tramos anotados a lo largo del registro. La cantidad de aumentos depende de la estructura de la red. La versión de decisión (¿flujo de al menos K?) está en P: se calcula el máximo y se compara con K. Un flujo de 10 y un corte de capacidad 10 prueban el óptimo.
+Código:
+from __future__ import annotations
+
+from collections import deque
+from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
+
+Capacidades = Dict[str, Dict[str, int]]
+
+
+def capacidades_desde_tramos(tramos: Iterable[Sequence]) -> Capacidades:
+    cap: Capacidades = {}
+    for t in tramos:
+        if len(t) != 3:
+            raise ValueError(f"Tramo inválido {t!r}: debe ser [origen, destino, capacidad]")
+        u, v, c = t
+        cap.setdefault(u, {})
+        cap.setdefault(v, {})
+        if v in cap[u]:
+            raise ValueError(f"Tramo repetido {u}→{v}")
+        cap[u][v] = c
+    return cap
+
+
+def _validar(cap: Capacidades, s: str, t: str) -> Set[str]:
+    nodos = set(cap)
+    for u, vs in cap.items():
+        nodos.update(vs)
+        for v, c in vs.items():
+            if isinstance(c, bool) or not isinstance(c, int) or c < 0:
+                raise ValueError(f"Capacidad inválida en {u}→{v}: {c!r} (entero ≥ 0)")
+            if u == v:
+                raise ValueError(f"Lazo {u}→{u} no permitido")
+            if u in cap.get(v, {}):
+                raise ValueError(f"Aristas antiparalelas {u}⇄{v}: agregue un nodo intermedio (CLRS 26.1)")
+    if s not in nodos or t not in nodos:
+        raise ValueError("s y t deben pertenecer a la red")
+    if s == t:
+        raise ValueError("s y t deben ser distintos")
+    return nodos
+
+
+def edmonds_karp(cap: Capacidades, s: str, t: str):
+    """Devuelve (valor, flujo por tramo original, lado S del corte mínimo, registro).
+
+    El registro conserva los cambios de capacidad usada y disponible por aumento.
+    """
+    nodos = _validar(cap, s, t)
+    residual: Dict[str, Dict[str, int]] = {u: {} for u in nodos}
+    flujo: Dict[Tuple[str, str], int] = {}
+    for u, vs in cap.items():
+        for v, c in vs.items():
+            residual[u][v] = c
+            residual[v].setdefault(u, 0)  # arista inversa (permite "cancelar" flujo)
+            flujo[(u, v)] = 0
+    valor, registro = 0, []
+    while True:
+        padre: Dict[str, Optional[str]] = {s: None}
+        cola = deque([s])
+        while cola and t not in padre:  # BFS -> camino aumentante con menos aristas
+            u = cola.popleft()
+            for v in residual[u]:  # orden de inserción (determinista), sin factor log
+                if residual[u][v] > 0 and v not in padre:
+                    padre[v] = u
+                    cola.append(v)
+        if t not in padre:
+            break
+        camino, v = [t], t
+        while padre[v] is not None:
+            v = padre[v]
+            camino.append(v)
+        camino.reverse()
+        cuello = min(residual[u][v] for u, v in zip(camino, camino[1:]))
+        tramos = []
+        for u, v in zip(camino, camino[1:]):
+            residual[u][v] -= cuello
+            residual[v][u] += cuello
+            if (u, v) in flujo:                       # tramo original: se usa más capacidad
+                flujo[(u, v)] += cuello
+                orig, accion = (u, v), "usar"
+            else:                                     # tramo inverso: se cancela flujo de v→u
+                flujo[(v, u)] -= cuello
+                orig, accion = (v, u), "cancelar"
+            c = cap[orig[0]][orig[1]]
+            tramos.append({"tramo": f"{orig[0]}→{orig[1]}", "accion": accion,
+                           "usado": flujo[orig], "capacidad": c, "disponible": c - flujo[orig]})
+        valor += cuello
+        registro.append({"iteracion": len(registro) + 1, "camino": camino, "cuello": cuello,
+                         "tramos": tramos, "total": valor})
+    lado_s, cola = {s}, deque([s])  # alcanzables en el residual final = lado S del corte
+    while cola:
+        u = cola.popleft()
+        for v, c in residual[u].items():
+            if c > 0 and v not in lado_s:
+                lado_s.add(v)
+                cola.append(v)
+    return valor, flujo, lado_s, registro
+
+
+def verificar_flujo(cap: Capacidades, flujo: Dict[Tuple[str, str], int], s: str, t: str) -> int:
+    """Verificador O(V + E): capacidad y conservación. Devuelve el valor del flujo."""
+    nodos = _validar(cap, s, t)
+    balance = {v: 0 for v in nodos}
+    for (u, v), f in flujo.items():
+        c = cap.get(u, {}).get(v)
+        if c is None:
+            raise ValueError(f"El flujo usa un tramo inexistente {u}→{v}")
+        if f < 0 or f > c:
+            raise ValueError(f"Flujo {f} viola la capacidad {c} en {u}→{v}")
+        balance[u] -= f
+        balance[v] += f
+    for v in nodos - {s, t}:
+        if balance[v] != 0:
+            raise ValueError(f"No se conserva el flujo en {v} (balance {balance[v]})")
+    return balance[t]
+
+
+def capacidad_corte(cap: Capacidades, lado_s: Set[str]) -> int:
+    return sum(c for u, vs in cap.items() for v, c in vs.items() if u in lado_s and v not in lado_s)
+
+
+# Entrada: capacidades del expediente en camiones por día.
+tramos = [("Planta", "Quito", 7), ("Planta", "Guayaquil", 5),
+          ("Quito", "Clientes", 4), ("Guayaquil", "Clientes", 6),
+          ("Quito", "Guayaquil", 2)]
+red = capacidades_desde_tramos(tramos)
+maximo, flujo, lado_s, registro = edmonds_karp(red, "Planta", "Clientes")
+corte = capacidad_corte(red, lado_s)
+print("Máximo de camiones/día:", maximo, "| capacidad del corte:", corte)
+for aumento in registro:
+    print(f"Aumento {aumento['iteracion']}: {' -> '.join(aumento['camino'])} "
+          f"| cuello {aumento['cuello']} | total {aumento['total']}")
+    for tramo in aumento["tramos"]:
+        print(f"  {tramo['accion']} {tramo['tramo']}: "
+              f"usado {tramo['usado']}/{tramo['capacidad']} "
+              f"| disponible {tramo['disponible']}")
+
+# Pruebas: máximo, corte mínimo, registro completo y destino inalcanzable.
+assert maximo == corte == verificar_flujo(red, flujo, "Planta", "Clientes") == 10
+assert sum(red["Planta"].values()) == 12
+assert [aumento["cuello"] for aumento in registro] == [4, 5, 1]
+assert all(tramo["usado"] + tramo["disponible"] == tramo["capacidad"]
+           for aumento in registro for tramo in aumento["tramos"])
+assert edmonds_karp({"s": {"a": 3}, "a": {}, "t": {}}, "s", "t")[0] == 0
+
+# Caso general donde es necesario cancelar parte de un envío previo.
+red_cancelacion = {"s": {"a": 1, "c": 1}, "a": {"b": 1, "e": 1},
+                   "b": {"t": 1}, "c": {"b": 1}, "e": {"f": 1},
+                   "f": {"t": 1}, "t": {}}
+valor, flujo, _, registro = edmonds_karp(red_cancelacion, "s", "t")
+assert valor == 2 and flujo[("a", "b")] == 0
+assert any(tramo["accion"] == "cancelar"
+           for aumento in registro for tramo in aumento["tramos"])
+print("Pruebas OK")
+
+N1 · Comparar topologías equivalentes
+Clasificación: NP (coincide)
+Algoritmo: Búsqueda exhaustiva de permutaciones (coincide)
+Decidibilidad: Decidible
+Computabilidad: Sí, las topologías coinciden con la correspondencia (1, 0, 2). Se prueban las n! correspondencias y se verifica cada una. Termina porque las permutaciones de n nodos son finitas. Si la respuesta es Sí, la correspondencia es un certificado que se revisa en tiempo polinomial; por eso el problema está en NP. No afirmamos que sea NP-completo ni que se conozca un algoritmo polinomial.
+Complejidad: Entrada: dos matrices de adyacencia n×n. Verificar un certificado: O(n²) comparaciones. Búsqueda exhaustiva: hasta n! permutaciones por O(n²) cada una, O(n!·n²) en tiempo y O(n) de espacio extra. Con 3 nodos son 6 candidatas; con 12 ya son unos 479 millones.
+Código:
+from itertools import permutations
+
+
+def verificar(A, B, p):
+    """¿La correspondencia p conserva todas las conexiones? O(n²)."""
+    n = len(A)
+    return sorted(p) == list(range(n)) and all(A[i][j] == B[p[i]][p[j]] for i in range(n) for j in range(n))
+
+
+def buscar(A, B):
+    """Prueba las n! correspondencias. Tiempo O(n!·n²), espacio O(n)."""
+    if len(A) != len(B):
+        return None
+    for p in permutations(range(len(A))):
+        if verificar(A, B, p):
+            return p
+    return None
+
+
+# Entrada: matrices de adyacencia de las dos redes (código del expediente)
+A = [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
+B = [[0, 1, 1], [1, 0, 0], [1, 0, 0]]
+p = buscar(A, B)
+print("¿Misma estructura?", p is not None, "| correspondencia nodo i de A -> nodo p[i] de B:", p)
+
+# Pruebas: certificado válido, identidad inválida y un par no isomorfo con los mismos grados
+assert p == (1, 0, 2) and verificar(A, B, p)
+assert not verificar(A, B, (0, 1, 2))
+C6 = [[1 if abs(i - j) in (1, 5) else 0 for j in range(6)] for i in range(6)]
+dos_triangulos = [[1 if i != j and i // 3 == j // 3 else 0 for j in range(6)] for i in range(6)]
+assert buscar(C6, dos_triangulos) is None
+print("Pruebas OK")
+
+N2 · ¿Tiene N un factor en este intervalo?
+Clasificación: NP (coincide)
+Algoritmo: Prueba por división exhaustiva (coincide)
+Decidibilidad: Decidible
+Computabilidad: Sí hay un procedimiento efectivo: probar d = 2, ..., B. Termina porque el rango es finito. El divisor d es un certificado y se verifica con una sola división (N mod d = 0 y 2 <= d <= B), en tiempo polinomial en los bits de N. Por eso el problema está en NP. La búsqueda y la validación son rutinas separadas.
+Complejidad: Entrada: N y B codificados en binario. Buscar requiere hasta O(min(B, N)) divisiones y O(1) enteros auxiliares. El rango enumerado puede crecer exponencialmente en la longitud binaria de la entrada. Verificar requiere comparar d con el límite B y una sola división para comprobar el residuo, con costo polinomial en los bits de N, B y d. Resultado: N = 91 (7 bits), B = 10 (4 bits), d = 7.
+Código:
+def verificar(N, B, d):
+    """Verifica un divisor propuesto con una sola división: polinomial en log N."""
+    return 2 <= d <= B and N % d == 0
+
+
+def buscar(N, B):
+    """Prueba d = 2, 3, ..., min(B, N): O(B) divisiones, exponencial en los bits de B."""
+    for d in range(2, min(B, N) + 1):
+        if N % d == 0:
+            return d
+    return None
+
+
+# Entrada: datos de la consola (los números se reciben en binario)
+N, B = 91, 10
+d = buscar(N, B)
+print(f"N = {N} ({bin(N)[2:]}, {N.bit_length()} bits), B = {B} ({bin(B)[2:]}) -> divisor:", d)
+
+# Pruebas: divisor en el rango, rango sin divisor, certificado fuera de rango y un primo
+assert d == 7 and verificar(N, B, d)
+assert buscar(91, 6) is None
+assert not verificar(91, 10, 13)
+assert buscar(97, 96) is None
+print("Pruebas OK")
+
+N3 · ¿Existe exponente x que produzca h?
+Clasificación: NP (coincide)
+Algoritmo: Búsqueda exhaustiva con exponenciación modular (coincide)
+Decidibilidad: Decidible
+Computabilidad: Sí hay un procedimiento efectivo: probar x = 0, ..., B. Termina porque hay B + 1 candidatos. El exponente x es un certificado y se verifica con exponenciación rápida en tiempo polinomial en log p + log B; por eso está en NP. La búsqueda y el verificador están separados y solo se usan los parámetros ficticios.
+Complejidad: Entrada: p, g, h y B en binario. Verificar requiere O(log(x + 1) + 1) multiplicaciones modulares, con costo polinomial en la longitud binaria. Buscar requiere O(B + 1) pasos y O(1) enteros auxiliares, incluido el contador de O(log(B + 1) + 1) bits y un residuo de O(log p) bits. El número de candidatos puede crecer exponencialmente en los bits de B. Resultado con los datos ficticios: x = 6, porque 5^6 es congruente con 8 módulo 23.
+Código:
+def verificar(p, g, h, B, x):
+    """Verifica un exponente propuesto con exponenciación rápida: O(log x) multiplicaciones modulares."""
+    return 0 <= x <= B and pow(g, x, p) == h % p
+
+
+def buscar(p, g, h, B):
+    """Prueba x = 0, 1, ..., B con una multiplicación por paso: O(B), exponencial en los bits de B."""
+    valor = 1
+    for x in range(B + 1):
+        if valor == h % p:
+            return x
+        valor = valor * g % p
+    return None
+
+
+# Entrada: parámetros ficticios de la estación
+p, g, h, B = 23, 5, 8, 10
+x = buscar(p, g, h, B)
+print(f"¿Existe x <= {B} con {g}^x = {h} (mod {p})?", x)
+
+# Pruebas: exponente válido, exponente incorrecto y límite B demasiado bajo
+assert x == 6 and verificar(p, g, h, B, x)
+assert not verificar(p, g, h, B, 5)
+assert buscar(p, g, h, 5) is None
+print("Pruebas OK")
+
+N4 · ¿La topología tiene una simetría?
+Clasificación: NP (coincide)
+Algoritmo: Permutaciones + verificación de adyacencia (coincide)
+Decidibilidad: Decidible
+Computabilidad: Sí, el triángulo admite la simetría (0, 2, 1). Se prueban las permutaciones distintas de la identidad y se verifica cada una. Termina porque son finitas; si ninguna sirve, el programa responde No después de agotarlas todas (para el No no se conoce un certificado corto). Si la respuesta es Sí, la permutación es un certificado verificable en tiempo polinomial: el problema está en NP.
+Complejidad: Entrada: matriz de adyacencia n×n. Verificar una permutación: O(n²). Búsqueda: hasta n! permutaciones, O(n!·n²) en tiempo y O(n) de espacio extra. En el triángulo se encuentra (0, 2, 1); un grafo asimétrico de 6 vértices obliga a revisar las 720 permutaciones.
+Código:
+from itertools import permutations
+
+
+def verificar(G, p):
+    """¿p es una simetría real (no la identidad) que conserva todas las adyacencias? O(n²)."""
+    n = len(G)
+    return (sorted(p) == list(range(n)) and list(p) != list(range(n))
+            and all(G[i][j] == G[p[i]][p[j]] for i in range(n) for j in range(n)))
+
+
+def buscar(G):
+    """Prueba las n! permutaciones; si ninguna sirve, responde No tras agotarlas. O(n!·n²)."""
+    for p in permutations(range(len(G))):
+        if verificar(G, p):
+            return p
+    return None
+
+
+def matriz(n, aristas):
+    G = [[0] * n for _ in range(n)]
+    for u, v in aristas:
+        G[u][v] = G[v][u] = 1
+    return G
+
+
+# Entrada: el plano del portal (triángulo de 3 zonas)
+triangulo = matriz(3, [(0, 1), (1, 2), (0, 2)])
+p = buscar(triangulo)
+print("Simetría del plano (zona i -> zona p[i]):", p)
+
+# Pruebas: certificado válido, la identidad no cuenta y un grafo asimétrico agota las 6! = 720 opciones
+assert p == (0, 2, 1) and verificar(triangulo, p)
+assert not verificar(triangulo, (0, 1, 2))
+asimetrico = matriz(6, [(0, 1), (1, 2), (2, 3), (3, 4), (5, 1), (5, 2)])
+assert buscar(asimetrico) is None
+print("Pruebas OK")
+
+C1 · ¿Hay una asignación que cumpla todas las reglas?
+Clasificación: NP-completo (coincide)
+Algoritmo: DPLL / retroceso con poda (coincide)
+Decidibilidad: Decidible
+Computabilidad: Sí, un horario válido es x1 = verdadero, x2 = falso, x3 = verdadero. Hay 2^n asignaciones finitas. DPLL siempre termina porque cada llamada recursiva fija al menos una variable (profundidad <= n) y prueba los dos valores de la variable elegida. La asignación (horario candidato) es un certificado y la comprobación cláusula por cláusula es polinomial. Es NP-completo: está en NP y toda fórmula 3-SAT es una instancia del problema general por reducción identidad.
+Complejidad: Entrada: n variables y m cláusulas de hasta k literales. Verificar: O(m·k). Fuerza bruta: 2^n asignaciones, O(2^n·m·k). DPLL: árbol de <= 2^(n+1) nodos y O(n·m·k) por nodo, O(2^n·n·m·k) en el peor caso, con espacio O(n·m·k). Cada decisión extra duplica las posibilidades (3 -> 8; 60 -> unos 10^18). La instancia es 2-CNF, un caso que está en P, pero el problema general es NP-completo.
+Código:
+from itertools import product
+
+
+def verificar(clausulas, asig):
+    """Comprobación independiente: cada cláusula necesita un literal verdadero. O(m·k)."""
+    return all(any(asig[abs(l)] == (l > 0) for l in c) for c in clausulas)
+
+
+def simplificar(clausulas, lit):
+    """Fija lit = verdadero: quita las cláusulas que ya se cumplen y borra el literal opuesto."""
+    return [[l for l in c if l != -lit] for c in clausulas if lit not in c]
+
+
+def dpll(clausulas, asig=None):
+    """DPLL: propagación unitaria + literal puro + ramificación. Peor caso O(2ⁿ·n·m·k)."""
+    asig = dict(asig or {})
+    unit = next((c[0] for c in clausulas if len(c) == 1), None)
+    while unit is not None:
+        asig[abs(unit)] = unit > 0
+        clausulas = simplificar(clausulas, unit)
+        unit = next((c[0] for c in clausulas if len(c) == 1), None)
+    if any(len(c) == 0 for c in clausulas):
+        return None
+    literales = {l for c in clausulas for l in c}
+    for l in literales:
+        if -l not in literales:
+            asig[abs(l)] = l > 0
+            clausulas = simplificar(clausulas, l)
+    if not clausulas:
+        return asig
+    x = abs(clausulas[0][0])
+    for lit in (x, -x):
+        r = dpll(simplificar(clausulas, lit), {**asig, x: lit > 0})
+        if r is not None:
+            return r
+    return None
+
+
+def resolver(clausulas, n):
+    r = dpll(clausulas)
+    return None if r is None else {i: r.get(i, False) for i in range(1, n + 1)}
+
+
+# Entrada: x1, x2, x3 (decisiones vehículo-franja) y las reglas (x1 o no x2) y (x2 o x3)
+n, reglas = 3, [[1, -2], [2, 3]]
+horario = resolver(reglas, n)
+print("Horario candidato:", horario, "| posibilidades con", n, "decisiones:", 2 ** n)
+
+# Pruebas: el verificador acepta el horario, DPLL coincide con fuerza bruta y detecta una fórmula sin solución
+assert horario == {1: True, 2: False, 3: True} and verificar(reglas, horario)
+assert not verificar(reglas, {1: False, 2: True, 3: False})
+insatisfacible = [[a * 1, b * 2, c * 3] for a in (1, -1) for b in (1, -1) for c in (1, -1)]
+assert resolver(insatisfacible, 3) is None
+assert not any(verificar(insatisfacible, dict(zip((1, 2, 3), v))) for v in product((True, False), repeat=3))
+tres_cnf = [[1, 2, 3], [-1, -2, 4], [-3, -4, 5], [2, 4, -5], [-1, 3, 5]]
+assert verificar(tres_cnf, resolver(tres_cnf, 5))
+print("Pruebas OK")
+
+C2 · ¿Existe una ruta hamiltoniana dentro del presupuesto?
+Clasificación: NP-completo (coincide)
+Algoritmo: Backtracking / enumerar permutaciones (coincide)
+Decidibilidad: Decidible
+Computabilidad: Sí hay un procedimiento efectivo: revisar los (n-1)! recorridos que salen de la Planta y vuelven. Termina porque son finitos. Un recorrido es un certificado verificable en O(n). La pregunta es de decisión (¿existe un recorrido con costo <= L?), distinta de pedir el recorrido más corto. Es NP-completo: HAM-CYCLE se reduce a TSP-DEC con pesos 1 y 2 y L = n.
+Complejidad: Entrada: n centros y una matriz n×n de distancias. Verificar: O(n). Enumeración: (n-1)! recorridos por O(n), O(n!) operaciones en tiempo y O(n) espacio auxiliar, sin contar la matriz. Si los pesos y L ocupan hasta B bits, la matriz y el umbral requieren O((n² + 1)B) bits y las sumas requieren O(B + log n) bits. Resultado: Planta -> Quito -> Guayaquil -> Planta = 15 km <= 20.
+Código:
+from itertools import permutations
+
+
+def costo(dist, ruta):
+    return sum(dist[ruta[i]][ruta[i + 1]] for i in range(len(ruta) - 1))
+
+
+def verificar(dist, L, ruta):
+    """Visita cada centro una vez, vuelve a la salida y cuesta <= L. O(n)."""
+    n = len(dist)
+    return (len(ruta) == n + 1 and ruta[0] == ruta[-1] == 0
+            and set(ruta[:-1]) == set(range(n)) and costo(dist, ruta) <= L)
+
+
+def buscar(dist, L):
+    """Pregunta de DECISIÓN: ¿existe un recorrido con costo <= L? Prueba los (n-1)! órdenes: O(n!)."""
+    n = len(dist)
+    for orden in permutations(range(1, n)):
+        ruta = (0,) + orden + (0,)
+        if costo(dist, ruta) <= L:
+            return ruta
+    return None
+
+
+# Entrada: matriz de distancias (km) y presupuesto L del expediente
+centros = ["Planta", "Quito", "Guayaquil"]
+dist = [[0, 4, 8], [4, 0, 3], [8, 3, 0]]
+L = 20
+ruta = buscar(dist, L)
+print("Recorrido:", " -> ".join(centros[i] for i in ruta), "| costo:", costo(dist, ruta), "km <=", L)
+
+# Pruebas: recorrido verificado, presupuesto insuficiente y diferencia con la pregunta de optimización
+assert ruta == (0, 1, 2, 0) and costo(dist, ruta) == 15 and verificar(dist, L, ruta)
+assert buscar(dist, 14) is None
+assert not verificar(dist, L, (0, 1, 0))  # no visita Guayaquil
+mas_barato = min(costo(dist, (0,) + o + (0,)) for o in permutations(range(1, 3)))
+assert mas_barato == 15  # el óptimo responde otra pregunta: ¿cuál es el recorrido más corto?
+print("Pruebas OK")
+
+C3 · ¿Bastan k almacenes para cubrir todas las zonas?
+Clasificación: NP-completo (coincide)
+Algoritmo: Backtracking / ramificación (coincide)
+Decidibilidad: Decidible
+Computabilidad: Sí hay un procedimiento efectivo: ramificar sobre un corredor sin cubrir (u, v), porque toda selección válida contiene a u o a v. Termina porque cada rama usa un equipo y la profundidad es <= k. La selección es un certificado y el verificador separado es polinomial. Es NP-completo: INDEPENDENT-SET se reduce a VERTEX-COVER con k = |V| - j.
+Complejidad: Entrada: V zonas, E corredores y k en binario. Verificar: O(V + E). Ramificación: <= 2^(k+1) - 1 nodos y O(V + E) por nodo, O(2^k·(V + E)) en tiempo y O(k·(V + E)) en espacio. Por subconjuntos: O(2^V·(V + E)). La 2-aproximación es O(V + E) pero puede usar el doble de equipos. Resultado: {B} con k = 1.
+Código:
+def verificar(corredores, k, S):
+    """Verificador separado: |S| <= k y cada corredor tiene un equipo en un extremo. O(V + E)."""
+    zonas = {z for c in corredores for z in c}
+    return len(S) <= k and set(S) <= zonas and all(u in S or v in S for u, v in corredores)
+
+
+def ramificar(corredores, k):
+    """Toma un corredor sin cubrir (u, v): toda solución contiene a u o a v. Tiempo O(2^k·(V + E))."""
+    if k < 0:
+        return None
+    if not corredores:
+        return set()
+    if k == 0:
+        return None
+    u, v = corredores[0]
+    for z in (u, v):
+        resto = [c for c in corredores if z not in c]
+        r = ramificar(resto, k - 1)
+        if r is not None:
+            return r | {z}
+    return None
+
+
+# Entrada: corredores entre zonas y k equipos de inspección
+corredores = [("A", "B"), ("B", "C")]
+k = 1
+S = ramificar(corredores, k)
+print(f"¿Bastan {k} equipo(s)?", S is not None, "| selección:", S)
+
+# Pruebas: certificado {B}, k = 0 sin solución, selección que no cubre y un caso que exige k + 1
+assert S == {"B"} and verificar(corredores, k, S)
+assert ramificar(corredores, 0) is None
+assert not verificar(corredores, 1, {"A"})
+pares = [(f"a{i}", f"b{i}") for i in range(5)]
+assert ramificar(pares, 4) is None and verificar(pares, 5, ramificar(pares, 5))
+print("Pruebas OK")
