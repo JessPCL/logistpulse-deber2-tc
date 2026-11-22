@@ -216,11 +216,11 @@ def chk_sin_emojis():
 
 
 def chk_informe():
-    pdfs = [p for p in RAIZ.rglob("*.pdf") if ".git" not in p.parts]
+    pdfs = sorted(p for p in RAIZ.rglob("*.pdf") if ".git" not in p.parts)
     if pdfs:
-        return OK, f"informe: {pdfs[0].relative_to(RAIZ)}"
+        return OK, "informe: " + ", ".join(str(p.relative_to(RAIZ)) for p in pdfs)
     if (RAIZ / "docs" / "generado" / "INFORME.md").exists():
-        return PEND, "hay borrador (docs/generado/INFORME.md); falta exportar el PDF (scripts/armar_informe.py → Word/Docs → PDF)"
+        return PEND, "hay borrador (docs/generado/INFORME.docx); falta exportarlo a PDF con Word y guardarlo como docs/INFORME_Deber2_LOGISTPULSE.pdf"
     return PEND, "no hay informe: corre scripts/armar_informe.py y exporta a PDF (Jessica)"
 
 

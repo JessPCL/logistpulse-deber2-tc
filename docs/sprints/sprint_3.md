@@ -10,10 +10,10 @@
 ## Planificación
 | Tarea (ID del backlog) | Responsable | Rama / PR | Revisor | Estado |
 |---|---|---|---|---|
-| Simulador: los diez correos + reporte .txt | Luis | `luis/fase-bc-fichas-p` | Jessica | En curso |
-| Guion completo y diapositivas de la exposición (8–10 min) | Jessica, con la parte de Camila | `jessica/fase-df-gestion` | Luis | En curso |
+| Simulador: los diez correos + reporte .txt | Luis | `jessica/fase-df-gestion` · #34 | Jessica | Hecho (22/11, #34) |
+| Guion completo y diapositivas de la exposición (8–10 min) | Los tres (integra Jessica) | #31, #33, #35 | Luis | Guion hecho (22/11, #31, #33, #35) · diapositivas en curso |
 | Captura `pedido_determinismo.png` con la franja de *Nondeterminism* | Camila | `camila/fase-a-fichas-np` | Jessica | Por hacer |
-| F-G1 · Informe PDF (`scripts/armar_informe.py` → Word → PDF) | Jessica | `jessica/fase-df-gestion` | Luis | Por hacer |
+| F-G1 · Informe PDF (`scripts/armar_informe.py` → Word → PDF; enlaza al repositorio fichas, código y pruebas) | Jessica | `jessica/fase-df-gestion` | Luis | En curso (armador listo; PDF el 24/11) |
 | F-G1 · Tag `v1.0` + release con el PDF | Jessica | `main` | — | Por hacer |
 
 ## Revisión (demo del sprint) · martes 24/11

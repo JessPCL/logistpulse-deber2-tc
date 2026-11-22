@@ -26,12 +26,12 @@ El enunciado sugiere 4 roles **rotativos**. Separamos dos cosas: el **dueño del
 
 Esto queda registrado en cada `docs/sprints/sprint_N.md` (tabla "Roles de este sprint").
 
-## Calendario sugerido (ajústenlo a la fecha real de entrega)
+## Calendario real (entrega: martes 24 de noviembre)
 | Sprint | Fechas | Meta | Quién cierra qué |
 |---|---|---|---|
-| 1 | 17–23 nov | Repo creado; autómatas probados en JFLAP; grafo definido | Jessica sube el repo base. Camila: capturas JFLAP + borrador de la Fase A. Luis: borrador de la Fase B |
-| 2 | 24–30 nov | Pseudocódigo + Big-O revisados por pares | Luis: Fases B y C. Camila: Fase A final. Jessica: backlog + sprint 1–2 |
-| 3 | 1–7 dic | 10 fichas, nota de la parada, informe PDF, release v1.0, ensayo | Cada uno sus fichas. Jessica integra, llena el simulador y crea el tag v1.0 |
+| 1 | 17–21 nov | Repo creado; autómatas probados en JFLAP; grafo definido | Jessica sube el repo base. Camila: capturas JFLAP + borrador de la Fase A. Luis: borrador de la Fase B |
+| 2 | 22 nov | Pseudocódigo + Big-O revisados por pares | Luis: Fases B y C. Camila: Fase A final. Jessica: backlog + sprint 1–2 |
+| 3 | 23–24 nov | 10 fichas, nota de la parada, informe PDF, release v1.0, ensayo | Cada uno sus fichas. Jessica integra, llena el simulador y crea el tag v1.0 |
 
 ## Antes de usar el prompt (los tres)
 1. Jessica crea el **repo público** y sube el **zip v3.3** siguiendo `equipo/GUIA_CODESPACES.md`; cada uno abre su Codespace. A la IA le adjuntan el zip v3.3 (o el enlace del repo público), el enunciado (.docx) y el simulador (.html).

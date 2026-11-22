@@ -83,9 +83,10 @@
 
 ## 4. Entrega final (Sprint 3 · Jessica)
 ```bash
-python scripts/armar_informe.py                   # docs/generado/INFORME.docx
+python scripts/armar_informe.py                   # docs/generado/INFORME.docx (resume y enlaza al repositorio)
+python scripts/armar_informe.py --completo        # (alternativa) todo dentro del PDF, unas 110 páginas
 ```
-1. Descarga `INFORME.docx` (clic derecho → *Download*), ábrelo en Word o Google Docs, actualiza el índice y exporta a PDF.
+1. Descarga `INFORME.docx` (clic derecho → *Download*) y ábrelo en **Word** (de escritorio o en office.com con la cuenta USFQ): Word muestra bien las fórmulas; Google Docs y LibreOffice pueden perderlas. Si pregunta por actualizar campos, **Sí**; si el índice sale vacío, clic en él → *Actualizar tabla*. Exporta a PDF.
 2. Arrastra el PDF a `docs/` con el nombre `INFORME_Deber2_LOGISTPULSE.pdf`, haz commit y PR.
 3. Cuando `verificar_entrega.py` quede sin pendientes:
    ```bash
