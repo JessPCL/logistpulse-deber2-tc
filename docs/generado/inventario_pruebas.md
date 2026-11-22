@@ -1,6 +1,6 @@
 # Inventario de pruebas
 
-_Generado por `scripts/generar_docs.py`. Total: 142 métodos de prueba (complejidad (conteo): 16 · complejidad (tiempo): 4 · inválida: 33 · límite: 19 · normal: 70). Muchos métodos agrupan varios casos con `subTest`. La categoría se asigna por el nombre del método._
+_Generado por `scripts/generar_docs.py`. Total: 143 métodos de prueba (complejidad (conteo): 16 · complejidad (tiempo): 4 · inválida: 33 · límite: 19 · normal: 71). Muchos métodos agrupan varios casos con `subTest`. La categoría se asigna por el nombre del método._
 
 | Archivo | Prueba | Categoría | Descripción |
 |---|---|---|---|
@@ -60,6 +60,7 @@ _Generado por `scripts/generar_docs.py`. Total: 142 métodos de prueba (compleji
 | `test_casos_npc` | `TestC3.test_invalidos` | inválida |  |
 | `test_casos_npc` | `TestC3.test_limites` | límite |  |
 | `test_casos_npc` | `TestC3.test_reduccion_is_a_vc` | normal |  |
+| `test_casos_npc` | `TestC3.test_reduccion_k_mayor_que_V_da_no` | normal | Con k > /V/ no hay conjunto independiente de ese tamaño: la reducción produce una instancia No. |
 | `test_casos_npc` | `TestC3.test_verificador_rechaza` | inválida |  |
 | `test_casos_p` | `TestP1.test_alcanzable` | normal |  |
 | `test_casos_p` | `TestP1.test_grafo_dirigido_no_vuelve` | normal |  |

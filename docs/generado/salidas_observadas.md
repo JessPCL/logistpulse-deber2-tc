@@ -1,6 +1,6 @@
 # Salidas observadas
 
-_Generado el 2026-11-20 ejecutando `python -m logistpulse`. Reproducible: mismos datos, mismo orden de desempate._
+_Generado el 2026-11-22 ejecutando `python -m logistpulse`. Reproducible: mismos datos, mismo orden de desempate._
 
 ## automatas
 
@@ -243,8 +243,8 @@ Grafo asimétrico de 6 vértices: None -> 'No' tras AGOTAR 720 = 6! permutacione
 ==============================================================================
 FASE D · C1 · NP-completo · ¿Hay una asignación que cumpla todas las reglas?
 ==============================================================================
-RESPUESTA AL CORREO: Sí, hay una asignación que cumple todas las reglas: {1: False, 2: False, 3: True} (comprobación independiente: verificar = True).
-Fuerza bruta probó 2 de 2^3 = 8 asignaciones (crece como 2ⁿ con n decisiones)
+RESPUESTA AL CORREO: Sí, hay una asignación que cumple todas las reglas: x1 = verdadero, x2 = falso, x3 = verdadero (DPLL; comprobación independiente: verificar = True).
+DPLL: 1 nodo(s) del árbol · fuerza bruta (referencia): {1: False, 2: False, 3: True}, probó 2 de 2^3 = 8 asignaciones (crece como 2ⁿ)
 La instancia es 2-CNF = True ⇒ 2-SAT lineal -> {1: True, 2: False, 3: True} · verificar = True
 3-CNF satisfacible (extra): DPLL -> {1: True, 2: True, 3: False, 4: True, 5: True} · verificar = True
 3-CNF con las 8 cláusulas (extra): DPLL -> None · fuerza bruta -> None
@@ -259,9 +259,9 @@ Reducción HAM→TSP: C4 -> True · estrella K1,3 -> False
 Heurística vs exacto (4 centros): vecino más cercano (0, 1, 2, 3, 0) = 13 · Held–Karp (0, 2, 3, 1, 0) = 6
 
 ==============================================================================
-FASE D · C3 · NP-completo · ¿Bastan k almacenes/equipos para cubrir todo?
+FASE D · C3 · NP-completo · ¿Bastan k almacenes para cubrir todas las zonas?
 ==============================================================================
-RESPUESTA AL CORREO: Sí, basta con 1 equipo(s) (k = 1): zona(s) ['B'] cubren todos los corredores (verificar = True).
+RESPUESTA AL CORREO: Sí, basta con 1 almacén(es) (k = 1): en la(s) zona(s) ['B']; toda adyacencia entre zonas queda cubierta (verificar = True).
 verificar({'A'}) = False · con k = 0: None (No)
 Estrella de 5 hojas: óptimo = {'centro'} · 2-aproximación = ['centro', 'h0'] (tamaño 2 ≤ 2·1)
 Reducción IS→VC: ¿IS de tamaño 2 en A-B-C? ⇔ ¿VC de tamaño 1? -> True

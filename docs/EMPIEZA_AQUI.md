@@ -118,7 +118,7 @@ flowchart LR
 
 ## 6. Los tres sprints
 
-| Sprint | Fechas | Meta (del enunciado) | Quién entrega qué | Cierre (domingo) |
+| Sprint | Fechas | Meta (del enunciado) | Quién entrega qué | Cierre (lunes) |
 |---|---|---|---|---|
 | **1** | 17–23 nov | Autómatas y grafo de la planta | Jessica: repo, protección, Issues, ficha c2. Camila: capturas JFLAP + borrador Fase A. Luis: borrador Fase B | 23/11: completar "Revisión" y "Retrospectiva" de `sprint_1.md` + capturas `s1_` |
 | **2** | 24–30 nov | Pseudocódigo y Big-O revisados por pares | Luis: Fases B y C. Camila: Fase A final. Jessica: backlog + sprints 1–2 | 30/11: `sprint_2.md` + capturas `s2_` |
@@ -159,15 +159,15 @@ Los roles de proceso rotan cada sprint (tabla en `equipo/ROLES_Y_PROMPTS.md`). E
 | Archivo | Cuándo |
 |---|---|
 | `s1_07_pr_c2.png` | Cuando Luis apruebe el PR de la ficha c2 y se haga el merge |
-| `s1_08_issues_cerrados.png` | Domingo 23/11: *Issues → Closed* |
+| `s1_08_issues_cerrados.png` | Lunes 23/11: *Issues → Closed* |
 
 ### Sprints 2 y 3, y entrega final
 | Archivo | Cuándo | Dónde |
 |---|---|---|
-| `s2_01_prs_cerrados.png` | Domingo 30/11 | *Pull requests → Closed* |
+| `s2_01_prs_cerrados.png` | Lunes 30/11 | *Pull requests → Closed* |
 | `s2_02_revision_de_pares.png` | Cuando alguien comente o pida cambios en un PR del Sprint 2 | El PR, pestaña *Conversation* |
-| `s3_01_prs_cerrados.png` | Domingo 7/12 | *Pull requests → Closed* |
-| `s3_02_issues_cerrados.png` | Domingo 7/12 | *Issues → Closed* |
+| `s3_01_prs_cerrados.png` | Lunes 7/12 | *Pull requests → Closed* |
+| `s3_02_issues_cerrados.png` | Lunes 7/12 | *Issues → Closed* |
 | `final_01_contribuidores.png` | Antes de entregar | *Insights → Contributors* (deben verse los 3) |
 | `final_02_release_v1.png` | Después de crear el release | *Releases →* `v1.0` con el PDF adjunto |
 

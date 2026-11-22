@@ -144,16 +144,19 @@ def demo_n4(inst: Inst) -> str:
 
 def demo_c1(inst: Inst) -> str:
     cl, n = inst["clausulas"], inst["n"]
-    cont = Contador()
-    a = c1_sat.fuerza_bruta(cl, n, contar=cont)
+    c_dpll, c_fb = Contador(), Contador()
+    a = c1_sat.dpll(cl, n, contar=c_dpll)  # algoritmo seleccionado
+    a_fb = c1_sat.fuerza_bruta(cl, n, contar=c_fb)  # referencia independiente
     a2 = c1_sat.dos_sat(cl, n)
     t, u = inst["tres_cnf_satisfacible"], inst["tres_cnf_insatisfacible"]
     a3 = c1_sat.dpll(t["clausulas"], t["n"])
+    texto = ", ".join(f"x{i} = {'verdadero' if v else 'falso'}" for i, v in sorted(a.items())) if a else ""
     return (
-        (f"RESPUESTA AL CORREO: Sí, hay una asignación que cumple todas las reglas: {a} "
-         f"(comprobación independiente: verificar = {c1_sat.verificar(cl, a)}).\n"
-         if a else "RESPUESTA AL CORREO: No existe asignación: hay que renegociar la ventana de despacho.\n") +
-        f"Fuerza bruta probó {cont['asignacion']} de 2^{n} = {2 ** n} asignaciones (crece como 2ⁿ con n decisiones)\n"
+        (f"RESPUESTA AL CORREO: Sí, hay una asignación que cumple todas las reglas: {texto} "
+         f"(DPLL; comprobación independiente: verificar = {c1_sat.verificar(cl, a)}).\n"
+         if a else "RESPUESTA AL CORREO: No existe una asignación que cumpla todas las reglas a la vez.\n") +
+        f"DPLL: {c_dpll['nodo']} nodo(s) del árbol · fuerza bruta (referencia): {a_fb}, probó {c_fb['asignacion']} "
+        f"de 2^{n} = {2 ** n} asignaciones (crece como 2ⁿ)\n"
         f"La instancia es 2-CNF = {c1_sat.es_2cnf(cl)} ⇒ 2-SAT lineal -> {a2} · verificar = {c1_sat.verificar(cl, a2)}\n"
         f"3-CNF satisfacible (extra): DPLL -> {a3} · verificar = {c1_sat.verificar(t['clausulas'], a3)}\n"
         f"3-CNF con las 8 cláusulas (extra): DPLL -> {c1_sat.dpll(u['clausulas'], u['n'])} · "
@@ -188,12 +191,12 @@ def demo_c3(inst: Inst) -> str:
     ady, k = inst["ady"], inst["k"]
     S = c3_vertex_cover.ramificacion(ady, k)
     if S is None:
-        return f"RESPUESTA AL CORREO: No, con k = {k} equipos no se pueden cubrir todos los corredores."
+        return f"RESPUESTA AL CORREO: No, con k = {k} almacenes no se cubren todas las adyacencias entre zonas."
     est = c3_vertex_cover.estrella(5)
     G2, kvc = c3_vertex_cover.reducir_is_a_vc(ady, 2)
     return (
-        f"RESPUESTA AL CORREO: Sí, basta con {len(S)} equipo(s) (k = {k}): zona(s) {sorted(S)} cubren todos los corredores "
-        f"(verificar = {c3_vertex_cover.verificar(ady, k, S)}).\n"
+        f"RESPUESTA AL CORREO: Sí, basta con {len(S)} almacén(es) (k = {k}): en la(s) zona(s) {sorted(S)}; "
+        f"toda adyacencia entre zonas queda cubierta (verificar = {c3_vertex_cover.verificar(ady, k, S)}).\n"
         f"verificar({{'A'}}) = {c3_vertex_cover.verificar(ady, k, {'A'})} · con k = 0: {c3_vertex_cover.ramificacion(ady, 0)} (No)\n"
         f"Estrella de 5 hojas: óptimo = {c3_vertex_cover.minimo_por_subconjuntos(est)} · "
         f"2-aproximación = {sorted(c3_vertex_cover.aproximacion_2(est))} (tamaño 2 ≤ 2·1)\n"

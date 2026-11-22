@@ -53,7 +53,7 @@
 | H4 | p3: lo que sale de Planta suma 12, pero el **flujo máximo es 10**. El corte mínimo es {Quito→Clientes, Guayaquil→Clientes}. El correo advierte justamente esto. | `TestP3` |
 | H5 | Reposición sin duplicados: el SKU sugiere 37. Después de emitir esa orden (en_orden += 37) la posición pasa a 50 > 30 y la nueva sugerencia es **0**. | `test_no_duplica_si_ya_hay_orden_abierta` |
 | **H6** | **c1: la instancia del simulador es 2-CNF** (x1∨¬x2)∧(x2∨x3), y 2-SAT ∈ **P** (O(n+m)). El problema general (3-CNF) sigue siendo NP-completo. **Que una instancia sea fácil no cambia la clase del problema.** | `test_instancia_simulador_es_2cnf` |
-| H7 | c3: la ficha del simulador dice "zona cubierta por un almacén propio o vecino" (eso es *Dominating Set*), pero el **correo** pide cubrir corredores (*Vertex Cover*). Seguimos el correo. Los dos son NP-completos. | — |
+| H7 | c3: el correo mezcla dos definiciones. Dice "zona cubierta por un almacén propio o vecino" (eso es *Dominating Set*), pero lo llama *Vertex Cover*, sus datos preguntan "¿Cubre toda arista?" y su código revisa aristas. Seguimos Vertex Cover. Los dos son NP-completos y en esta instancia dan la misma respuesta: S = {B}. | `TestC3` |
 | H8 | c2: el correo pide **regresar** al punto de salida, así que es un **ciclo** hamiltoniano (TSP), no un camino. | `TestC2` |
 | **H9** | n2 y n3: O(B) **no es polinomial**. B ocupa log₂B bits, así que B = 2^(log B) y la búsqueda es **exponencial en el tamaño de la entrada** (pseudo-polinomial). El verificador sí es polinomial. | — |
 | H10 | n2: si B ≥ N, la respuesta es trivialmente Sí (d = N). El caso interesante es B < N. | `test_limites` (n2) |

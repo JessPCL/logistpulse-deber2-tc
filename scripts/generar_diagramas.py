@@ -83,7 +83,7 @@ def dot_casos():
     p2 += [f'  "{u}" -> "{v}" [label="{w}"];' for u, v, w in d["p2"]["tramos"]]
     p3 = ["digraph p3 {", *base, '  label="p3 · capacidades (camiones/día)"; labelloc=t;']
     p3 += [f'  "{u}" -> "{v}" [label="{c}"];' for u, vs in d["p3"]["capacidades"].items() for v, c in vs.items()]
-    c3 = ["graph c3 {", *[b.replace("rankdir=LR; ", "rankdir=LR; ") for b in base], '  label="c3 · corredores entre zonas"; labelloc=t;']
+    c3 = ["graph c3 {", *[b.replace("rankdir=LR; ", "rankdir=LR; ") for b in base], '  label="c3 · zonas adyacentes (aristas)"; labelloc=t;']
     c3 += [f'  "{u}" -- "{v}";' for u, v in d["c3"]["aristas"]]
     return {"caso_p1": "\n".join(p1 + ["}"]), "caso_p2": "\n".join(p2 + ["}"]),
             "caso_p3": "\n".join(p3 + ["}"]), "caso_c3": "\n".join(c3 + ["}"])}

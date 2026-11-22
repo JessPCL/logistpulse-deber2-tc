@@ -9,7 +9,7 @@
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 63)">
 <title>c3</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-63 238,-63 238,4 -4,4"/>
-<text text-anchor="middle" x="117" y="-43.8" font-family="Helvetica,sans-Serif" font-size="14.00">c3 · corredores entre zonas</text>
+<text text-anchor="middle" x="117" y="-43.8" font-family="Helvetica,sans-Serif" font-size="14.00">c3 · zonas adyacentes (aristas)</text>
 <!-- A -->
 <g id="node1" class="node">
 <title>A</title>

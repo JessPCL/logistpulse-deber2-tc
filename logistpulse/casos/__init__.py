@@ -176,8 +176,8 @@ CASOS: List[Caso] = [
         "Con L = 20: Sí (Planta→Quito→Guayaquil→Planta = 15). Con L = 14: No.",
     ),
     Caso(
-        "c3", "C", "NP-completo", "¿Bastan k almacenes/equipos para cubrir todo?", "Carla Núñez · Red logística",
-        "¿Existe S con |S| ≤ k que toque cada corredor (arista)?",
+        "c3", "C", "NP-completo", "¿Bastan k almacenes para cubrir todas las zonas?", "Carla Núñez · Red logística",
+        "¿Existe un conjunto S de a lo sumo k zonas con almacén tal que toda adyacencia entre zonas (arista) tenga un almacén en uno de sus extremos?",
         "Grafo no dirigido G=(V,E) y entero k.",
         "Sí/No + conjunto S como evidencia.",
         "Decisión.",
@@ -185,11 +185,12 @@ CASOS: List[Caso] = [
         "Conjunto S ⊆ V.", "IS ≤p VC: <G,k> ∈ IS ⇔ <G,|V|−k> ∈ VC (Karp 1972).",
         "Backtracking / ramificación acotada (exacto) · 2-aproximación por emparejamiento (heurística)",
         "Exacto (ramificación) / aproximado (factor 2)",
-        "O(2^k·(V + E)) ramificación · O(V + E) aproximación", "O(k·(V + E)) (lista de aristas por nivel)", "V = zonas, E = corredores, k = equipos",
+        "O(2^k·(V + E)) ramificación · O(V + E) aproximación", "O(k·(V + E)) (lista de aristas por nivel)", "V = zonas, E = adyacencias entre zonas, k = almacenes",
         "Sí: árbol de búsqueda de profundidad ≤ k (o 2^V subconjuntos).",
         "logistpulse/casos/c3_vertex_cover.py",
-        "El correo describe Vertex Cover (corredores); la ficha del simulador menciona 'propio o vecino' "
-        "(Dominating Set). Se sigue el correo.",
+        "El correo mezcla dos definiciones: 'zona cubierta por un almacén propio o vecino' (Dominating Set) y "
+        "'Vertex Cover' / '¿Cubre toda arista?'. Se sigue Vertex Cover (etiqueta, datos y código del correo). "
+        "Ambos son NP-completos y en esta instancia dan la misma respuesta (S = {B}).",
     ),
 ]
 
