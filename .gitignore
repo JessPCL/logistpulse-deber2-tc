@@ -5,3 +5,5 @@ __pycache__/
 .DS_Store
 *.zip
 docs/generado/*.docx
+# El informe PDF no se versiona (pesa): va adjunto al release v1.0 y se sube al aula
+*.pdf

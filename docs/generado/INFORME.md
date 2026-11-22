@@ -1084,7 +1084,7 @@ El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su fic
 | F-C1 | Pseudocódigo + Big-O de FEFO y reposición | C | Luis | 2 | 3 | Hecho (22/11, #26) | `docs/fase_C_fefo_reposicion.md` |
 | F-E1 | Revisión cruzada de código y pruebas (PR) | E | Rol de validación | 2 | 2 | Hecho (22/11, revisiones cruzadas #20–#32) | `tests/`, `scripts/verificar_entrega.py` |
 | F-F1 | Nota sobre el problema de la parada | F | Jessica | 2 | 2 | Hecho (22/11, #27) | `docs/fase_F_nota_parada.md` |
-| F-G1 | Informe PDF + release v1.0 + presentación | — | Jessica (integra) | 3 | 3 | En curso | `docs/generado/INFORME.md`, tag `v1.0` |
+| F-G1 | Informe PDF + release v1.0 + presentación | — | Jessica (integra) | 3 | 3 | Hecho (22/11): informe PDF y release `v1.0`; exposición: ensayo el 23/11 | `docs/generado/INFORME.md`; PDF adjunto al release `v1.0` |
 
 ### Una unidad de trabajo por correo
 | ID | Correo | Clase | Responsable | Sprint | Ficha | Código | Pruebas | Estado |
@@ -1163,7 +1163,7 @@ El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su fic
 | Las revisiones fueron cruzadas y con evidencia objetiva: comparación con el código y fusión de prueba antes de aprobar. | Dos fichas entraron con un emoji que el verificador detectó después del merge, y algunas ramas estaban desactualizadas respecto de `main`. | Correr `python scripts/verificar_entrega.py` antes de abrir cada PR y traer `main` a la rama antes de empezar a trabajar. |
 
 ## Sprint 3
-**Fechas:** lunes 23 al martes 24 de noviembre de 2026 · **Objetivo:** Analizar los diez correos; conectar decidibilidad/computabilidad/P-NP; presentar resultados.
+**Fechas:** lunes 23 al martes 24 de noviembre de 2026 (el cierre y el release se adelantaron al domingo 22/11, porque el martes 24 el equipo tiene otra entrega) · **Objetivo:** Analizar los diez correos; conectar decidibilidad/computabilidad/P-NP; presentar resultados.
 **Evidencia de revisión que pide el enunciado:** Release del informe, código, modelos JFLAP y retrospectiva.
 
 ### Roles de este sprint (rotativos)
@@ -1175,20 +1175,20 @@ El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su fic
 | Tarea (ID del backlog) | Responsable | Rama / PR | Revisor | Estado |
 |---|---|---|---|---|
 | Simulador: los diez correos + reporte .txt | Luis | `jessica/fase-df-gestion` · #34 | Jessica | Hecho (22/11, #34) |
-| Guion completo y diapositivas de la exposición (8–10 min) | Los tres (integra Jessica) | #31, #33, #35 | Luis | Guion hecho (22/11, #31, #33, #35) · diapositivas en curso |
-| Captura `pedido_determinismo.png` con la franja de *Nondeterminism* | Camila | `camila/fase-a-fichas-np` | Jessica | Por hacer |
-| F-G1 · Informe PDF (`scripts/armar_informe.py` → Word → PDF; enlaza al repositorio fichas, código y pruebas) | Jessica | `jessica/fase-df-gestion` | Luis | En curso (armador listo; PDF el 24/11) |
-| F-G1 · Tag `v1.0` + release con el PDF | Jessica | `main` | — | Por hacer |
+| Guion completo y diapositivas de la exposición (8–10 min) | Los tres (integra Jessica) | #31, #33, #35 | Luis | Guion hecho (22/11, #31, #33, #35) · diapositivas y ensayo con cronómetro: lunes 23/11 (no van en el release) |
+| Captura `pedido_determinismo.png` con la franja de *Nondeterminism* | Camila | `camila/fase-a-fichas-np` | Jessica | Opcional, no bloquea la entrega (el determinismo ya consta en la tabla δ total y en las otras dos capturas) |
+| F-G1 · Informe PDF (`scripts/armar_informe.py` → Word → PDF; enlaza al repositorio fichas, código y pruebas) | Jessica | `jessica/fase-df-gestion` · #36 y cierre | Luis | Hecho (22/11): fuente en `docs/generado/INFORME.md`; el PDF va adjunto al release `v1.0` y se sube al aula (no se versiona por su peso) |
+| F-G1 · Tag `v1.0` + release con el PDF | Jessica | `main` | — | Hecho (22/11), al integrar el cierre: *Releases → v1.0* |
 
-### Revisión (demo del sprint) · martes 24/11
-- Qué se mostró: (completar el 24/11: ensayo de la exposición y release `v1.0`)
-- Comentarios del revisor: (completar el 24/11)
-- Estado de `python scripts/verificar_entrega.py` al cierre: (completar el 24/11)
+### Revisión (demo del sprint) · domingo 22/11
+- Qué se mostró: el informe PDF armado desde los documentos del repositorio (análisis de las seis fases, una ficha resumida por correo con enlace a la ficha completa), el simulador con los diez correos (10/10 coinciden con nuestro análisis) y el guion completo de 8–10 minutos con la parte de cada integrante.
+- Comentarios del revisor (Luis): aprobó el simulador (#34) y el armador del informe (#36) sin pedir cambios.
+- Estado de `python scripts/verificar_entrega.py` al cierre: 146 pruebas OK; todos los criterios en OK salvo el tag `v1.0` y la captura del release, que se crean justo después de integrar este cierre.
 
 ### Retrospectiva
 | Qué salió bien | Qué salió mal | Qué mejoramos el próximo sprint |
 |---|---|---|
-| (completar el 24/11) | (completar el 24/11) | (completar el 24/11) |
+| Revisión cruzada en cada PR (Luis → Jessica, Camila → Luis, Jessica → Camila) con Actions en verde; el simulador coincidió 10/10 con las fichas; el informe se arma solo desde los `.md`, sin copiar a mano. | Los sprints se comprimieron porque al inicio no teníamos clara la fecha real (24/11) y coincide con otra entrega; algunas capturas se tomaron tarde o hubo que repetirlas; un error de bash con `!` al aprobar un PR. | Fijar la fecha real de entrega el primer día y planificar desde ahí; tomar cada captura en el momento (lista en `docs/EMPIEZA_AQUI.md`); ensayar la exposición con cronómetro antes del día. |
 
 ## Evidencias de gestión
 
@@ -1209,6 +1209,10 @@ El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su fic
 ![Sprint 2 · revision de pares](../evidencias/s2_02_revision_de_pares.png)
 
 ![Sprint 2 · issues cerrados](../evidencias/s2_03_issues_cerrados.png)
+
+![Sprint 3 · prs cerrados](../evidencias/s3_01_prs_cerrados.png)
+
+![Entrega final · contribuidores](../evidencias/final_01_contribuidores.png)
 
 # 9. Supuestos, límites y conclusiones
 
