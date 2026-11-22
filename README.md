@@ -98,7 +98,10 @@ tests/     más de 140 pruebas unittest (también corren con pytest)
 - Cierre: `git tag -a v1.0 -m "Entrega final Deber 2"` → `git push origin v1.0` → *Release* en GitHub.
 
 ## Declaración de uso de IA
-(Completar con lo que pida el curso: qué partes se hicieron con apoyo de IA, cómo se verificaron —más de 140 pruebas automáticas, pruebas de complejidad, JFLAP, revisión cruzada por PR— y qué revisó y defiende cada integrante.)
+- **Herramientas:** cada integrante usó un asistente de IA conversacional con los prompts de `equipo/ROLES_Y_PROMPTS.md`; Jessica usó Claude (Anthropic).
+- **Para qué:** generar y revisar el código Python y sus pruebas, redactar borradores de las fichas, las fases y el informe, y organizar el repositorio y los sprints.
+- **Cómo se verificó:** 146 pruebas automáticas (casos normales, límites e inválidos), pruebas de complejidad que cuentan operaciones, comparación de los .jff en JFLAP (Multiple Run), salidas generadas ejecutando el código y revisión cruzada de cada cambio en un PR aprobado por otro integrante.
+- **Responsabilidad:** cada integrante revisó, entiende y defiende su parte: Camila (Fase A, JFLAP, n1–n4), Luis (Fases B y C, p2, p3) y Jessica (gestión, c1–c3, Fase F, conclusiones e informe).
 
 ## Referencias
 Sipser, *Introduction to the Theory of Computation*, 3.ª ed. (caps. 1, 4, 5 y 7) · CLRS (caminos mínimos, flujo máximo, NP-completitud) · Cook (1971) · Karp (1972) · JFLAP: https://www.jflap.org
