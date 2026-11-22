@@ -8,7 +8,43 @@
 | 7:00–9:30 | Jessica | Un caso de complejidad (c2 TSP: reducción HAM→TSP, n! vs Held–Karp vs heurística) + parada |
 | 9:30–10:00 | Todos | Conclusiones y límites |
 
-> Cada integrante pega aquí su guion de 3 minutos (lo genera su prompt).
+## Camila · 1:00–4:00
+
+### Diapositiva 1 · Estados y transiciones en LOGISTPULSE (1:00–1:45)
+
+**En pantalla**
+
+- Tres Autómatas Finitos Deterministas (AFD): **pedido**, **reserva** y **orden de compra**
+- Desde cada estado y ante cada evento existe **una única transición**
+- Cadena vacía rechazada ($q_0 \notin F$)
+
+**Qué decir**
+
+En la Fase A modelamos el ciclo de vida operativo de LOGISTPULSE —pedido, reserva y orden de compra— utilizando Autómatas Finitos Deterministas. Elegimos un AFD porque las reglas de negocio en logística no admiten ambigüedad: desde cada estado y ante cada evento del alfabeto existe una única transición posible. Si una secuencia cumple las reglas y termina en un estado de aceptación, el autómata la acepta; si no, la rechaza. Por ejemplo, la cadena vacía siempre se rechaza porque el estado inicial no es final.
+
+### Diapositiva 2 · Demo de Multiple Run en JFLAP (1:45–2:45)
+
+**En pantalla**
+
+- [Captura de Multiple Run del pedido](../jflap/capturas/pedido_multiple_run.png)
+- Cadena válida: **`criedn`** → **Accept**
+- Validación 100 % coherente entre JFLAP y las pruebas en Python
+
+**Qué decir**
+
+Para comprobar que el modelo teórico coincide exactamente con el código, probamos los tres autómatas en JFLAP usando Multiple Run. En esta captura del autómata de pedido cargamos todo el conjunto de cadenas de prueba, válidas e inválidas, y verificamos que cada resultado coincidiera con lo esperado. Por ejemplo, la secuencia válida `criedn` recorre el flujo completo hasta un estado de aceptación, mientras que las secuencias incompletas o fuera de orden se rechazan automáticamente.
+
+### Diapositiva 3 · Caso clave `crix` (decisión A6) y complejidad (2:45–4:00)
+
+**En pantalla**
+
+- Cadena inválida: **`crix`** → **Reject**
+- **Decisión A6:** un pedido **no se puede cancelar** después de iniciar el *picking*
+- Complejidad de evaluación: tiempo **$O(n)$** · espacio auxiliar **$O(1)$**
+
+**Qué decir**
+
+El caso más claro de cómo el autómata protege las reglas del negocio es la cadena inválida `crix`. Los primeros eventos avanzan el pedido con normalidad hasta que inicia el proceso de picking; justo ahí llega el evento `x`, que representa un intento de cancelación. Según nuestra decisión A6, un pedido no se puede cancelar después de haber iniciado el picking. Al ser un AFD, no existe transición válida con `x` hacia un estado de aceptación, por lo que JFLAP marca `crix` como Reject. Finalmente, evaluar cualquier cadena de longitud $n$ toma tiempo lineal $O(n)$ y espacio auxiliar constante $O(1)$. Ahora Luis continúa con la ruta de la planta y el inventario.
 
 ## Luis · 4:00–7:00
 
