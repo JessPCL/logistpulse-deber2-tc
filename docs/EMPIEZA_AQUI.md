@@ -118,24 +118,21 @@ flowchart LR
 
 ## 6. Los tres sprints
 
-| Sprint | Fechas | Meta (del enunciado) | Quién entrega qué | Cierre (lunes) |
-|---|---|---|---|---|
-| **1** | 17–23 nov | Autómatas y grafo de la planta | Jessica: repo, protección, Issues, ficha c2. Camila: capturas JFLAP + borrador Fase A. Luis: borrador Fase B | 23/11: completar "Revisión" y "Retrospectiva" de `sprint_1.md` + capturas `s1_` |
-| **2** | 24–30 nov | Pseudocódigo y Big-O revisados por pares | Luis: Fases B y C. Camila: Fase A final. Jessica: backlog + sprints 1–2 | 30/11: `sprint_2.md` + capturas `s2_` |
-| **3** | 1–7 dic | 10 fichas, nota de la parada, informe, release | Cada uno sus fichas. Jessica: c1, c3, parada, conclusiones, informe PDF, simulador, tag `v1.0` | 7/12: `sprint_3.md` + capturas `s3_` y `final_` |
+La entrega real es el **martes 24/11**, así que los tres sprints se comprimieron. El detalle está en `docs/sprints/sprint_1.md`, `sprint_2.md` y `sprint_3.md`.
 
-Los roles de proceso rotan cada sprint (tabla en `equipo/ROLES_Y_PROMPTS.md`). En el Sprint 1, Jessica coordina.
+| Sprint | Fechas | Qué se cerró |
+|---|---|---|
+| **1** | 17–21 nov | Repo, protección, Issues, código y pruebas, Fase B (rutas), ficha c2 |
+| **2** | 22 nov | Fase A + JFLAP, Fase C, Fase F, las 10 fichas, conclusiones, revisiones cruzadas |
+| **3** | 23–24 nov | Simulador, exposición, informe PDF, tag `v1.0` y release |
+
+Los roles de proceso rotan cada sprint (tabla en `equipo/ROLES_Y_PROMPTS.md`).
 
 ---
 
-## 7. Dónde estamos (20/11)
+## 7. Dónde estamos
 
-| Ya está | En curso | Falta |
-|---|---|---|
-| Código + 142 pruebas, archivos JFLAP, diagramas, tabla resumen | Camila: Fase A + capturas JFLAP | Fichas p2, p3 (Luis), n1–n4 (Camila), c1, c3 (Jessica) |
-| Fichas p1 (modelo) y c2 | Luis: Fase B | Fases A, B, C redactadas; Fase F; conclusiones |
-| Repo público, Codespaces, Actions, protección de `main`, Issues | Jessica: PR de la ficha c2 | Cierres de los 3 sprints; declaración de IA del README |
-| Limpieza sin emojis (PR aprobado y fusionado) | | Guion de la presentación, informe PDF, simulador, tag `v1.0` |
+El estado real, criterio por criterio de la rúbrica, lo da `python scripts/verificar_entrega.py`. Al cierre del Sprint 2 (22/11): 5 de 7 criterios en OK, con todo el contenido listo (autómatas, rutas, FEFO, 10 fichas, Fase F, conclusiones). Falta lo del Sprint 3: simulador, exposición, informe PDF, release `v1.0` y las últimas capturas.
 
 ---
 
@@ -155,21 +152,19 @@ Los roles de proceso rotan cada sprint (tabla en `equipo/ROLES_Y_PROMPTS.md`). E
 | `s1_05_actions_verde.png` | Pestaña *Actions →* la ejecución más reciente | `pruebas (3.10)` y `pruebas (3.12)` en verde |
 | `s1_06_codespace_pruebas.png` | Terminal del Codespace: `python -m unittest discover -s tests` | Al final: `Ran 142 tests` y `OK` |
 
-### Sprint 1: se toman cuando ocurra
-| Archivo | Cuándo |
+### Sprint 2 (22/11)
+| Archivo | Dónde |
 |---|---|
-| `s1_07_pr_c2.png` | Cuando Luis apruebe el PR de la ficha c2 y se haga el merge |
-| `s1_08_issues_cerrados.png` | Lunes 23/11: *Issues → Closed* |
+| `s2_01_revision_fase_a.png` | PR #30, pestaña *Conversation*: aprobación de Jessica y *Merged* |
+| `s2_02_revision_de_pares.png` | PR #32, pestaña *Conversation*: aprobación con comentario y *Merged* |
+| `s2_03_issues_cerrados.png` | *Issues → Closed*, después de cerrar los Issues terminados |
 
-### Sprints 2 y 3, y entrega final
-| Archivo | Cuándo | Dónde |
-|---|---|---|
-| `s2_01_prs_cerrados.png` | Lunes 30/11 | *Pull requests → Closed* |
-| `s2_02_revision_de_pares.png` | Cuando alguien comente o pida cambios en un PR del Sprint 2 | El PR, pestaña *Conversation* |
-| `s3_01_prs_cerrados.png` | Lunes 7/12 | *Pull requests → Closed* |
-| `s3_02_issues_cerrados.png` | Lunes 7/12 | *Issues → Closed* |
-| `final_01_contribuidores.png` | Antes de entregar | *Insights → Contributors* (deben verse los 3) |
-| `final_02_release_v1.png` | Después de crear el release | *Releases →* `v1.0` con el PDF adjunto |
+### Sprint 3 y entrega final (24/11, antes de subir)
+| Archivo | Dónde |
+|---|---|
+| `s3_01_prs_cerrados.png` | *Pull requests → Closed* |
+| `final_01_contribuidores.png` | *Insights → Contributors* (deben verse los 3) |
+| `final_02_release_v1.png` | *Releases →* `v1.0` con el PDF adjunto |
 
 ---
 
