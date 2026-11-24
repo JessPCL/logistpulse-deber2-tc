@@ -1,6 +1,6 @@
 # Fase E · Implementación y validación
 
-Rúbrica: "Implementación y pruebas (1,5): algoritmo ejecutable o verificador; casos normales, límite e inválidos; resultados reproducibles". El enunciado agrega: "No se evaluará solo que funcione: **debe coincidir con el problema formalizado y con la complejidad argumentada**". Esta sección muestra cómo cumplimos ambas cosas.
+El enunciado pide que la implementación no solo funcione, sino que **coincida con el problema formalizado y con la complejidad argumentada**. Esta sección muestra cómo se cumple: qué se implementó, cómo se organiza el código, cómo se validan las entradas, qué pruebas lo respaldan y cómo se reproducen los resultados.
 
 ## 1. Qué se implementó (más de lo mínimo exigido)
 | Exigido | Implementado |
@@ -12,11 +12,12 @@ Rúbrica: "Implementación y pruebas (1,5): algoritmo ejecutable o verificador; 
 | — | Los 3 autómatas como AFD en Python, idénticos a los `.jff` de JFLAP (probado) |
 
 ## 2. Separación lectura / procesamiento / presentación
-```
-data/*.json ──► io_datos.py (LECTURA: valida y convierte) ──► automatas/ rutas/ inventario/ casos/ (PROCESAMIENTO: algoritmos puros)
-                                                                         │
-                                         presentacion.py / presentacion_casos.py (PRESENTACIÓN: texto y tablas) ◄┘
-```
+El código tiene tres capas, y los datos fluyen en un solo sentido:
+
+1. **Lectura** (`io_datos.py`): lee `data/*.json`, valida los datos y los convierte en estructuras de Python.
+2. **Procesamiento** (`automatas/`, `rutas/`, `inventario/`, `casos/`): algoritmos puros, sin lectura de archivos ni impresión.
+3. **Presentación** (`presentacion.py`, `presentacion_casos.py`): convierte los resultados en texto y tablas.
+
 - Los módulos de procesamiento **no leen archivos ni imprimen**. `tests/test_registro.py::TestCapas` lo comprueba automáticamente analizando el código.
 - Los datos de los 10 expedientes están en `data/casos_simulador.json`, no incrustados en el código (también se prueba).
 

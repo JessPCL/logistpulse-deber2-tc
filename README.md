@@ -58,8 +58,8 @@ Todos los comandos se ejecutan **desde la carpeta raíz del repo**. Si la máqui
 | 10 fichas + tabla resumen | `docs/fichas/*.md` (modelo terminado: `p1.md`; formato: `docs/PLANTILLA_FICHA.md`), `docs/generado/tabla_resumen.md` | p: Luis · n: Camila · c: Jessica |
 | Informe sobre el problema de la parada | `docs/fase_F_nota_parada.md` (+ evidencia en `docs/generado/crecimiento.md`) | Jessica |
 | Supuestos, límites y conclusiones (rúbrica de comunicación) | `docs/conclusiones.md` | Jessica |
-| Tres sprints (roles rotativos, una unidad de trabajo por correo) + release | `docs/sprints/`, historial Git, tag `v1.0` | Rol de coordinación de cada sprint |
-| Informe PDF (resume el análisis y enlaza al repositorio lo demás) | `scripts/armar_informe.py` → `docs/generado/INFORME.docx` → Word → PDF adjunto al release `v1.0` y subido al aula (no se versiona por su peso; `--completo` = todo dentro del PDF) | Jessica |
+| Tres sprints (roles rotativos, una unidad de trabajo por correo) + release | `docs/sprints/`, historial Git, tags `v1.0` y `v1.1` (versión final) | Rol de coordinación de cada sprint |
+| Informe PDF (resume el análisis y enlaza al repositorio lo demás) | `scripts/armar_informe.py` → `docs/generado/INFORME.docx` → Word (Times New Roman 12) → PDF adjunto al release `v1.1` y subido al aula (no se versiona por su peso; `--completo` = todo dentro del PDF) | Jessica |
 | Presentación de 8–10 min | `docs/presentacion_guion.md` | Todos (integra Jessica) |
 
 ```
@@ -95,13 +95,13 @@ tests/     más de 140 pruebas unittest (también corren con pytest)
 - Un *Issue* por correo y por historia del backlog (`python scripts/crear_issues.py --crear`); el PR lo cierra con `Closes #N`.
 - Comandos exactos (`gh pr create`, `gh pr review`, `gh pr merge`, `gh release create`): `equipo/GUIA_CODESPACES.md`.
 - Si cambian el código: pruebas en OK → `python scripts/generar_docs.py`. Antes de cada PR y antes de entregar: `python scripts/verificar_entrega.py`.
-- Cierre: `git tag -a v1.0 -m "Entrega final Deber 2"` → `git push origin v1.0` → *Release* en GitHub.
+- Cierre: `git tag -a v1.0 -m "Entrega final Deber 2"` → `git push origin v1.0` → *Release* en GitHub. La versión final del informe se publicó como release `v1.1`.
 
 ## Declaración de uso de IA
 - **Herramientas:** cada integrante usó un asistente de IA conversacional con los prompts de `equipo/ROLES_Y_PROMPTS.md`; Jessica usó Claude (Anthropic).
 - **Para qué:** generar y revisar el código Python y sus pruebas, redactar borradores de las fichas, las fases y el informe, y organizar el repositorio y los sprints.
 - **Cómo se verificó:** 146 pruebas automáticas (casos normales, límites e inválidos), pruebas de complejidad que cuentan operaciones, comparación de los .jff en JFLAP (Multiple Run), salidas generadas ejecutando el código y revisión cruzada de cada cambio en un PR aprobado por otro integrante.
-- **Responsabilidad:** cada integrante revisó, entiende y defiende su parte: Camila (Fase A, JFLAP, n1–n4), Luis (Fases B y C, p2, p3) y Jessica (gestión, c1–c3, Fase F, conclusiones e informe).
+- **Responsabilidad:** cada integrante revisó, entiende y defiende su parte: Camila (Fase A, JFLAP, n1–n4), Luis (Fases B y C, p1–p3) y Jessica (gestión, c1–c3, Fase F, conclusiones e informe).
 
 ## Referencias
 Sipser, *Introduction to the Theory of Computation*, 3.ª ed. (caps. 1, 4, 5 y 7) · CLRS (caminos mínimos, flujo máximo, NP-completitud) · Cook (1971) · Karp (1972) · JFLAP: https://www.jflap.org

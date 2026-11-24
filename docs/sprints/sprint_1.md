@@ -1,7 +1,6 @@
 # Sprint 1
 **Fechas:** martes 17 al sábado 21 de noviembre de 2026 · **Objetivo:** Modelar pedidos, reservas y compras con autómatas; definir el grafo de la planta y los casos de ruta.
 **Evidencia de revisión que pide el enunciado:** Diagramas de estados y grafo con entradas, eventos y supuestos.
-**Ajuste de plazo:** la entrega real es el martes 24/11, así que los tres sprints se comprimieron: Sprint 1 (17–21/11), Sprint 2 (22/11) y Sprint 3 (23–24/11).
 
 ## Roles de este sprint (rotativos)
 | Coordinación y backlog | Formalización | Algoritmos y análisis | Implementación y validación |

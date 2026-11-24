@@ -215,16 +215,21 @@ def chk_sin_emojis():
     return (OK, "documentos entregables sin emojis") if not con else (PEND, "quitar emojis en: " + "; ".join(con))
 
 
-def pdf_en_release(tag: str = "v1.0") -> str:
-    """Nombre del PDF adjunto al release (gh en el Codespace); "" si no hay gh, red o release."""
+def pdf_en_release() -> str:
+    """Nombre del PDF adjunto al último release (gh en el Codespace); "" si no hay gh, red o release."""
     if shutil.which("gh") is None:
         return ""
     try:
-        r = subprocess.run(["gh", "release", "view", tag, "--json", "assets", "-q", ".assets[].name"],
+        r = subprocess.run(["gh", "release", "view", "--json", "tagName,assets", "-q",
+                            '.tagName + " " + ([.assets[].name] | join(" "))'],
                            cwd=RAIZ, capture_output=True, text=True, timeout=20)
     except (OSError, subprocess.TimeoutExpired):
         return ""
-    return next((n for n in r.stdout.split() if n.lower().endswith(".pdf")), "") if r.returncode == 0 else ""
+    if r.returncode != 0 or not r.stdout.split():
+        return ""
+    tag, *nombres = r.stdout.split()
+    pdf = next((n for n in nombres if n.lower().endswith(".pdf")), "")
+    return f"{pdf} adjunto al release {tag}" if pdf else ""
 
 
 def chk_informe():
@@ -234,9 +239,9 @@ def chk_informe():
         return OK, "informe: " + ", ".join(str(p.relative_to(RAIZ)) for p in pdfs) + " (fuera de git: va en el release y en el aula)"
     adjunto = pdf_en_release()
     if adjunto:
-        return OK, f"informe: {adjunto} adjunto al release v1.0"
+        return OK, f"informe: {adjunto}"
     if (RAIZ / "docs" / "generado" / "INFORME.md").exists():
-        return PEND, "hay borrador (docs/generado/INFORME.docx); falta exportarlo a PDF con Word como docs/INFORME_Deber2_LOGISTPULSE.pdf y adjuntarlo al release v1.0"
+        return PEND, "hay borrador (docs/generado/INFORME.docx); falta exportarlo a PDF con Word y adjuntarlo al release"
     return PEND, "no hay informe: corre scripts/armar_informe.py y exporta a PDF (Jessica)"
 
 

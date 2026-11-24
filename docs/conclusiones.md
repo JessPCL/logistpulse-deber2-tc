@@ -2,7 +2,7 @@
 **Responsable: Jessica**
 
 ## Supuestos
-Todos están justificados en `docs/DECISIONES_Y_HALLAZGOS.md`; aquí va el resumen.
+Cada supuesto se justifica en `docs/DECISIONES_Y_HALLAZGOS.md` (decisiones A1–A8, B1–B3, C1–C4 y E1–E4); aquí se resumen.
 - **Modelo de cómputo:** máquina de Turing determinista, o de forma equivalente el modelo RAM con enteros codificados **en binario**. Por eso el tamaño de un número B es log₂B bits, y un algoritmo O(B) no es polinomial (H9).
 - **Autómatas (A1–A8):** F son los estados donde el proceso cerró de forma legítima; *Cancelado* y *Rechazada* cuentan como cierre válido. La variante "solo pedidos entregados" queda en `PEDIDO_ESTRICTO`. La función δ es parcial con un sumidero ERROR, y un símbolo fuera de Σ es un dato inválido, no un rechazo.
 - **Planta (B1–B3):** el grafo es no dirigido, los pesos son metros ≥ 0, el origen es R y el destino D. Una zona bloqueada se modela como vértice eliminado. Los empates se resuelven por nombre para que la salida sea reproducible.
