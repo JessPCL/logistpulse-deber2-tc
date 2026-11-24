@@ -2,15 +2,21 @@
 title: "Deber 2 · Teoría de la Computación — LOGISTPULSE: decisiones, algoritmos y límites computacionales"
 subtitle: "Universidad San Francisco de Quito · Colegio Politécnico"
 author: ["Camila Granda", "Luis Borja", "Jessica Pijal"]
+date: "24 de noviembre de 2026"
+lang: es
 ---
 
-# 1. Introducción, regla conceptual y supuestos
+# 1. Introducción
 
-P ⊆ NP y NP-completo ⊆ NP; la separación P ≠ NP no está demostrada. Cada correo se clasifica según la evidencia: (A) algoritmo polinómico conocido, (B) certificado + verificador polinómico sin afirmar NP-completitud, (C) NP-completo con reducción desde un problema conocido.
+LOGISTPULSE es la empresa de logística del enunciado. Este trabajo modela sus procesos con tres autómatas finitos deterministas (Fase A), busca rutas en la planta con Dijkstra y BFS (Fase B), define la selección de lotes FEFO y la regla de reposición (Fase C), clasifica diez problemas recibidos por correo como P, NP o NP-completos (Fase D), los implementa y prueba en Python (Fase E) y distingue decidibilidad de eficiencia con el problema de la parada (Fase F).
 
-## Dónde está cada cosa
+**Regla de clasificación.** P ⊆ NP y NP-completo ⊆ NP; la separación P ≠ NP no está demostrada. Cada correo se clasifica según la evidencia disponible: (A) un algoritmo polinómico conocido; (B) un certificado con verificador polinómico, sin afirmar NP-completitud porque no se conoce una reducción ni un algoritmo polinómico; (C) NP-completitud, demostrada con la pertenencia a NP y una reducción polinómica desde un problema NP-completo conocido.
 
-Este informe resume el análisis; el material completo y ejecutable está en el repositorio público https://github.com/JessPCL/logistpulse-deber2-tc (versión etiquetada `v1.0`).
+**Organización.** Las secciones 2 a 7 corresponden a las fases A a F. La sección 8 resume la gestión del proyecto (backlog, sprints y evidencias), la sección 9 reúne los supuestos, los límites de la inferencia y las conclusiones, y la sección 10 declara el uso de IA.
+
+## 1.1 Material de respaldo en el repositorio
+
+Este informe resume el análisis. El material completo y ejecutable está en el repositorio público https://github.com/JessPCL/logistpulse-deber2-tc; la versión entregada es la etiqueta `v1.1`.
 
 | Material | En el repositorio |
 |---|---|
@@ -26,46 +32,9 @@ Este informe resume el análisis; el material completo y ejecutable está en el 
 | Respuestas del simulador y reporte de los diez correos | [docs/simulador](https://github.com/JessPCL/logistpulse-deber2-tc/tree/main/docs/simulador) |
 | Instrucciones de ejecución | [README.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/README.md) |
 
-### 1. Decisiones de modelado
+## 1.2 Hallazgos del análisis
 
-#### Fase A · Autómatas
-| # | Decisión | Por qué |
-|---|---|---|
-| A1 | **F = estados terminales legítimos** (el ciclo cerró de forma válida) en los 3 AFD. Pedido: F = {Entregado, Cancelado}. Reserva: F = {Consumida, Liberada, Expirada, Rechazada}. Compra: F = {Recibida, Rechazada}. | Las Figuras 3 y 4 marcan *Rechazada* como final; la Figura 2 no marca *Cancelado*. Usamos un criterio único para los tres. La variante "solo pedidos entregados" está en `PEDIDO_ESTRICTO` (F = {Entregado}), así que se puede cambiar en una línea. |
-| A2 | Símbolos de **1 carácter** (ej. `c` = confirmar). | JFLAP *Multiple Run* lee una cadena por línea, carácter a carácter. |
-| A3 | δ **parcial**; lo no declarado va a un **sumidero ERROR** (no final y absorbente). | Así δ es total, como pide la definición formal. JFLAP hace lo mismo implícitamente: si no hay transición, rechaza. |
-| A4 | Un símbolo ∉ Σ **no es un rechazo**: es una entrada inválida (ValueError). | La cadena no está en Σ*. Separamos "rechazada por el modelo" de "dato mal formado". |
-| A5 | Pedido: "liberar/cancelar" en Reservado = **un solo evento `x`** (cancelar libera la reserva). | La Figura 2 lo dibuja como una sola flecha. |
-| A6 | Pedido: **no se puede cancelar en Preparación** ni después. | La Figura 2 no tiene esa flecha: una vez iniciado el picking, el pedido sigue. Se prueba con la cadena `crix`, que se rechaza. |
-| A7 | Compra: se agrega el bucle **δ(Recepción parcial, p) = Recepción parcial**. | Se pueden recibir varias entregas parciales antes de completar. Es la parte del enunciado que pide "completar eventos". |
-| A8 | Los estados finales **no tienen transiciones de salida**. | Un proceso cerrado no se reabre. Así se rechaza "Rechazada → Enviada". |
-
-#### Fase B · Planta
-| # | Decisión |
-|---|---|
-| B1 | Grafo **no dirigido** (pasillos de doble sentido), pesos = metros (≥ 0), origen **R**, destino **D**. Datos en `data/planta.json`. |
-| B2 | Zona bloqueada = vértice eliminado. **Origen bloqueado = dato inválido** (error). **Destino bloqueado = no hay ruta** (dist = ∞). |
-| B3 | Desempate reproducible: el heap compara (distancia, nombre del vértice) y los vecinos se recorren en orden alfabético. |
-
-#### Fase C · Inventario
-| # | Decisión |
-|---|---|
-| C1 | Lote elegible ⇔ mismo SKU ∧ disponible > 0 ∧ **vencimiento > fecha de referencia**. Un lote que vence **hoy** ya no se reserva. |
-| C2 | Orden FEFO: (vencimiento ↑, código de lote ↑). |
-| C3 | Si el stock no alcanza, las **tres** políticas del enunciado están implementadas: `parcial` (reserva lo que hay y reporta el pendiente → PARCIAL), `rechazar` (no reserva nada → RECHAZADO) y `esperar` (no reserva; el pedido queda EN_ESPERA con `requiere_reposicion = True`, que alimenta la regla de reposición). |
-| C4 | `en_orden` = solo órdenes de compra **abiertas** (emitidas y no recibidas). Esto evita sugerencias duplicadas (ver H5). |
-
-#### Fase E · Código
-| # | Decisión |
-|---|---|
-| E1 | Capas separadas: **lectura** (`io_datos.py`, que lee `data/*.json`, incluidos los 10 expedientes en `data/casos_simulador.json`), **procesamiento** (`automatas/`, `rutas/`, `inventario/`, `casos/`: algoritmos puros, sin E/S) y **presentación** (`presentacion.py`, `presentacion_casos.py`). Lo comprueba `tests/test_registro.py::TestCapas`. |
-| E2 | Cada algoritmo acepta un `Contador` opcional que cuenta su operación dominante. `tests/test_complejidad.py` compara esos conteos con la cota Big-O (y además mide tiempos reales con tolerancia). Así el Big-O del informe queda **atado al código**. |
-| E3 | Nada se ordena dentro de bucles cuya cota no lo permita (BFS, Edmonds–Karp, verificadores). Held–Karp recorre las máscaras en orden creciente: O(n²·2ⁿ) real. |
-| E4 | Las salidas observadas se **generan ejecutando** el código (`scripts/generar_docs.py`), también dentro de cada ficha (bloque `SALIDA`), así que nunca se inventan. |
-
----
-
-### 2. Hallazgos
+Durante el análisis aparecieron catorce resultados que precisan o corrigen una lectura rápida del enunciado. Cada uno está respaldado por una prueba automática del repositorio.
 
 | # | Hallazgo | Dónde se prueba |
 |---|---|---|
@@ -73,7 +42,7 @@ Este informe resume el análisis; el material completo y ejecutable está en el 
 | H2 | BFS en la planta da R→A→E→D: 3 tramos pero **12 m**. BFS minimiza tramos, no metros. Con pesos hay que usar Dijkstra. | `test_bfs_minimiza_tramos_no_costo` |
 | H3 | p2 también empata: Quito→Latacunga→Guayaquil = Quito→Ambato→Guayaquil = 8. | `TestP2` |
 | H4 | p3: lo que sale de Planta suma 12, pero el **flujo máximo es 10**. El corte mínimo es {Quito→Clientes, Guayaquil→Clientes}. El correo advierte justamente esto. | `TestP3` |
-| H5 | Reposición sin duplicados: el SKU sugiere 37. Después de emitir esa orden (en_orden += 37) la posición pasa a 50 > 30 y la nueva sugerencia es **0**. | `test_no_duplica_si_ya_hay_orden_abierta` |
+| H5 | Reposición sin duplicados: con 18 unidades disponibles, 5 reservadas y ninguna orden abierta, la regla sugiere 37. Después de emitir esa orden (en_orden += 37) la posición sube a 50 > 30 y la nueva sugerencia es **0**. Con las 10 unidades en orden del ejemplo del enunciado sugiere 27. | `test_no_duplica_si_ya_hay_orden_abierta` |
 | **H6** | **c1: la instancia del simulador es 2-CNF** (x1∨¬x2)∧(x2∨x3), y 2-SAT ∈ **P** (O(n+m)). La ficha del simulador dice "fórmula 3-CNF" y el correo habla de reglas booleanas en general: ese problema general sigue siendo NP-completo. **Que una instancia sea fácil no cambia la clase del problema.** | `test_instancia_simulador_es_2cnf` |
 | H7 | c3: el asunto y la ficha del simulador hablan de "k almacenes" y de "zona cubierta por un almacén propio o vecino" (eso es *Dominating Set*). El **cuerpo del correo** pide otra cosa: hasta k **equipos de inspección**, con un equipo en al menos un extremo de **cada corredor** (*Vertex Cover*); el mapa del portal se titula "Corredores entre zonas" y los datos preguntan "¿Cubre toda arista?". Seguimos el cuerpo del correo. Los dos son NP-completos y en esta instancia dan la misma respuesta: S = {B}. | `TestC3` |
 | H8 | c2: el correo pide **regresar** al punto de salida, así que es un **ciclo** hamiltoniano (TSP), no un camino. | `TestC2` |
@@ -84,50 +53,43 @@ Este informe resume el análisis; el material completo y ejecutable está en el 
 | H13 | Edmonds–Karp hace **el mismo número de aumentos** si se multiplican todas las capacidades por 10⁶. Es la prueba empírica de que O(V·E²) no depende del valor de las capacidades. | `test_edmonds_karp_cota_independiente_de_las_capacidades` |
 | H14 | Búsqueda de factores: con N primo y B = N−1, las divisiones se **duplican con cada bit** extra (8 → 16 bits). Es la prueba empírica de H9. | `test_factor_rango_exponencial_en_bits` |
 
----
+## 1.3 Modelo de cómputo y convenciones
 
-### 3. Modelo de cómputo y convenciones
-- **Modelo de cómputo**: máquina de Turing determinista; enteros codificados en **binario**; M(k) es el costo de multiplicar números de k bits (O(k²) con el método escolar).
-- **Big-O siempre con variables definidas** (V, E, n, m, k, L, P, B…), en tiempo **y** espacio.
-- **Grupo B**: nunca escribir "es NP-completo". Escribir: "pertenece a NP (certificado + verificador polinómico); no se conoce un algoritmo polinómico ni una prueba de NP-completitud".
-- **Grupo C**: la reducción va **del problema conocido al nuestro**: CONOCIDO ≤p NUESTRO. Hay que dar la construcción, la correctitud (⇔) y el costo polinómico de la transformación.
-- **Decidible ≠ eficiente**. Los 10 casos son decidibles; los grupos B y C pueden ser impracticables en instancias grandes.
-- P ⊆ NP y NPC ⊆ NP. **No** son tres conjuntos disjuntos (Figura 1 del enunciado). "NP" **no** significa "no polinómico". No se afirma P ≠ NP.
-- Referencias a Sipser con la numeración de la **3.ª edición**: PATH ∈ P (Teo. 7.14); Cook–Levin (§7.4); VERTEX-COVER y HAMPATH NP-completos (§7.5); A_TM indecidible por diagonalización (Teo. 4.11); HALT_TM indecidible por reducción desde A_TM (Teo. 5.1).
-
----
-
+- **Modelo de cómputo:** máquina de Turing determinista (o, de forma equivalente, el modelo RAM) con enteros codificados en binario. Un número B ocupa unos log₂B bits, y M(k) es el costo de multiplicar números de k bits (O(k²) con el método escolar).
+- **Big-O:** siempre con las variables definidas (V, E, n, m, k, L, P, B) y para tiempo y espacio.
+- **Reducciones (grupo C):** cada una va del problema conocido al nuestro (CONOCIDO ≤p NUESTRO) e incluye la construcción, la correctitud (⇔) y el costo polinómico de la transformación.
+- **Referencias:** Sipser, 3.ª ed. (PATH ∈ P, Teo. 7.14; Cook–Levin, §7.4; VERTEX-COVER y HAMPATH, §7.5; A_TM indecidible, Teo. 4.11; HALT_TM indecidible, Teo. 5.1) y CLRS (caminos mínimos, flujo máximo y NP-completitud).
 
 # 2. Fase A · Autómatas
 
 
-**Responsable:** Camila Granda · **Rúbrica:** 2,0 pts (tres modelos correctos; estados, eventos, transiciones aceptadas y no válidas; evidencia JFLAP).
+**Responsable:** Camila Granda
 
 ---
 
-### 1. Decisiones generales de modelado
+## 2.1 Decisiones generales de modelado
 
 Para garantizar coherencia entre la definición formal, los diagramas, los archivos JFLAP y el código en `logistpulse/automatas/definiciones.py`, se aplican criterios uniformes a los tres autómatas finitos deterministas (AFD):
 
-1. **Criterio único para estados finales $F$ (Decisión A1):** Se definen como estados finales todos los **estados terminales legítimos**, es decir, aquellos donde el ciclo operativo cierra de manera válida. En las Figuras 3 y 4 del enunciado, *Rechazada* aparece marcada como estado final, mientras que en la Figura 2 *Cancelado* no lleva doble círculo. Para mantener un criterio único en los tres procesos, *Cancelado* se incluye en $F$ para el pedido (la variante estricta donde solo *Entregado* es final queda disponible en `PEDIDO_ESTRICTO`).
-2. **Símbolos de un carácter (Decisión A2):** Cada evento operativo se codifica con un único símbolo en $\Sigma$ para que la herramienta *Multiple Run* de JFLAP procese una cadena por línea carácter a carácter.
-3. **Función de transición total mediante estado sumidero `ERROR` (Decisión A3):** En los diagramas y en JFLAP solo se dibujan las transiciones válidas ($\delta$ parcial); cualquier transición no declarada para un par $(q, a) \in Q \times \Sigma$ se dirige al estado sumidero no final y absorbente `ERROR`, donde $\delta(\text{ERROR}, a) = \text{ERROR}$ para todo $a \in \Sigma$. De este modo, $\delta: Q \times \Sigma \to Q$ es formalmente una función total.
-4. **Separación entre rechazo del modelo y dato mal formado (Decisión A4):** Si una cadena contiene un símbolo $a \notin \Sigma$, no pertenece a $\Sigma^*$ y el código lanza `ValueError` en lugar de reportar un rechazo del autómata.
+1. **Criterio único para estados finales F (Decisión A1):** Se definen como estados finales todos los **estados terminales legítimos**, es decir, aquellos donde el ciclo operativo cierra de manera válida. En las Figuras 3 y 4 del enunciado, *Rechazada* aparece marcada como estado final, mientras que en la Figura 2 *Cancelado* no lleva doble círculo. Para mantener un criterio único en los tres procesos, *Cancelado* se incluye en F para el pedido (la variante estricta donde solo *Entregado* es final queda disponible en `PEDIDO_ESTRICTO`).
+2. **Símbolos de un carácter (Decisión A2):** Cada evento operativo se codifica con un único símbolo en Σ para que la herramienta *Multiple Run* de JFLAP procese una cadena por línea carácter a carácter.
+3. **Función de transición total mediante estado sumidero `ERROR` (Decisión A3):** En los diagramas y en JFLAP solo se dibujan las transiciones válidas (δ parcial); cualquier transición no declarada para un par (q, a) ∈ Q × Σ se dirige al estado sumidero no final y absorbente `ERROR`, donde δ(ERROR, a) = ERROR para todo a ∈ Σ. De este modo, δ: Q × Σ → Q es formalmente una función total.
+4. **Separación entre rechazo del modelo y dato mal formado (Decisión A4):** Si una cadena contiene un símbolo a ∉ Σ, no pertenece a Σ^\*^ y el código lanza `ValueError` en lugar de reportar un rechazo del autómata.
 5. **Eventos completados y cierre definitivo (Decisiones A5–A8):**
    * **A5 (Pedido):** La flecha *liberar/cancelar* desde *Reservado* se modela como el evento único `x` (*cancelar*), entendiendo que cancelar un pedido reservado libera automáticamente su reserva.
    * **A6 (Pedido):** No existe transición de cancelación desde *Preparación*, *Empacado* ni *Despachado*, respetando la Figura 2: una vez iniciado el picking, el pedido no se cancela.
-   * **A7 (Orden de compra):** Se incorpora el bucle $\delta(\text{Recepcion parcial}, p) = \text{Recepcion parcial}$ para admitir múltiples entregas parciales antes de completar la recepción.
+   * **A7 (Orden de compra):** Se incorpora el bucle δ(Recepcion parcial, p) = Recepcion parcial para admitir múltiples entregas parciales antes de completar la recepción.
    * **A8 (Todos):** Ningún estado final posee transiciones de salida; un proceso cerrado no puede reabrirse.
 
 ---
 
-### 2. Autómata 1: Ciclo de vida del pedido (`M_Pedido`)
+## 2.2 Autómata 1: Ciclo de vida del pedido (`M_Pedido`)
 
-#### 2.1 Definición formal y significado operativo
+### Definición formal y significado operativo
 
-$$M_{\text{Pedido}} = (Q, \Sigma, \delta, q_0, F)$$
+M~Pedido~ = (Q, Σ, δ, q~0~, F)
 
-* **$Q$ (Estados):** `Borrador`, `Confirmado`, `Reservado`, `Preparacion`, `Empacado`, `Despachado`, `Entregado`, `Cancelado`, `ERROR`.
+* **Q (Estados):** `Borrador`, `Confirmado`, `Reservado`, `Preparacion`, `Empacado`, `Despachado`, `Entregado`, `Cancelado`, `ERROR`.
   * `Borrador`: pedido registrado inicialmente, aún sin confirmación comercial.
   * `Confirmado`: pedido validado y aprobado para reservar inventario.
   * `Reservado`: inventario asignado al pedido.
@@ -137,7 +99,7 @@ $$M_{\text{Pedido}} = (Q, \Sigma, \delta, q_0, F)$$
   * `Entregado`: pedido recibido por el cliente (cierre exitoso).
   * `Cancelado`: pedido anulado antes de iniciar el picking (cierre legítimo sin entrega).
   * `ERROR`: estado sumidero no final que absorbe cualquier secuencia con una transición inválida.
-* **$\Sigma$ (Eventos):**
+* **Σ (Eventos):**
   * `c` = *confirmar* (aprueba el borrador).
   * `r` = *reservar* (asigna inventario al pedido confirmado).
   * `i` = *iniciar_picking* (comienza la preparación física).
@@ -145,10 +107,10 @@ $$M_{\text{Pedido}} = (Q, \Sigma, \delta, q_0, F)$$
   * `d` = *despachar* (libera el pedido a transporte).
   * `n` = *entregar* (confirma recepción del cliente).
   * `x` = *cancelar* (anula el pedido; desde *Reservado* implica liberar la reserva).
-* **$q_0$:** `Borrador`.
-* **$F$:** `{Entregado, Cancelado}`.
+* **q~0~:** `Borrador`.
+* **F:** `{Entregado, Cancelado}`.
 
-#### 2.2 Tabla de transiciones ($\delta$ total)
+### Tabla de transiciones (δ total)
 
 | Estado | `c` (confirmar) | `r` (reservar) | `i` (iniciar_picking) | `e` (empacar) | `d` (despachar) | `n` (entregar) | `x` (cancelar) |
 |---|---|---|---|---|---|---|---|
@@ -162,26 +124,28 @@ $$M_{\text{Pedido}} = (Q, \Sigma, \delta, q_0, F)$$
 | Cancelado * | ERROR | ERROR | ERROR | ERROR | ERROR | ERROR | ERROR |
 | ERROR (sumidero) | ERROR | ERROR | ERROR | ERROR | ERROR | ERROR | ERROR |
 
-*Diagrama:* `docs/diagramas/afd_pedido.png` · *Archivo JFLAP:* `jflap/pedido.jff`.
+![Diagrama de estados (pedido)](../diagramas/afd_pedido.png)
 
-#### 2.3 Secuencias válidas e inválidas
+Archivo JFLAP: `jflap/pedido.jff`.
+
+### Secuencias válidas e inválidas
 
 | Tipo | Cadena | Secuencia de eventos / estados | Resultado | Transición clave que acepta o rechaza |
 |---|---|---|---|---|
-| Válida 1 (enunciado) | `criedn` | Borrador → Confirmado → Reservado → Preparacion → Empacado → Despachado → Entregado | **Aceptada** | $\delta(\text{Despachado}, n) = \text{Entregado} \in F$. |
-| Válida 2 | `crx` | Borrador → Confirmado → Reservado → Cancelado | **Aceptada** | $\delta(\text{Reservado}, x) = \text{Cancelado} \in F$ (cierre legítimo con liberación de reserva). |
-| Inválida 1 (enunciado) | `d` | Borrador $\xrightarrow{d}$ ERROR | **Rechazada** | $\delta(\text{Borrador}, d) = \text{ERROR}$: no se puede despachar sin confirmar, reservar, preparar y empacar. |
-| Inválida 2 (Decisión A6) | `crix` | Borrador → Confirmado → Reservado → Preparacion $\xrightarrow{x}$ ERROR | **Rechazada** | $\delta(\text{Preparacion}, x) = \text{ERROR}$: una vez iniciado el picking, el pedido no admite cancelación. |
+| Válida 1 (enunciado) | `criedn` | Borrador → Confirmado → Reservado → Preparacion → Empacado → Despachado → Entregado | **Aceptada** | δ(Despachado, n) = Entregado ∈ F. |
+| Válida 2 | `crx` | Borrador → Confirmado → Reservado → Cancelado | **Aceptada** | δ(Reservado, x) = Cancelado ∈ F (cierre legítimo con liberación de reserva). |
+| Inválida 1 (enunciado) | `d` | Borrador —d→ ERROR | **Rechazada** | δ(Borrador, d) = ERROR: no se puede despachar sin confirmar, reservar, preparar y empacar. |
+| Inválida 2 (Decisión A6) | `crix` | Borrador → Confirmado → Reservado → Preparacion —x→ ERROR | **Rechazada** | δ(Preparacion, x) = ERROR: una vez iniciado el picking, el pedido no admite cancelación. |
 
 ---
 
-### 3. Autómata 2: Ciclo de vida de la reserva (`M_Reserva`)
+## 2.3 Autómata 2: Ciclo de vida de la reserva (`M_Reserva`)
 
-#### 3.1 Definición formal y significado operativo
+### Definición formal y significado operativo
 
-$$M_{\text{Reserva}} = (Q, \Sigma, \delta, q_0, F)$$
+M~Reserva~ = (Q, Σ, δ, q~0~, F)
 
-* **$Q$ (Estados):** `Solicitada`, `Validada`, `Reservada`, `Consumida`, `Liberada`, `Expirada`, `Rechazada`, `ERROR`.
+* **Q (Estados):** `Solicitada`, `Validada`, `Reservada`, `Consumida`, `Liberada`, `Expirada`, `Rechazada`, `ERROR`.
   * `Solicitada`: petición de reserva ingresada al sistema.
   * `Validada`: existencia de stock confirmada preliminarmente.
   * `Reservada`: unidades bloqueadas formalmente para el pedido.
@@ -190,17 +154,17 @@ $$M_{\text{Reserva}} = (Q, \Sigma, \delta, q_0, F)$$
   * `Expirada`: inventario liberado por vencimiento de plazo (cierre legítimo).
   * `Rechazada`: solicitud denegada por falta de stock (cierre legítimo).
   * `ERROR`: estado sumidero absorbente.
-* **$\Sigma$ (Eventos):**
+* **Σ (Eventos):**
   * `v` = *validar* (verifica disponibilidad de stock).
   * `s` = *sin_stock* (rechaza la solicitud por inventario insuficiente).
   * `c` = *confirmar* (bloquea efectivamente las unidades).
   * `p` = *picking* (consume el inventario reservado).
   * `x` = *cancelar* (libera una reserva activa).
   * `t` = *vence_plazo* (caduca la reserva por tiempo).
-* **$q_0$:** `Solicitada`.
-* **$F$:** `{Consumida, Liberada, Expirada, Rechazada}`.
+* **q~0~:** `Solicitada`.
+* **F:** `{Consumida, Liberada, Expirada, Rechazada}`.
 
-#### 3.2 Tabla de transiciones ($\delta$ total)
+### Tabla de transiciones (δ total)
 
 | Estado | `v` (validar) | `s` (sin_stock) | `c` (confirmar) | `p` (picking) | `x` (cancelar) | `t` (vence_plazo) |
 |---|---|---|---|---|---|---|
@@ -213,26 +177,28 @@ $$M_{\text{Reserva}} = (Q, \Sigma, \delta, q_0, F)$$
 | Rechazada * | ERROR | ERROR | ERROR | ERROR | ERROR | ERROR |
 | ERROR (sumidero) | ERROR | ERROR | ERROR | ERROR | ERROR | ERROR |
 
-*Diagrama:* `docs/diagramas/afd_reserva.png` · *Archivo JFLAP:* `jflap/reserva.jff`.
+![Diagrama de estados (reserva)](../diagramas/afd_reserva.png)
 
-#### 3.3 Secuencias válidas e inválidas
+Archivo JFLAP: `jflap/reserva.jff`.
+
+### Secuencias válidas e inválidas
 
 | Tipo | Cadena | Secuencia de eventos / estados | Resultado | Transición clave que acepta o rechaza |
 |---|---|---|---|---|
-| Válida 1 (enunciado) | `vcp` | Solicitada → Validada → Reservada → Consumida | **Aceptada** | $\delta(\text{Reservada}, p) = \text{Consumida} \in F$. |
-| Válida 2 | `vct` | Solicitada → Validada → Reservada → Expirada | **Aceptada** | $\delta(\text{Reservada}, t) = \text{Expirada} \in F$. |
-| Inválida 1 | `vp` | Solicitada → Validada $\xrightarrow{p}$ ERROR | **Rechazada** | $\delta(\text{Validada}, p) = \text{ERROR}$: impide consumir una reserva que nunca fue confirmada. |
-| Inválida 2 | `sv` | Solicitada → Rechazada $\xrightarrow{v}$ ERROR | **Rechazada** | $\delta(\text{Rechazada}, v) = \text{ERROR}$: una reserva rechazada es final y no puede validarse después. |
+| Válida 1 (enunciado) | `vcp` | Solicitada → Validada → Reservada → Consumida | **Aceptada** | δ(Reservada, p) = Consumida ∈ F. |
+| Válida 2 | `vct` | Solicitada → Validada → Reservada → Expirada | **Aceptada** | δ(Reservada, t) = Expirada ∈ F. |
+| Inválida 1 | `vp` | Solicitada → Validada —p→ ERROR | **Rechazada** | δ(Validada, p) = ERROR: impide consumir una reserva que nunca fue confirmada. |
+| Inválida 2 | `sv` | Solicitada → Rechazada —v→ ERROR | **Rechazada** | δ(Rechazada, v) = ERROR: una reserva rechazada es final y no puede validarse después. |
 
 ---
 
-### 4. Autómata 3: Ciclo de vida de la orden de compra (`M_OrdenCompra`)
+## 2.4 Autómata 3: Ciclo de vida de la orden de compra (`M_OrdenCompra`)
 
-#### 4.1 Definición formal y significado operativo
+### Definición formal y significado operativo
 
-$$M_{\text{OrdenCompra}} = (Q, \Sigma, \delta, q_0, F)$$
+M~OrdenCompra~ = (Q, Σ, δ, q~0~, F)
 
-* **$Q$ (Estados):** `Borrador`, `En aprobacion`, `Aprobada`, `Rechazada`, `Enviada`, `Recepcion parcial`, `Recibida`, `ERROR`.
+* **Q (Estados):** `Borrador`, `En aprobacion`, `Aprobada`, `Rechazada`, `Enviada`, `Recepcion parcial`, `Recibida`, `ERROR`.
   * `Borrador`: orden creada antes de someterse a revisión.
   * `En aprobacion`: orden pendiente de autorización administrativa.
   * `Aprobada`: orden autorizada, lista para emitirse al proveedor.
@@ -241,7 +207,7 @@ $$M_{\text{OrdenCompra}} = (Q, \Sigma, \delta, q_0, F)$$
   * `Recepcion parcial`: parte de la mercancía recibida; restan entregas pendientes.
   * `Recibida`: totalidad de la orden ingresada en bodega (cierre exitoso).
   * `ERROR`: estado sumidero absorbente.
-* **$\Sigma$ (Eventos):**
+* **Σ (Eventos):**
   * `s` = *solicitar_aprobacion* (envía el borrador a revisión).
   * `a` = *aprobar* (autoriza la compra).
   * `r` = *rechazar* (deniega la compra).
@@ -249,10 +215,10 @@ $$M_{\text{OrdenCompra}} = (Q, \Sigma, \delta, q_0, F)$$
   * `p` = *recibir_parte* (registra un ingreso parcial).
   * `c` = *recibir_completa* (registra el ingreso total en una sola entrega).
   * `f` = *completar_recepcion* (cierra la recepción tras uno o más ingresos parciales).
-* **$q_0$:** `Borrador`.
-* **$F$:** `{Rechazada, Recibida}`.
+* **q~0~:** `Borrador`.
+* **F:** `{Rechazada, Recibida}`.
 
-#### 4.2 Tabla de transiciones ($\delta$ total)
+### Tabla de transiciones (δ total)
 
 | Estado | `s` (solicitar_aprobacion) | `a` (aprobar) | `r` (rechazar) | `e` (emitir_orden) | `p` (recibir_parte) | `c` (recibir_completa) | `f` (completar_recepcion) |
 |---|---|---|---|---|---|---|---|
@@ -265,30 +231,32 @@ $$M_{\text{OrdenCompra}} = (Q, \Sigma, \delta, q_0, F)$$
 | Recibida * | ERROR | ERROR | ERROR | ERROR | ERROR | ERROR | ERROR |
 | ERROR (sumidero) | ERROR | ERROR | ERROR | ERROR | ERROR | ERROR | ERROR |
 
-*Diagrama:* `docs/diagramas/afd_orden_compra.png` · *Archivo JFLAP:* `jflap/orden_compra.jff`.
+![Diagrama de estados (orden de compra)](../diagramas/afd_orden_compra.png)
 
-#### 4.3 Secuencias válidas e inválidas
+Archivo JFLAP: `jflap/orden_compra.jff`.
+
+### Secuencias válidas e inválidas
 
 | Tipo | Cadena | Secuencia de eventos / estados | Resultado | Transición clave que acepta o rechaza |
 |---|---|---|---|---|
-| Válida 1 | `saec` | Borrador → En aprobacion → Aprobada → Enviada → Recibida | **Aceptada** | $\delta(\text{Enviada}, c) = \text{Recibida} \in F$. |
-| Válida 2 (Decisión A7) | `saeppf` | Borrador → En aprobacion → Aprobada → Enviada → Recepcion parcial → Recepcion parcial → Recibida | **Aceptada** | El bucle $\delta(\text{Recepcion parcial}, p) = \text{Recepcion parcial}$ permite múltiples parciales y $\delta(\text{Recepcion parcial}, f) = \text{Recibida} \in F$ cierra la orden. |
-| Inválida 1 (enunciado) | `sre` | Borrador → En aprobacion → Rechazada $\xrightarrow{e}$ ERROR | **Rechazada** | $\delta(\text{Rechazada}, e) = \text{ERROR}$: un estado final rechazado no habilita la emisión de la orden. |
-| Inválida 2 | `saep` | Borrador → En aprobacion → Aprobada → Enviada → Recepcion parcial | **Rechazada** | Termina en `Recepcion parcial` $\notin F$: la orden quedó incompleta sin cerrar la recepción. |
+| Válida 1 | `saec` | Borrador → En aprobacion → Aprobada → Enviada → Recibida | **Aceptada** | δ(Enviada, c) = Recibida ∈ F. |
+| Válida 2 (Decisión A7) | `saeppf` | Borrador → En aprobacion → Aprobada → Enviada → Recepcion parcial → Recepcion parcial → Recibida | **Aceptada** | El bucle δ(Recepcion parcial, p) = Recepcion parcial permite múltiples parciales y δ(Recepcion parcial, f) = Recibida ∈ F cierra la orden. |
+| Inválida 1 (enunciado) | `sre` | Borrador → En aprobacion → Rechazada —e→ ERROR | **Rechazada** | δ(Rechazada, e) = ERROR: un estado final rechazado no habilita la emisión de la orden. |
+| Inválida 2 | `saep` | Borrador → En aprobacion → Aprobada → Enviada → Recepcion parcial | **Rechazada** | Termina en `Recepcion parcial` ∉ F: la orden quedó incompleta sin cerrar la recepción. |
 
 ---
 
-### 5. Prevención de transiciones imposibles
+## 2.5 Prevención de transiciones imposibles
 
 Al modelar cada proceso como un AFD determinista con función de transición total hacia `ERROR`, el sistema impone un contrato estricto sobre el orden de los eventos:
 
 * **No se puede consumir una reserva no confirmada:** el evento `p` (*picking*) solo tiene transición válida desde `Reservada`. Si ocurre en `Solicitada` o `Validada`, el autómata transita a `ERROR` y rechaza la operación.
 * **No se puede despachar un pedido sin preparación:** el evento `d` (*despachar*) solo es válido desde `Empacado`; cualquier intento desde `Borrador`, `Confirmado` o `Reservado` cae en `ERROR`.
-* **No se pueden reabrir procesos cerrados:** ningún estado en $F$ tiene transiciones válidas de salida (Decisión A8), bloqueando operaciones ilegales como emitir una orden `Rechazada` o cancelar un pedido `Entregado`.
+* **No se pueden reabrir procesos cerrados:** ningún estado en F tiene transiciones válidas de salida (Decisión A8), bloqueando operaciones ilegales como emitir una orden `Rechazada` o cancelar un pedido `Entregado`.
 
 ---
 
-### 6. Validación, pruebas y complejidad
+## 2.6 Validación, pruebas y complejidad
 
 La verificación se realizó en dos niveles complementarios y trazables:
 
@@ -296,38 +264,28 @@ La verificación se realizó en dos niveles complementarios y trazables:
    * *Test → Highlight Nondeterminism* (confirmando determinismo): `jflap/capturas/<automata>_determinismo.png`.
    * *Input → Multiple Run* cargando `jflap/entradas_<automata>.txt` y contrastando contra `jflap/esperado_<automata>.md`: `jflap/capturas/<automata>_multiple_run.png`.
    * *Input → Step by State* sobre una cadena válida y una inválida: `jflap/capturas/<automata>_traza_valida.png` y `jflap/capturas/<automata>_traza_invalida.png`.
-   * La cadena vacía $\varepsilon$ se rechaza porque $q_0 \notin F$ en los tres modelos (cubierto por `tests/test_automatas.py::test_cadena_vacia_rechazada`).
+   * La cadena vacía ε se rechaza porque q~0~ ∉ F en los tres modelos (cubierto por `tests/test_automatas.py::test_cadena_vacia_rechazada`).
 2. **Pruebas automatizadas en Python (`unittest`):**
-   * `tests/test_automatas.py` verifica las secuencias válidas, inválidas, cadena vacía, estados finales y el rechazo de símbolos fuera de $\Sigma$ (`ValueError`).
+   * `tests/test_automatas.py` verifica las secuencias válidas, inválidas, cadena vacía, estados finales y el rechazo de símbolos fuera de Σ (`ValueError`).
    * `tests/test_jflap.py` comprueba estructuralmente que cada archivo `.jff` coincide exactamente en estados, estado inicial, estados finales y transiciones con el AFD definido en `logistpulse/automatas/definiciones.py`.
-3. **Complejidad:** Evaluar una cadena de longitud $n$ en cualquiera de los tres AFD toma tiempo $O(n)$ (exactamente una consulta a la tabla de transiciones por símbolo) y espacio auxiliar $O(1)$, respaldado empíricamente por `tests/test_complejidad.py::test_afd_un_paso_por_simbolo`.
+3. **Complejidad:** Evaluar una cadena de longitud n en cualquiera de los tres AFD toma tiempo O(n) (exactamente una consulta a la tabla de transiciones por símbolo) y espacio auxiliar O(1), respaldado empíricamente por `tests/test_complejidad.py::test_afd_un_paso_por_simbolo`.
 
-![AFD pedido](../diagramas/afd_pedido.png)
-
-![AFD reserva](../diagramas/afd_reserva.png)
-
-![AFD orden_compra](../diagramas/afd_orden_compra.png)
-
-
-## Evidencia JFLAP (Multiple Run)
+## 2.7 Evidencia JFLAP (Multiple Run)
 
 ![JFLAP · pedido · Multiple Run](../../jflap/capturas/pedido_multiple_run.png)
 
 ![JFLAP · reserva · Multiple Run](../../jflap/capturas/reserva_multiple_run.png)
 
-![JFLAP · orden compra · Multiple Run](../../jflap/capturas/orden_compra_multiple_run.png)
+![JFLAP · orden de compra · Multiple Run](../../jflap/capturas/orden_compra_multiple_run.png)
 
 Determinismo y trazas válidas/inválidas de cada autómata: [jflap/capturas](https://github.com/JessPCL/logistpulse-deber2-tc/tree/main/jflap/capturas).
 
 
 # 3. Fase B · Planta y rutas
 
-![Planta con la ruta encontrada](../diagramas/planta_ruta.png)
+**Responsable:** Luis Borja
 
-
-**Responsable: Luis** · Rúbrica: 1,5 pts (grafo definido, ruta válida, algoritmo y precondiciones, Big-O)
-
-### 1. Modelado del grafo de la planta
+## 3.1 Modelado del grafo de la planta
 
 La planta de LOGISTPULSE se representa como un grafo ponderado no dirigido G = (V, E, w), según la Figura 5 del enunciado y los datos de `data/planta.json`. Los vértices V representan zonas transitables y las aristas E representan pasillos que el robot móvil autónomo (AMR) puede recorrer en ambos sentidos. A cada arista le corresponde un peso w igual a su longitud en metros, con w ≥ 0 e igual para ambos sentidos. El objetivo es encontrar una ruta de distancia mínima de **Recepción (R)** a **Despacho (D)**. La distancia de una ruta es la suma de los pesos de los pasillos recorridos.
 
@@ -357,9 +315,9 @@ La planta de LOGISTPULSE se representa como un grafo ponderado no dirigido G = (
 
 El grafo base tiene **7 vértices y 11 aristas**. Cada pasillo se cuenta una vez en E y se almacena en ambas listas de adyacencia, una por cada extremo. Por tanto, el grafo base tiene 22 entradas de adyacencia.
 
-![Grafo ponderado de la planta con las dos rutas óptimas entre R y D](diagramas/planta_ruta.png)
+![Grafo ponderado de la planta con las dos rutas óptimas entre R y D](../diagramas/planta_ruta.png)
 
-### 2. Escenarios de operación
+## 3.2 Escenarios de operación
 
 En el **escenario base**, el grafo es **no dirigido** y **todas las zonas están habilitadas**. El AMR parte de **Recepción (R)** y se dirige a **Despacho (D)**. Los bloqueos de Pasillo A, Picking y Empaque están definidos en `data/planta.json` y se evalúan **por separado** como escenarios de prueba para observar su efecto en la ruta.
 
@@ -376,7 +334,7 @@ En el escenario base, la ruta devuelta cuesta 2 + 1 + 5 + 3 = **11 m**. La ruta 
 
 **Reproducción.** Desde la raíz del repositorio, ejecutar `python -m logistpulse rutas` para obtener los cuatro escenarios, o `python -m unittest tests.test_rutas -v` para verificar las rutas, los empates y las entradas inválidas.
 
-### 3. Dijkstra para minimizar la distancia
+## 3.3 Dijkstra para minimizar la distancia
 
 La entrada es un grafo finito con pesos numéricos finitos y no negativos, el origen, el destino y las zonas bloqueadas. El origen y el destino deben pertenecer al grafo. El origen debe estar habilitado y cada zona bloqueada debe existir. La salida es una ruta óptima y su distancia en metros, o sin ruta y distancia infinita si el destino es inalcanzable.
 
@@ -419,7 +377,7 @@ RUTA_MÍNIMA(grafo, origen, destino, bloqueados)
 
 **Precondición de los pesos.** Dijkstra requiere que todas las aristas tengan pesos no negativos. En el caso p2, desde S se llega a A con costo 2 y a B con costo 3. Como 2 es menor que 3, Dijkstra finaliza A primero y calcula que llegar a C por S → A → C cuesta 2 + 1 = 3. Al procesar B, la arista B → A de peso −2 permite llegar a A con costo 3 − 2 = 1. Como A ya fue finalizado, Dijkstra no lo vuelve a procesar y conserva el costo 3 para C. Bellman–Ford sí encuentra la ruta óptima S → B → A → C, que cuesta 2. Este ejemplo explica por qué el código valida los pesos antes de ejecutar Dijkstra.
 
-### 4. Traza observada de Dijkstra en la planta
+## 3.4 Traza observada de Dijkstra en la planta
 
 La tabla reproduce el escenario base de `python -m logistpulse rutas`. Cada fila registra una finalización y las mejoras aceptadas al examinar los vecinos.
 
@@ -435,7 +393,7 @@ La tabla reproduce el escenario base de `python -m logistpulse rutas`. Cada fila
 
 Para reconstruir la ruta se sigue la cadena **D ← E ← A ← B ← R** en sentido inverso al recorrido. Al invertir la lista obtenemos **R → B → A → E → D**, de **11 m**. En el paso 5 se observa por qué la Figura 5 también muestra una solución óptima. Pasar por Picking llega a Empaque con los mismos 8 m.
 
-### 5. BFS para minimizar el número de tramos
+## 3.5 BFS para minimizar el número de tramos
 
 `logistpulse/rutas/bfs.py` recibe una lista de adyacencia sin pesos. Usa una cola FIFO y registra a cada vértice cuando lo encola por primera vez. Por ello procesa las zonas por niveles de distancia en número de tramos. Al extraer el destino, los predecesores permiten reconstruir una ruta con el mínimo número de tramos.
 
@@ -468,7 +426,7 @@ MENOS_TRAMOS(adyacencia, origen, destino, bloqueados)
 
 Para el AMR se elige Dijkstra porque el objetivo de la planta se mide en metros y los pasillos tienen longitudes distintas.
 
-### 6. Validación
+## 3.6 Validación
 
 | Tipo | Prueba o escenario | Resultado comprobado |
 |---|---|---|
@@ -479,18 +437,12 @@ Para el AMR se elige Dijkstra porque el objetivo de la planta se mide en metros 
 
 Las pruebas de la tabla están en `tests/test_rutas.py`. En `tests/test_complejidad.py`, `test_dijkstra_operaciones_de_heap_acotadas` verifica la cota de inserciones, extracciones y aristas examinadas. `test_bfs_es_O_V_mas_E` verifica que las extracciones y las aristas examinadas respeten las cotas lineales. `test_dijkstra_crece_casi_lineal` compara tiempos en grafos dispersos de 5 000 y 20 000 vértices. Estos resultados respaldan el análisis de crecimiento para los casos probados.
 
-#### Preguntas de práctica para la defensa oral
-
-1. **¿Por qué hay 11 aristas si en la lista de adyacencia hay 22 entradas?** Un pasillo bidireccional conecta dos zonas mediante una sola arista. Para poder recorrerlo desde cualquiera de sus extremos, cada zona registra a la otra como vecina.
-2. **¿Por qué bloquear Empaque impide llegar a Despacho?** El tramo E ↔ D es la única conexión de Despacho con la planta. Quitar E elimina ese tramo y deja D aislado.
-3. **¿Por qué el programa devuelve una ruta diferente de la Figura 5?** Desde A, el pasillo directo a E cuesta 5 m y el desvío por P cuesta 3 + 2 = 5 m. Las dos rutas completas tienen distancia mínima de 11 m.
-
 # 4. Fase C · FEFO y reposición
 
 
-**Responsable:** Luis
+**Responsable:** Luis Borja
 
-### 1. Selección de lotes mediante FEFO
+## 4.1 Selección de lotes mediante FEFO
 
 FEFO (*First Expired, First Out*) asigna primero las unidades de los lotes elegibles que vencen antes. Un lote es elegible si corresponde al SKU solicitado, tiene unidades disponibles y su fecha de vencimiento es posterior a la fecha de referencia. Según la política del proyecto, un lote que vence el mismo día de la reserva queda excluido. Si dos lotes vencen el mismo día, se elige primero el de menor código en orden alfabético.
 
@@ -524,7 +476,7 @@ La cantidad tomada se limita tanto al stock del lote como al pendiente del pedid
 
 **Complejidad.** Con (L) lotes de entrada, filtrar y recorrer cuesta **O(L)**. El ordenamiento de los candidatos y el ordenamiento del registro de descartes dan un tiempo total de **O(L log L)** en el peor caso. El espacio es **O(L)** por las listas de lotes, candidatos, descartes y el plan que se genera.
 
-#### Resultados de la ejecución
+### Resultados de la ejecución
 
 Con fecha de referencia del **20 de noviembre de 2026**, el pedido de **80 unidades de LECHE-1L** toma 30 de L-001, 25 de L-002 y 25 de L-003. L-001 y L-002 vencen el 1 de diciembre, así que el código decide el orden entre ambos. Se excluyen L-004 por vencido, L-005 por falta de stock y L-007 porque vence el día de la reserva.
 
@@ -536,7 +488,7 @@ En un pedido separado de **200 unidades** del mismo SKU, los cuatro lotes elegib
 | Rechazar | `RECHAZADO` | 0 | 200 |
 | Esperar reposición | `EN_ESPERA` | 0 | 200 |
 
-### 2. Reposición por punto de pedido
+## 4.2 Reposición por punto de pedido
 
 Para cada SKU se calcula la **posición de inventario** sumando las unidades en bodega y las unidades pendientes de recibir de órdenes de compra abiertas, y restando las unidades ya reservadas. Cuando la posición es menor o igual al mínimo, se sugiere la cantidad necesaria para alcanzar el objetivo. Las cantidades de entrada son enteros no negativos y el objetivo debe ser mayor o igual al mínimo. La posición calculada puede ser negativa.
 
@@ -554,7 +506,7 @@ SUGERIR_REPOSICIÓN(productos)
 
 **Terminación y complejidad.** `sugerencias`, en `logistpulse/inventario/reposicion.py`, procesa una vez cada producto de un conjunto finito. Con **P productos**, el tiempo es **O(P)** porque se hacen las mismas operaciones por SKU. El generador entrega una sugerencia a la vez y usa **O(1)** de espacio auxiliar. Si se guardan todas las sugerencias, la salida ocupa **O(P)**.
 
-### 3. Validación
+## 4.3 Validación
 
 Desde la raíz del repositorio, `python -m logistpulse inventario` reproduce los ejemplos. `python -m unittest tests.test_inventario -v` comprueba los siguientes casos, entre otros:
 
@@ -569,15 +521,9 @@ Desde la raíz del repositorio, `python -m logistpulse inventario` reproduce los
 
 En `tests/test_complejidad.py`, `test_fefo_O_L_log_L_y_reposicion_O_P` verifica los conteos del filtro, el recorrido y el ordenamiento de candidatos en FEFO, y comprueba que la regla de reposición procesa cada SKU una sola vez.
 
-#### Preguntas de práctica para la defensa oral
-
-1. **¿Qué pasa si dos lotes vencen el mismo día?** Se elige primero el lote con el código que aparece antes en orden alfabético. Así el resultado es reproducible aunque cambie el orden de entrada.
-2. **¿Qué pasa si se piden 200 unidades y solo hay 155 elegibles?** Con política parcial se asignan 155 y quedan 45 pendientes. Con rechazo o espera se asignan 0, con el estado correspondiente.
-3. **¿Por qué se cuentan las órdenes abiertas?** Porque las unidades pendientes de recibir ya están comprometidas por el proveedor. Al incluirlas en la posición, la siguiente sugerencia cubre únicamente el faltante que todavía activa la regla.
-
 # 5. Fase D · Clasificación de los diez correos
 
-## Tabla resumen de los 10 correos
+## 5.1 Tabla resumen de los diez correos
 
 
 | Correo | Clase | Tipo de problema | Decidible | Algoritmo | Complejidad (tiempo · espacio) | Estrategia |
@@ -608,192 +554,194 @@ Evidencia de cada clase (detalle en cada ficha):
 
 Grupo A = algoritmo polinómico conocido · B = pertenencia a NP con certificado (sin afirmar NPC) · C = NP-completo con reducción. Distribución: A = 3 (p1, p2, p3) · B = 4 (n1–n4) · C = 3 (c1–c3).
 
-## Ficha p1 · ¿Puede llegar el envío a la zona Norte?
+Cada ficha resumida presenta la respuesta al remitente, la clasificación con su evidencia y la conclusión sobre decidibilidad, computabilidad y complejidad. La ficha completa del repositorio añade la entrada y la salida, el algoritmo, el análisis Big-O, el código, las pruebas y la salida observada.
+
+## 5.2 Ficha p1 · ¿Puede llegar el envío a la zona Norte?
 
 **Remitente:** Daniela Paredes · Planificación · **Grupo:** A · **Clasificación propuesta:** P
-**Responsable:** Luis
+**Responsable:** Luis Borja
 
 
 > **Solicitud operativa:** ¿Puede un pedido llegar desde Planta Durán hasta la zona Norte usando únicamente rutas activas?
 
-### 0. Respuesta al correo (para Daniela Paredes)
+### Respuesta al correo (para Daniela Paredes)
 Daniela: **sí, hoy existe ruta** desde la Planta Durán hasta la zona Norte: **Durán → Quito → Norte (2 tramos)**, así que se puede coordinar el camión con el cliente. Si el cierre de vías hubiera dejado fuera de servicio el tramo Quito → Norte, la respuesta sería **no**: desde Durán solo se llegaría a Quito, Guayaquil y Sur. Adjuntamos el programa (BFS), que recibe cualquier lista de conexiones, con las dos pruebas.
 
-### 3. Clasificación y evidencia: **P**
+### Clasificación y evidencia: **P**
 - **Evidencia del grupo A (algoritmo polinómico conocido):** la búsqueda en anchura (BFS) decide ALCANZABILIDAD en O(|V| + |E|), que es polinomial en el tamaño de la entrada. Por lo tanto **ALCANZABILIDAD ∈ P** (Sipser, Teorema 7.14, 3.ª ed.).
 - **Relación con NP:** como P ⊆ NP, el problema también está en NP (el certificado sería el propio camino, verificable en O(|E| + |camino|) con `verificar_camino`). Para el grupo A, sin embargo, la evidencia exigida es el algoritmo polinómico, no el certificado. Que esté en P no dice nada sobre si P = NP.
 
-### ¿Qué concluimos?
+### Conclusión
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
 | **Sí.** BFS termina al agotar la cola o al encontrar el destino. | **Sí.** Hay un procedimiento efectivo (MT determinista / RAM) que calcula la función característica de ALCANZABILIDAD para toda red finita. | **P.** O(V + E) de tiempo y O(V) de espacio con listas de adyacencia (comprobado con conteo de operaciones). |
 
 
-**Ficha completa** (resumen del correo, entrada y salida, decidibilidad y computabilidad, algoritmo, Big-O, código, pruebas y salida observada): [docs/fichas/p1.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/p1.md)
+Ficha completa: [docs/fichas/p1.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/p1.md)
 
-## Ficha p2 · Ruta mínima entre centros de distribución
+## 5.3 Ficha p2 · Ruta mínima entre centros de distribución
 
 **Remitente:** Marco Cedeño · Transporte · **Grupo:** A · **Clasificación de la versión de decisión:** P
-**Responsable:** Luis
+**Responsable:** Luis Borja
 
 > **Solicitud operativa:** Encontrar el recorrido de menor tiempo de CD Quito a CD Guayaquil y explicar cómo reconstruirlo.
 
-### 0. Respuesta al correo
+### Respuesta al correo
 
 Marco, para asignar el camión refrigerado te sugiero la ruta **Quito → Latacunga → Guayaquil**, con tiempo total **8** en las unidades de la tabla. Pasar por Ambato también da **8**. Guarda el predecesor de cada centro para reconstruir el recorrido desde el destino.
 
-### 3. Clasificación y evidencia
+### Clasificación y evidencia
 
 **RUTA-CORTA pertenece a P.** Dijkstra calcula la distancia mínima desde s hasta t. Luego se responde Sí exactamente cuando t es alcanzable y su distancia mínima es ≤ K. El número de operaciones es polinómico en el tamaño del grafo. Las sumas y comparaciones de tiempos también son polinómicas en bits, pues un camino simple suma a lo sumo |V| − 1 pesos. Con pesos no negativos siempre basta considerar caminos simples para encontrar una distancia mínima. Por tanto, una distancia finita requiere a lo sumo O(B + log(|V| + 1)) bits.
 
-### ¿Qué concluimos?
+### Conclusión
 
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
 | Sí. Dijkstra y la comparación con K siempre terminan para entradas válidas. | Se calculan la distancia mínima, una ruta óptima y la respuesta Sí o No mediante un procedimiento determinista. | La versión de decisión está en P. Dijkstra con montículo usa O((V + E) log V) operaciones y O(V + E) de espacio auxiliar, donde V y E son las cantidades de vértices y aristas. |
 
 
-**Ficha completa** (resumen del correo, entrada y salida, decidibilidad y computabilidad, algoritmo, Big-O, código, pruebas y salida observada): [docs/fichas/p2.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/p2.md)
+Ficha completa: [docs/fichas/p2.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/p2.md)
 
-## Ficha p3 · Máximo de camiones hacia clientes
+## 5.4 Ficha p3 · Máximo de camiones hacia clientes
 
 **Remitente:** Luis Vaca · Distribución · **Grupo:** A · **Clasificación de la versión de decisión:** P
-**Responsable:** Luis
+**Responsable:** Luis Borja
 
-### 0. Respuesta al correo
+### Respuesta al correo
 
 Luis, con las capacidades actuales pueden llegar **10 camiones por día** a la zona de clientes. Una asignación válida envía 4 por Planta → Quito → Clientes, 5 por Planta → Guayaquil → Clientes y 1 por Planta → Quito → Guayaquil → Clientes. Los dos tramos que llegan a Clientes quedan al máximo de su capacidad.
 
-### 3. Clasificación y evidencia
+### Clasificación y evidencia
 
 **FLUJO-UMBRAL pertenece a P.** Edmonds–Karp calcula el flujo máximo en tiempo polinómico. Compararlo con K da la respuesta. Las operaciones sobre capacidades, flujo y umbral también tienen un costo polinómico en bits. Por ejemplo, el flujo total está acotado por la suma de las capacidades de los tramos que salen de la fuente, que requiere O(B + log(E + 1)) bits.
 
 Para **verificar** una propuesta, se comprueban las capacidades, la conservación de flujo y si el valor alcanza K. Para demostrar que un flujo es máximo, se puede presentar un **corte** de igual capacidad. Cada flujo factible da un valor alcanzable y cada corte pone un límite a ese valor. Encontrar el flujo máximo es la tarea que resuelve el algoritmo.
 
-### ¿Qué concluimos?
+### Conclusión
 
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
 | Sí. Se obtiene el máximo y se compara con K en un número finito de pasos. | El algoritmo calcula el máximo y una asignación factible de forma determinista. | La decisión está en P. Edmonds–Karp usa O(V·E²) operaciones y O(V + E) espacio de trabajo, más el espacio del registro. |
 
 
-**Ficha completa** (resumen del correo, entrada y salida, decidibilidad y computabilidad, algoritmo, Big-O, código, pruebas y salida observada): [docs/fichas/p3.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/p3.md)
+Ficha completa: [docs/fichas/p3.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/p3.md)
 
-## Ficha n1 · Comparar topologías equivalentes
+## 5.5 Ficha n1 · Comparar topologías equivalentes
 
 **Remitente:** Elena Ruiz · Arquitectura · **Grupo:** B · **Clasificación propuesta:** NP
-**Responsable de redacción:** Camila
+**Responsable:** Camila Granda
 
-> **Solicitud operativa:** ¿Existe una biyección entre nodos que preserve todas las conexiones ($A \cong B$)?
+> **Solicitud operativa:** ¿Existe una biyección entre nodos que preserve todas las conexiones (A ≅ B)?
 
-### 0. Respuesta al correo (para Elena Ruiz)
-Sí, las dos topologías comparadas en el caso de prueba tienen exactamente la misma estructura de conexiones. La correspondencia válida entre nodos es el certificado $\pi = (1, 0, 2)$ (el nodo $i$ de la red $A$ corresponde al nodo $\pi(i)$ de la red $B$), verificado de forma automática preservando todas las adyacencias.
+### Respuesta al correo (para Elena Ruiz)
+Sí, las dos topologías comparadas en el caso de prueba tienen exactamente la misma estructura de conexiones. La correspondencia válida entre nodos es el certificado π = (1, 0, 2) (el nodo i de la red A corresponde al nodo π(i) de la red B), verificado de forma automática preservando todas las adyacencias.
 
-### 3. Clasificación y evidencia
+### Clasificación y evidencia
 - **Clase:** NP
-- **Evidencia:** Certificado $\pi$ de tamaño polinómico + verificador determinista en tiempo $O(n^2)$ $\Rightarrow L_{\text{ISO}} \in \text{NP}$.
-- **Certificado / verificador:** El certificado es una permutación $\pi$ de $\{0, \dots, n-1\}$, que ocupa $O(n \log n)$ bits (polinómico respecto al tamaño de entrada $\Theta(n^2)$). El verificador comprueba primero que $\pi$ sea una biyección válida en $O(n)$ y luego verifica que $A[i][j] = B[\pi(i)][\pi(j)]$ para los $n^2$ pares $(i, j)$, tomando tiempo total $O(n^2)$, que es polinómico en el tamaño de la entrada.
+- **Evidencia:** Certificado π de tamaño polinómico + verificador determinista en tiempo O(n^2^) ⇒ L~ISO~ ∈ NP.
+- **Certificado / verificador:** El certificado es una permutación π de {0, …, n−1}, que ocupa O(n log n) bits (polinómico respecto al tamaño de entrada Θ(n^2^)). El verificador comprueba primero que π sea una biyección válida en O(n) y luego verifica que A[i][j] = B[π(i)][π(j)] para los n^2^ pares (i, j), tomando tiempo total O(n^2^), que es polinómico en el tamaño de la entrada.
 - **Reducción:** —
 
-**Justificación formal:** Exhibir un certificado de tamaño polinómico y un verificador determinista polinómico demuestra rigurosamente que el problema de isomorfismo de grafos pertenece a **NP**. Sin embargo, esta evidencia **no demuestra** que el problema esté fuera de **P** (recordando que $\text{P} \subseteq \text{NP}$ y que "NP" no significa "no polinómico") ni demuestra que sea **NP-completo**, ya que para afirmar NP-completitud se requeriría una reducción polinómica desde un problema NP-completo conocido hacia este problema, la cual no se conoce.
+**Justificación formal:** Exhibir un certificado de tamaño polinómico y un verificador determinista polinómico demuestra rigurosamente que el problema de isomorfismo de grafos pertenece a **NP**. Sin embargo, esta evidencia **no demuestra** que el problema esté fuera de **P** (recordando que P ⊆ NP y que "NP" no significa "no polinómico") ni demuestra que sea **NP-completo**, ya que para afirmar NP-completitud se requeriría una reducción polinómica desde un problema NP-completo conocido hacia este problema, la cual no se conoce.
 
-### ¿Qué concluimos?
+### Conclusión
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
-| Decidible: siempre termina y responde Sí/No porque el espacio de $n!$ permutaciones es finito. | Computable en MT determinista / modelo RAM: decide $L_{\text{ISO}}$ y construye el testigo $\pi$ cuando existe. | NP · Búsqueda $O(n! \cdot n^2)$, verificador $O(n^2)$ |
+| Decidible: siempre termina y responde Sí/No porque el espacio de n! permutaciones es finito. | Computable en MT determinista / modelo RAM: decide L~ISO~ y construye el testigo π cuando existe. | NP · Búsqueda O(n! · n^2^), verificador O(n^2^) |
 
 
-**Ficha completa** (resumen del correo, entrada y salida, decidibilidad y computabilidad, algoritmo, Big-O, código, pruebas y salida observada): [docs/fichas/n1.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/n1.md)
+Ficha completa: [docs/fichas/n1.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/n1.md)
 
-## Ficha n2 · ¿Tiene N un factor en este intervalo?
+## 5.6 Ficha n2 · ¿Tiene N un factor en este intervalo?
 
 **Remitente:** Andrés Molina · Seguridad · **Grupo:** B · **Clasificación propuesta:** NP
-**Responsable de redacción:** Camila
+**Responsable:** Camila Granda
 
-> **Solicitud operativa:** ¿Existe $d$ con $2 \le d \le B$ que divida a $N$?
+> **Solicitud operativa:** ¿Existe d con 2 ≤ d ≤ B que divida a N?
 
-### 0. Respuesta al correo (para Andrés Molina)
-Sí, el número $N = 91$ tiene un divisor dentro del intervalo permitido $[2, 10]$: el factor es $d = 7$, ya que cumple $2 \le 7 \le 10$ y $91 \bmod 7 = 0$. Si el límite se reduce a $B = 6$, la respuesta pasa a ser No porque el primer divisor no trivial queda fuera del rango.
+### Respuesta al correo (para Andrés Molina)
+Sí, el número N = 91 tiene un divisor dentro del intervalo permitido [2, 10]: el factor es d = 7, ya que cumple 2 ≤ 7 ≤ 10 y 91 mod 7 = 0. Si el límite se reduce a B = 6, la respuesta pasa a ser No porque el primer divisor no trivial queda fuera del rango.
 
-### 3. Clasificación y evidencia
+### Clasificación y evidencia
 - **Clase:** NP
-- **Evidencia:** Certificado $d$ de tamaño polinómico + verificador determinista en tiempo $O(L^2)$ $\Rightarrow L_{\text{FACT}} \in \text{NP}$.
-- **Certificado / verificador:** El certificado es un entero candidato $d$ en binario, que ocupa a lo sumo $\lfloor \log_2 B \rfloor + 1 \le L$ bits (tamaño polinómico respecto a la entrada). El verificador comprueba dos condiciones: que $2 \le d \le B$ (en $O(L)$) y que $N \bmod d = 0$ mediante división entera escolar en $O(L^2)$. El tiempo total de verificación es $O(L^2)$, polinómico en el tamaño de la entrada $L$.
+- **Evidencia:** Certificado d de tamaño polinómico + verificador determinista en tiempo O(L^2^) ⇒ L~FACT~ ∈ NP.
+- **Certificado / verificador:** El certificado es un entero candidato d en binario, que ocupa a lo sumo ⌊log~2~ B⌋ + 1 ≤ L bits (tamaño polinómico respecto a la entrada). El verificador comprueba dos condiciones: que 2 ≤ d ≤ B (en O(L)) y que N mod d = 0 mediante división entera escolar en O(L^2^). El tiempo total de verificación es O(L^2^), polinómico en el tamaño de la entrada L.
 - **Reducción:** —
 
-**Justificación formal:** Contar con un certificado de tamaño polinómico y un verificador determinista de tiempo polinómico en $L$ prueba que $L_{\text{FACT}} \in \text{NP}$. Sin embargo, esto **no prueba** que el problema esté fuera de **P** (pues $\text{P} \subseteq \text{NP}$ y "NP" no significa "no polinómico") ni prueba que sea **NP-completo**: no existe ninguna reducción polinómica conocida desde un problema NP-completo hacia este problema.
+**Justificación formal:** Contar con un certificado de tamaño polinómico y un verificador determinista de tiempo polinómico en L prueba que L~FACT~ ∈ NP. Sin embargo, esto **no prueba** que el problema esté fuera de **P** (pues P ⊆ NP y "NP" no significa "no polinómico") ni prueba que sea **NP-completo**: no existe ninguna reducción polinómica conocida desde un problema NP-completo hacia este problema.
 
-### ¿Qué concluimos?
+### Conclusión
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
-| Decidible: siempre termina y responde Sí/No tras probar a lo sumo $B - 1$ divisores candidatos. | Computable en MT determinista / modelo RAM con enteros en binario: decide $L_{\text{FACT}}$ y entrega el divisor $d$ si existe. | NP · Búsqueda $O(B \cdot L^2)$ (exponencial en $L$ si $B \approx \sqrt{N}$), verificador $O(L^2)$ |
+| Decidible: siempre termina y responde Sí/No tras probar a lo sumo B − 1 divisores candidatos. | Computable en MT determinista / modelo RAM con enteros en binario: decide L~FACT~ y entrega el divisor d si existe. | NP · Búsqueda O(B · L^2^) (exponencial en L si B ≈ √N), verificador O(L^2^) |
 
 
-**Ficha completa** (resumen del correo, entrada y salida, decidibilidad y computabilidad, algoritmo, Big-O, código, pruebas y salida observada): [docs/fichas/n2.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/n2.md)
+Ficha completa: [docs/fichas/n2.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/n2.md)
 
-## Ficha n3 · ¿Existe exponente x que produzca h?
+## 5.7 Ficha n3 · ¿Existe exponente x que produzca h?
 
 **Remitente:** Paola León · Seguridad TI · **Grupo:** B · **Clasificación propuesta:** NP
-**Responsable de redacción:** Camila
+**Responsable:** Camila Granda
 
-> **Solicitud operativa:** ¿Existe $x$ con $0 \le x \le B$ y $g^x \equiv h \pmod p$?
+> **Solicitud operativa:** ¿Existe x con 0 ≤ x ≤ B y g^x^ ≡ h (mod p)?
 
-### 0. Respuesta al correo (para Paola León)
-Sí, existe un exponente dentro del límite permitido para el caso de prueba: $x = 6$, ya que cumple $0 \le 6 \le 10$ y $5^6 \equiv 8 \pmod{23}$. Si el límite se reduce a $B = 5$, la respuesta es No, porque el único exponente válido menor o igual a $21$ es $6$ y queda fuera del rango.
+### Respuesta al correo (para Paola León)
+Sí, existe un exponente dentro del límite permitido para el caso de prueba: x = 6, ya que cumple 0 ≤ 6 ≤ 10 y 5^6^ ≡ 8 (mod 23). Si el límite se reduce a B = 5, la respuesta es No, porque el único exponente válido menor o igual a 21 es 6 y queda fuera del rango.
 
-### 3. Clasificación y evidencia
+### Clasificación y evidencia
 - **Clase:** NP
-- **Evidencia:** Certificado $x$ de tamaño polinómico + verificador determinista mediante exponenciación rápida modular en tiempo $O(\log B \cdot M(\log p))$ $\Rightarrow L_{\text{DLOG}} \in \text{NP}$.
-- **Certificado / verificador:** El certificado es el exponente candidato $x$ en binario, que ocupa a lo sumo $\lfloor \log_2 B \rfloor + 1$ bits (tamaño polinómico respecto a la entrada). El verificador comprueba $0 \le x \le B$ en $O(\log B)$ y evalúa $g^x \bmod p = h$ usando exponenciación por cuadrado y multiplicación (`pow(g, x, p) == h`), lo cual realiza $O(\log x) \le O(\log B)$ multiplicaciones modulares de enteros de $O(\log p)$ bits, tomando tiempo total $O(\log B \cdot M(\log p))$, que es polinómico en el tamaño de la entrada.
+- **Evidencia:** Certificado x de tamaño polinómico + verificador determinista mediante exponenciación rápida modular en tiempo O(log B · M(log p)) ⇒ L~DLOG~ ∈ NP.
+- **Certificado / verificador:** El certificado es el exponente candidato x en binario, que ocupa a lo sumo ⌊log~2~ B⌋ + 1 bits (tamaño polinómico respecto a la entrada). El verificador comprueba 0 ≤ x ≤ B en O(log B) y evalúa g^x^ mod p = h usando exponenciación por cuadrado y multiplicación (`pow(g, x, p) == h`), lo cual realiza O(log x) ≤ O(log B) multiplicaciones modulares de enteros de O(log p) bits, tomando tiempo total O(log B · M(log p)), que es polinómico en el tamaño de la entrada.
 - **Reducción:** —
 
-**Justificación formal:** Exhibir un certificado de tamaño polinómico y un verificador determinista de tiempo polinómico demuestra que $L_{\text{DLOG}} \in \text{NP}$. Sin embargo, esta evidencia **no prueba** que el problema esté fuera de **P** (dado que $\text{P} \subseteq \text{NP}$ y "NP" no significa "no polinómico") ni demuestra que sea **NP-completo**, ya que no existe ninguna reducción polinómica conocida desde un problema NP-completo hacia el logaritmo discreto.
+**Justificación formal:** Exhibir un certificado de tamaño polinómico y un verificador determinista de tiempo polinómico demuestra que L~DLOG~ ∈ NP. Sin embargo, esta evidencia **no prueba** que el problema esté fuera de **P** (dado que P ⊆ NP y "NP" no significa "no polinómico") ni demuestra que sea **NP-completo**, ya que no existe ninguna reducción polinómica conocida desde un problema NP-completo hacia el logaritmo discreto.
 
-### ¿Qué concluimos?
+### Conclusión
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
-| Decidible: siempre termina y responde Sí/No porque el intervalo $[0, B]$ tiene a lo sumo $B + 1$ candidatos finitos. | Computable en MT determinista / modelo RAM con enteros en binario: decide $L_{\text{DLOG}}$ y entrega el exponente $x$ si existe. | NP · $O(B \cdot M(\log p))$ lineal · $O(\sqrt{B} \cdot M(\log p))$ BSGS · verificador $O(\log B \cdot M(\log p))$ |
+| Decidible: siempre termina y responde Sí/No porque el intervalo [0, B] tiene a lo sumo B + 1 candidatos finitos. | Computable en MT determinista / modelo RAM con enteros en binario: decide L~DLOG~ y entrega el exponente x si existe. | NP · O(B · M(log p)) lineal · O(√B · M(log p)) BSGS · verificador O(log B · M(log p)) |
 
 
-**Ficha completa** (resumen del correo, entrada y salida, decidibilidad y computabilidad, algoritmo, Big-O, código, pruebas y salida observada): [docs/fichas/n3.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/n3.md)
+Ficha completa: [docs/fichas/n3.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/n3.md)
 
-## Ficha n4 · ¿La topología tiene una simetría?
+## 5.8 Ficha n4 · ¿La topología tiene una simetría?
 
 **Remitente:** Santiago Jaramillo · Analítica · **Grupo:** B · **Clasificación propuesta:** NP
-**Responsable de redacción:** Camila
+**Responsable:** Camila Granda
 
-> **Solicitud operativa:** ¿Existe una permutación $\pi \neq \text{identidad}$ que preserve las adyacencias?
+> **Solicitud operativa:** ¿Existe una permutación π ≠ identidad que preserve las adyacencias?
 
-### 0. Respuesta al correo (para Santiago Jaramillo)
-Sí, la topología evaluada en el caso de prueba presenta una simetría estructural real: la reasignación $\pi = (0, 2, 1)$ es distinta de la identidad y conserva intactas todas las adyacencias del grafo. En contraste, sobre un grafo asimétrico de 6 vértices la respuesta es No tras agotar todas las permutaciones posibles.
+### Respuesta al correo (para Santiago Jaramillo)
+Sí, la topología evaluada en el caso de prueba presenta una simetría estructural real: la reasignación π = (0, 2, 1) es distinta de la identidad y conserva intactas todas las adyacencias del grafo. En contraste, sobre un grafo asimétrico de 6 vértices la respuesta es No tras agotar todas las permutaciones posibles.
 
-### 3. Clasificación y evidencia
+### Clasificación y evidencia
 - **Clase:** NP
-- **Evidencia:** Certificado $\pi$ de tamaño polinómico + verificador determinista en tiempo $O(n^2)$ $\Rightarrow L_{\text{AUT}} \in \text{NP}$.
-- **Certificado / verificador:** El certificado es una permutación $\pi$ de $\{0, \dots, n-1\}$, que ocupa $O(n \log n)$ bits (tamaño polinómico respecto a la entrada de $\Theta(n^2)$ bits). El verificador comprueba en $O(n)$ que $\pi$ es una biyección y que $\pi \neq \text{id}$ (existe al menos un $i$ con $\pi(i) \neq i$), y luego comprueba que $G[i][j] = G[\pi(i)][\pi(j)]$ para los $n^2$ pares $(i, j)$ en tiempo $O(n^2)$, lo cual es polinómico en el tamaño de la entrada.
+- **Evidencia:** Certificado π de tamaño polinómico + verificador determinista en tiempo O(n^2^) ⇒ L~AUT~ ∈ NP.
+- **Certificado / verificador:** El certificado es una permutación π de {0, …, n−1}, que ocupa O(n log n) bits (tamaño polinómico respecto a la entrada de Θ(n^2^) bits). El verificador comprueba en O(n) que π es una biyección y que π ≠ id (existe al menos un i con π(i) ≠ i), y luego comprueba que G[i][j] = G[π(i)][π(j)] para los n^2^ pares (i, j) en tiempo O(n^2^), lo cual es polinómico en el tamaño de la entrada.
 - **Reducción:** —
 
-**Justificación formal:** Exhibir un certificado de tamaño polinómico y un verificador determinista polinómico demuestra rigurosamente que $L_{\text{AUT}} \in \text{NP}$. Sin embargo, esta evidencia **no demuestra** que el problema esté fuera de **P** (pues $\text{P} \subseteq \text{NP}$ y "NP" no significa "no polinómico") ni prueba que sea **NP-completo**, ya que no existe ninguna reducción polinómica conocida desde un problema NP-completo hacia el problema de automorfismo de grafos.
+**Justificación formal:** Exhibir un certificado de tamaño polinómico y un verificador determinista polinómico demuestra rigurosamente que L~AUT~ ∈ NP. Sin embargo, esta evidencia **no demuestra** que el problema esté fuera de **P** (pues P ⊆ NP y "NP" no significa "no polinómico") ni prueba que sea **NP-completo**, ya que no existe ninguna reducción polinómica conocida desde un problema NP-completo hacia el problema de automorfismo de grafos.
 
-### ¿Qué concluimos?
+### Conclusión
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
-| Decidible: siempre termina y responde Sí/No tras inspeccionar a lo sumo las $n!$ permutaciones posibles. | Computable en MT determinista / modelo RAM: decide $L_{\text{AUT}}$ y construye el testigo $\pi \neq \text{id}$ cuando existe. | NP · Búsqueda $O(n! \cdot n^2)$, verificador $O(n^2)$ |
+| Decidible: siempre termina y responde Sí/No tras inspeccionar a lo sumo las n! permutaciones posibles. | Computable en MT determinista / modelo RAM: decide L~AUT~ y construye el testigo π ≠ id cuando existe. | NP · Búsqueda O(n! · n^2^), verificador O(n^2^) |
 
 
-**Ficha completa** (resumen del correo, entrada y salida, decidibilidad y computabilidad, algoritmo, Big-O, código, pruebas y salida observada): [docs/fichas/n4.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/n4.md)
+Ficha completa: [docs/fichas/n4.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/n4.md)
 
-## Ficha c1 · ¿Hay una asignación que cumpla todas las reglas?
+## 5.9 Ficha c1 · ¿Hay una asignación que cumpla todas las reglas?
 
 **Remitente:** Mónica Ruiz · Planificación (para Planificación de Turnos) · **Grupo:** C · **Clasificación propuesta:** NP-completo
-**Responsable de redacción:** Jessica
+**Responsable:** Jessica Pijal
 
 > **Solicitud operativa:** ¿Existe una asignación de vehículos a franjas de carga (valores verdadero/falso de las variables) que cumpla a la vez todas las reglas de compatibilidad y los compromisos?
 
-### 0. Respuesta al correo (para Mónica Ruiz)
+### Respuesta al correo (para Mónica Ruiz)
 Mónica: **sí, existe un horario candidato que cumple todas las reglas**, así que **no hace falta renegociar la ventana de despacho**. El horario es x1 = verdadero, x2 = falso, x3 = verdadero. La regla (x1 ∨ ¬x2) se cumple porque x1 es verdadero (y también porque x2 es falso), y la regla (x2 ∨ x3) se cumple porque x3 es verdadero. La comprobación independiente adjunta revisa cláusula por cláusula, sin depender de cómo se encontró el horario. Hay otros horarios válidos, por ejemplo x1 = falso, x2 = falso, x3 = verdadero. Sobre el número de posibilidades: con n decisiones hay 2ⁿ horarios posibles, así que cada decisión extra duplica la búsqueda (con 3 son 8; con 60 la búsqueda exhaustiva tardaría miles de años, sección 3).
 
-### 3. Clasificación y evidencia: **NP-completo**
+### Clasificación y evidencia: **NP-completo**
 Para el grupo C hay que probar dos cosas: que DESPACHO-SAT **pertenece a NP** y que es **NP-difícil**, mediante una reducción polinómica desde un problema que ya se sabe NP-completo.
 
 **(a) DESPACHO-SAT ∈ NP: certificado + verificador polinómico.**
@@ -813,25 +761,25 @@ Con (a) y (b), **DESPACHO-SAT es NP-completo**. Esto **no** demuestra que no exi
 
 **Consecuencia práctica para el tamaño de la instancia.** Con fuerza bruta, cada variable de decisión extra **duplica** el trabajo. Tiempos **medidos** (`docs/generado/crecimiento.md`; dependen de la máquina): con 18 variables y respuesta No, la fuerza bruta revisa 262 144 asignaciones en unos 0,5 s; extrapolando ese costo, **40 variables → unos 25 días** y **60 variables → unos 70 000 años**. DPLL poda mucho más: en fórmulas 3-CNF aleatorias de la zona difícil (m ≈ 4,26·n), la mediana fue de 17 nodos con 20 variables, 600 con 60 y unos 5 000 con 80. Aun así, sus nodos crecen de forma exponencial: un plan de despacho con cientos de variables no tiene garantía de respuesta en tiempo útil.
 
-### ¿Qué concluimos?
+### Conclusión
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
 | **Sí.** Hay 2ⁿ asignaciones finitas: la fuerza bruta y DPLL siempre terminan y responden Sí (con testigo) o No. | **Sí.** Hay un procedimiento efectivo (MT determinista / RAM) que calcula la función característica de DESPACHO-SAT y, si la respuesta es Sí, devuelve la asignación. | **NP-completo** (∈ NP con verificador O(m·k); NP-difícil por 3SAT ≤p DESPACHO-SAT). DPLL: O(2ⁿ·n·m·k) en el peor caso. La instancia 2-CNF del expediente: O(n + m) con 2-SAT. |
 
 
-**Ficha completa** (resumen del correo, entrada y salida, decidibilidad y computabilidad, algoritmo, Big-O, código, pruebas y salida observada): [docs/fichas/c1.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/c1.md)
+Ficha completa: [docs/fichas/c1.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/c1.md)
 
-## Ficha c2 · ¿Existe una ruta hamiltoniana dentro del presupuesto?
+## 5.10 Ficha c2 · ¿Existe una ruta hamiltoniana dentro del presupuesto?
 
 **Remitente:** Jorge Tapia · Ruteo · **Grupo:** C · **Clasificación propuesta:** NP-completo
-**Responsable de redacción:** Jessica
+**Responsable:** Jessica Pijal
 
 > **Solicitud operativa:** ¿Existe un recorrido que visite cada centro exactamente una vez, regrese al punto de salida y cueste como máximo L kilómetros?
 
-### 0. Respuesta al correo (para Jorge Tapia)
+### Respuesta al correo (para Jorge Tapia)
 Jorge: **sí, existe un recorrido dentro del presupuesto de L = 20 km**: Planta → Quito → Guayaquil → Planta, con **15 km**. El programa adjunto lo verifica: cada centro se visita una vez, el recorrido vuelve a la Planta y el costo es ≤ 20. Con tres centros es también el recorrido más corto, porque solo existe uno (recorrido en uno u otro sentido); si la gerencia bajara el presupuesto a 14 km, la respuesta sería **no**. Para manifiestos con muchos más centros, la búsqueda exacta crece muy rápido (sección 6), así que habría que usar un método exacto más eficiente (Held–Karp) o una heurística. La heurística entrega recorridos válidos, pero no garantiza el más corto.
 
-### 3. Clasificación y evidencia: **NP-completo**
+### Clasificación y evidencia: **NP-completo**
 Para el grupo C hay que probar dos cosas: que TSP-DEC **pertenece a NP** y que es **NP-difícil**, mediante una reducción polinómica desde un problema que ya se sabe NP-completo.
 
 **(a) TSP-DEC ∈ NP: certificado + verificador polinómico.**
@@ -853,25 +801,25 @@ Con (a) y (b), **TSP-DEC es NP-completo**. Esto **no** demuestra que no exista u
 
 **Consecuencia práctica para el tamaño de la instancia.** Con la enumeración exacta, cada centro extra multiplica el trabajo por unos (n − 1). Tiempos **medidos** (`docs/generado/crecimiento.md`; dependen de la máquina): 10 centros → 362 880 recorridos en 0,46 s; extrapolando ese costo por recorrido, 15 centros → unas 30 horas, **20 centros → unos 4 800 años** y 25 centros → unos 2,5·10¹⁰ años. Held–Karp resolvió 14 centros en 0,13 s, pero su memoria O(n·2ⁿ) también explota: con 30 centros serían unos 3·10¹⁰ valores en la tabla. Para un manifiesto real con decenas de centros, la respuesta exacta no es viable en tiempo útil y se usan heurísticas, aceptando que no garantizan el óptimo.
 
-### ¿Qué concluimos?
+### Conclusión
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
 | **Sí.** Hay (n − 1)! recorridos finitos con inicio fijo: la enumeración siempre termina y responde Sí (con testigo) o No. | **Sí.** Hay un procedimiento efectivo (MT determinista / RAM) que calcula la función característica de TSP-DEC y, si la respuesta es Sí, devuelve el recorrido. | **NP-completo** (∈ NP con verificador O(n); NP-difícil por HAM-CYCLE ≤p TSP-DEC). Exacto: O(n!) por enumeración, O(n²·2ⁿ) con Held–Karp. Heurística: O(n²), sin garantía de óptimo. |
 
 
-**Ficha completa** (resumen del correo, entrada y salida, decidibilidad y computabilidad, algoritmo, Big-O, código, pruebas y salida observada): [docs/fichas/c2.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/c2.md)
+Ficha completa: [docs/fichas/c2.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/c2.md)
 
-## Ficha c3 · ¿Bastan k almacenes para cubrir todas las zonas?
+## 5.11 Ficha c3 · ¿Bastan k almacenes para cubrir todas las zonas?
 
 **Remitente:** Carla Núñez · Red logística (para Continuidad Operativa) · **Grupo:** C · **Clasificación propuesta:** NP-completo
-**Responsable de redacción:** Jessica
+**Responsable:** Jessica Pijal
 
 > **Solicitud operativa:** ¿Existe una selección de no más de k zonas donde desplegar equipos de inspección, de modo que cada corredor tenga un equipo en al menos uno de sus extremos?
 
-### 0. Respuesta al correo (para Carla Núñez)
+### Respuesta al correo (para Carla Núñez)
 Carla: **sí, basta con k = 1 equipo de inspección, desplegado en la zona B**. B es extremo de los dos corredores del mapa (A–B y B–C), así que los dos movimientos quedan cubiertos y se puede confirmar el despliegue nocturno. La selección {B} es el certificado; el verificador adjunto, separado de la búsqueda, comprueba que tiene a lo sumo k zonas y que todo corredor tiene un equipo en un extremo. Un equipo en A no alcanza, porque B–C queda sin cubrir, y sin equipos (k = 0) tampoco. Si el mapa crece, la búsqueda exacta crece de forma exponencial con k (sección 3).
 
-### 3. Clasificación y evidencia: **NP-completo**
+### Clasificación y evidencia: **NP-completo**
 Para el grupo C hay que probar dos cosas: que VERTEX-COVER **pertenece a NP** y que es **NP-difícil**, mediante una reducción polinómica desde un problema que ya se sabe NP-completo.
 
 **(a) VERTEX-COVER ∈ NP: certificado + verificador polinómico.**
@@ -893,20 +841,20 @@ Con (a) y (b), **VERTEX-COVER es NP-completo**. Esto **no** demuestra que no exi
 
 **Consecuencia práctica para el tamaño de la instancia.** La búsqueda exacta por ramificación es exponencial en **k**: cada equipo extra duplica el árbol. Tiempos **medidos** (`docs/generado/crecimiento.md`; dependen de la máquina), en el peor caso (respuesta No, árbol completo de 2ᵏ⁺¹ − 1 nodos): k = 16 → 131 071 nodos en unos 0,1 s; extrapolando ese costo, **k = 40 → unos 19 días** y **k = 60 → unos 55 000 años**. Si en vez de ramificar se prueban todos los subconjuntos de zonas, el costo es 2^V: con 60 zonas ya son unos 10¹⁸ subconjuntos. En cambio, la 2-aproximación cubrió una red de 100 000 zonas en unos 0,2 s, pero puede usar hasta el doble de equipos que el óptimo.
 
-### ¿Qué concluimos?
+### Conclusión
 | Decidibilidad | Computabilidad | Complejidad |
 |---|---|---|
 | **Sí.** La ramificación tiene profundidad ≤ k y ≤ 2ᵏ⁺¹ − 1 nodos (o hay 2^V subconjuntos finitos): siempre termina y responde Sí (con testigo) o No. | **Sí.** Hay un procedimiento efectivo (MT determinista / RAM) que calcula la función característica de VERTEX-COVER y, si la respuesta es Sí, devuelve la selección de zonas con equipo. | **NP-completo** (∈ NP con verificador O(V + E); NP-difícil por INDEPENDENT-SET ≤p VERTEX-COVER). Exacto: O(2ᵏ·(V + E)) por ramificación. Aproximado: O(V + E) con \|S\| ≤ 2·ÓPTIMO. |
 
 
-**Ficha completa** (resumen del correo, entrada y salida, decidibilidad y computabilidad, algoritmo, Big-O, código, pruebas y salida observada): [docs/fichas/c3.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/c3.md)
+Ficha completa: [docs/fichas/c3.md](https://github.com/JessPCL/logistpulse-deber2-tc/blob/main/docs/fichas/c3.md)
 
 # 6. Fase E · Implementación y validación
 
 
-Rúbrica: "Implementación y pruebas (1,5): algoritmo ejecutable o verificador; casos normales, límite e inválidos; resultados reproducibles". El enunciado agrega: "No se evaluará solo que funcione: **debe coincidir con el problema formalizado y con la complejidad argumentada**". Esta sección muestra cómo cumplimos ambas cosas.
+El enunciado pide que la implementación no solo funcione, sino que **coincida con el problema formalizado y con la complejidad argumentada**. Esta sección muestra cómo se cumple: qué se implementó, cómo se organiza el código, cómo se validan las entradas, qué pruebas lo respaldan y cómo se reproducen los resultados.
 
-### 1. Qué se implementó (más de lo mínimo exigido)
+## 6.1 Qué se implementó (más de lo mínimo exigido)
 | Exigido | Implementado |
 |---|---|
 | ≥ 1 búsqueda de rutas **o** regla FEFO/reposición | Dijkstra (con bloqueos, predecesores y detección de empates), BFS, FEFO (3 políticas) y reposición |
@@ -915,16 +863,17 @@ Rúbrica: "Implementación y pruebas (1,5): algoritmo ejecutable o verificador; 
 | — | Reducciones **ejecutables y probadas**: HAM-CYCLE ≤p TSP-DEC e IS ≤p VC |
 | — | Los 3 autómatas como AFD en Python, idénticos a los `.jff` de JFLAP (probado) |
 
-### 2. Separación lectura / procesamiento / presentación
-```
-data/*.json ──► io_datos.py (LECTURA: valida y convierte) ──► automatas/ rutas/ inventario/ casos/ (PROCESAMIENTO: algoritmos puros)
-                                                                         │
-                                         presentacion.py / presentacion_casos.py (PRESENTACIÓN: texto y tablas) ◄┘
-```
+## 6.2 Separación lectura / procesamiento / presentación
+El código tiene tres capas, y los datos fluyen en un solo sentido:
+
+1. **Lectura** (`io_datos.py`): lee `data/*.json`, valida los datos y los convierte en estructuras de Python.
+2. **Procesamiento** (`automatas/`, `rutas/`, `inventario/`, `casos/`): algoritmos puros, sin lectura de archivos ni impresión.
+3. **Presentación** (`presentacion.py`, `presentacion_casos.py`): convierte los resultados en texto y tablas.
+
 - Los módulos de procesamiento **no leen archivos ni imprimen**. `tests/test_registro.py::TestCapas` lo comprueba automáticamente analizando el código.
 - Los datos de los 10 expedientes están en `data/casos_simulador.json`, no incrustados en el código (también se prueba).
 
-### 3. Validación de entradas (ejemplos)
+## 6.3 Validación de entradas (ejemplos)
 | Dato inválido | Reacción |
 |---|---|
 | Peso negativo, NaN, infinito o no numérico en la planta | `ValueError`: Dijkstra exige pesos ≥ 0 |
@@ -935,26 +884,26 @@ data/*.json ──► io_datos.py (LECTURA: valida y convierte) ──► automa
 | Matriz no cuadrada, no simétrica o con lazos; p no primo; cadena no binaria | `ValueError` |
 | Aristas antiparalelas en la red de flujo | `ValueError` con la indicación de agregar un nodo intermedio (CLRS 26.1) |
 
-### 4. Pruebas
+## 6.4 Pruebas
 - **Funcionales** (normales, límite e inválidas): `tests/test_automatas.py`, `test_jflap.py`, `test_rutas.py`, `test_inventario.py`, `test_casos_p.py`, `test_casos_np.py`, `test_casos_npc.py`, `test_registro.py`. El inventario completo, generado al ejecutar, está en `docs/generado/inventario_pruebas.md`.
 - **Comparación contra fuerza bruta** en cientos de instancias aleatorias con semilla fija: Dijkstra vs todos los caminos simples, Held–Karp vs todas las permutaciones, DPLL y 2-SAT vs 2ⁿ asignaciones, ramificación vs subconjuntos, BSGS vs búsqueda lineal, y las dos reducciones vs una prueba directa.
 - **Complejidad** (`tests/test_complejidad.py`), en dos niveles:
   1. *Conteo de operaciones* (determinista): cada algoritmo cuenta su operación dominante y se compara con la cota. Por ejemplo: Dijkstra hace ≤ E⃗+1 inserciones en el heap; Edmonds–Karp hace ≤ V·E aumentos y su número **no cambia** al multiplicar todas las capacidades por 10⁶; la enumeración TSP hace exactamente (n−1)! tours; la búsqueda de factores **se duplica con cada bit** extra; los verificadores son lineales o cuadráticos.
   2. *Tiempo real* (`time.perf_counter`, mínimo de mediciones intercaladas, hasta 3 intentos): al cuadruplicar la entrada, BFS y Dijkstra crecen unas 4–5 veces (no 16, que sería cuadrático); la enumeración TSP crece unas 9 veces al pasar de 8 a 9 centros; los factores, unas 4 veces con 2 bits más.
 
-### 5. Coherencia código ⇄ Big-O (decisiones de implementación)
+## 6.5 Coherencia código ⇄ Big-O (decisiones de implementación)
 - No se ordena dentro de los bucles de BFS ni de Edmonds–Karp, porque agregaría un factor log a O(V+E) y a O(V·E²). El orden de recorrido es el de la lista (determinista).
 - Held–Karp recorre las máscaras en orden creciente con una tabla 2ⁿ × n, lo que da O(n²·2ⁿ) real (no O(n³·2ⁿ)).
 - Los verificadores de c2 y c3 no ordenan: marcan "visto" en O(n) y O(V+E).
 - La reposición procesa con un generador (O(1) extra); la detección de SKU repetidos está en la capa de lectura.
 - Dijkstra recorre los vecinos en orden alfabético para que los empates sean reproducibles: Σ d·log d = O(E log V), dentro de la cota O((V+E) log V).
 
-### 6. Reproducibilidad
+## 6.6 Reproducibilidad
 - Solo biblioteca estándar de Python ≥ 3.8. Semillas fijas en todas las pruebas aleatorias. Desempates deterministas.
 - `python -m unittest discover -s tests -v` (o el notebook de Colab, celda 2) · `python -m logistpulse` · `python scripts/verificar_entrega.py`.
 - Las salidas observadas de las fichas y de `docs/generado/salidas_observadas.md` se **generan ejecutando** el código (`scripts/generar_docs.py`). `verificar_entrega.py` avisa si quedaron desactualizadas.
 
-## Crecimiento medido (tiempos reales)
+## 6.7 Crecimiento medido (tiempos reales)
 
 _Máquina: CPython 3.13.18 · x86_64. Los valores cambian según el equipo; lo que importa es la forma del crecimiento._
 
@@ -1046,7 +995,7 @@ Conclusión: con 50 000 ubicaciones Dijkstra sigue respondiendo en segundos: O((
 
 # 7. Fase F · Decidibilidad y el problema de la parada
 
-**Responsable: Jessica** · 1 página
+**Responsable:** Jessica Pijal
 
 - **Decidibilidad:** ¿hay un algoritmo que siempre termine y responda bien para toda entrada válida? Ej.: el AFD de pedidos da un paso por símbolo y siempre se detiene (A_DFA es decidible, Sipser Teo. 4.1).
 - **Computabilidad:** ¿qué función o relación se calcula, y en qué modelo? Ej.: en p2, f(planta, R, D) = distancia mínima de R a D y un camino que la logra, en una máquina de Turing determinista (o RAM).
@@ -1055,22 +1004,22 @@ Conclusión: con 50 000 ubicaciones Dijkstra sigue respondiendo en segundos: O((
 
 "Decidible" no implica "eficiente", y "NP-completo" no significa "indecidible".
 
-### Caso límite: decidible, pero impracticable
+## 7.1 Caso límite: decidible, pero impracticable
 En c2 (TSP-DEC: ¿hay un recorrido por los n centros con costo ≤ L?), una instancia finita tiene (n − 1)! órdenes. Revisarlos todos siempre termina con la respuesta correcta: el problema es **decidible**. Pero lo medimos (`docs/generado/crecimiento.md`): 10 centros, 0,46 s; 20 centros, unos 4 800 años; 25 centros, unos 2,5·10¹⁰ años. Lo mismo pasa en c1 (SAT, 60 variables: unos 70 000 años) y en c3 (k = 60: unos 55 000 años). Es un límite de **complejidad**, no de decidibilidad: la respuesta llegaría, pero después de la vida útil del almacén. Por eso, en tamaños reales se usan heurísticas o aproximaciones.
 
-### Contraste: "¿este programa arbitrario terminará para toda entrada?"
+## 7.2 Contraste: "¿este programa arbitrario terminará para toda entrada?"
 Aquí no hay cota: si una simulación no ha terminado, no se sabe si terminará después o nunca. HALT_TM = { ⟨M, w⟩ : M se detiene con la entrada w } es **indecidible** (Sipser, Teo. 5.1, por reducción desde A_TM, Teo. 4.11). **Idea de la diagonalización:** si existiera un decisor H, construiríamos D que, con la entrada ⟨M⟩, le pregunta a H si M se detiene con ⟨M⟩ y hace lo contrario (entra en un ciclo infinito si H dice "sí" y se detiene si dice "no"). Con la entrada ⟨D⟩, D se detiene si y solo si no se detiene: contradicción. "Para toda entrada" es aún más difícil: la máquina M′ que ignora su entrada y simula M con w termina con toda entrada ⇔ M se detiene con w, así que decidirlo permitiría decidir HALT_TM.
 
-### Cómo probamos que nuestros algoritmos sí terminan
+## 7.3 Cómo probamos que nuestros algoritmos sí terminan
 No hay un decisor **general**, pero sí se puede probar que un programa **concreto** termina, con una cota finita o una cantidad que decrece: AFD, un paso por símbolo; BFS y Dijkstra, cada zona se cierra una vez; Edmonds–Karp, ≤ V·E aumentos; FEFO y reposición, listas finitas; DPLL (c1) y ramificación (c3), profundidad ≤ n y ≤ k. `tests/test_complejidad.py` comprueba estas cotas contando operaciones.
 
 # 8. Gestión del proyecto
 
-## Backlog del producto
+## 8.1 Backlog del producto
 
-El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su ficha, su código y sus pruebas** (sección 5). Por eso hay una fila por correo, además de las historias por fase. Sugerencia: crear un *Issue* de GitHub por fila y cerrarlo desde el PR.
+El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su ficha, su código y sus pruebas** (sección 5). Por eso hay una fila por correo, además de las historias por fase. Cada fila tiene un *Issue* de GitHub, que se cerró desde el PR correspondiente.
 
-> Los tres sprints se comprimieron al plazo real de entrega (martes 24/11): Sprint 1 = 17–21/11, Sprint 2 = 22/11, Sprint 3 = 23–24/11. La columna Sprint indica en cuál se terminó cada tarea.
+> Los tres sprints se comprimieron al plazo real de entrega (martes 24/11): Sprint 1 = 17–21/11, Sprint 2 = 22/11 y Sprint 3 = 22–24/11. La columna Sprint indica en cuál se terminó cada tarea.
 
 ### Historias por fase
 | ID | Historia | Fase | Responsable | Sprint | Estimación | Estado | Evidencia (PR / archivo) |
@@ -1084,7 +1033,7 @@ El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su fic
 | F-C1 | Pseudocódigo + Big-O de FEFO y reposición | C | Luis | 2 | 3 | Hecho (22/11, #26) | `docs/fase_C_fefo_reposicion.md` |
 | F-E1 | Revisión cruzada de código y pruebas (PR) | E | Rol de validación | 2 | 2 | Hecho (22/11, revisiones cruzadas #20–#32) | `tests/`, `scripts/verificar_entrega.py` |
 | F-F1 | Nota sobre el problema de la parada | F | Jessica | 2 | 2 | Hecho (22/11, #27) | `docs/fase_F_nota_parada.md` |
-| F-G1 | Informe PDF + release v1.0 + presentación | — | Jessica (integra) | 3 | 3 | Hecho (22/11): informe PDF y release `v1.0`; exposición: ensayo el 23/11 | `docs/generado/INFORME.md`; PDF adjunto al release `v1.0` |
+| F-G1 | Informe PDF + release v1.0 + presentación | — | Jessica (integra) | 3 | 3 | Hecho: release `v1.0` (22/11) e informe final corregido en el release `v1.1` (24/11); exposición: ensayo el 23/11 | `docs/generado/INFORME.md`; PDF adjunto a los releases |
 
 ### Una unidad de trabajo por correo
 | ID | Correo | Clase | Responsable | Sprint | Ficha | Código | Pruebas | Estado |
@@ -1100,10 +1049,9 @@ El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su fic
 | C-c2 | Recorrido dentro del presupuesto (TSP) | NPC | Jessica | 1 | `docs/fichas/c2.md` | `casos/c2_tsp_decision.py` | `test_casos_npc.py::TestC2` | Hecho (20/11, #21) |
 | C-c3 | Cobertura con k equipos (Vertex Cover) | NPC | Jessica | 2 | `docs/fichas/c3.md` | `casos/c3_vertex_cover.py` | `test_casos_npc.py::TestC3` | Hecho (22/11, #25) |
 
-## Sprint 1
+## 8.2 Sprint 1
 **Fechas:** martes 17 al sábado 21 de noviembre de 2026 · **Objetivo:** Modelar pedidos, reservas y compras con autómatas; definir el grafo de la planta y los casos de ruta.
 **Evidencia de revisión que pide el enunciado:** Diagramas de estados y grafo con entradas, eventos y supuestos.
-**Ajuste de plazo:** la entrega real es el martes 24/11, así que los tres sprints se comprimieron: Sprint 1 (17–21/11), Sprint 2 (22/11) y Sprint 3 (23–24/11).
 
 ### Roles de este sprint (rotativos)
 | Coordinación y backlog | Formalización | Algoritmos y análisis | Implementación y validación |
@@ -1130,7 +1078,7 @@ El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su fic
 |---|---|---|
 | El código y las pruebas estuvieron listos desde el inicio, y cada cambio entró por PR con revisión y pruebas automáticas. | Hubo que rehacer documentos e Issues por emojis y corregir los nombres de los checks del ruleset. La Fase A no se terminó dentro del sprint. En c1 y c3 se usó la tarjeta del simulador en lugar del cuerpo del correo. | Leer el cuerpo completo de cada correo antes de redactar (`docs/QUE_PIDE_CADA_CORREO.md`), confirmar la fecha real de entrega y abrir los PR más temprano. |
 
-## Sprint 2
+## 8.3 Sprint 2
 **Fechas:** domingo 22 de noviembre de 2026 · **Objetivo:** Desarrollar Dijkstra, el pseudocódigo FEFO y la regla de reposición; analizar terminación y Big-O. Por el ajuste de plazo, este sprint también cerró la Fase A pendiente y las diez fichas.
 **Evidencia de revisión que pide el enunciado:** Pruebas, pseudocódigo y complejidades revisados por pares.
 
@@ -1162,8 +1110,8 @@ El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su fic
 |---|---|---|
 | Las revisiones fueron cruzadas y con evidencia objetiva: comparación con el código y fusión de prueba antes de aprobar. | Dos fichas entraron con un emoji que el verificador detectó después del merge, y algunas ramas estaban desactualizadas respecto de `main`. | Correr `python scripts/verificar_entrega.py` antes de abrir cada PR y traer `main` a la rama antes de empezar a trabajar. |
 
-## Sprint 3
-**Fechas:** lunes 23 al martes 24 de noviembre de 2026 (el cierre y el release se adelantaron al domingo 22/11, porque el martes 24 el equipo tiene otra entrega) · **Objetivo:** Analizar los diez correos; conectar decidibilidad/computabilidad/P-NP; presentar resultados.
+## 8.4 Sprint 3
+**Fechas:** domingo 22 al martes 24 de noviembre de 2026 (release `v1.0` el 22/11; versión final del informe, `v1.1`, el 24/11) · **Objetivo:** Analizar los diez correos; conectar decidibilidad/computabilidad/P-NP; presentar resultados.
 **Evidencia de revisión que pide el enunciado:** Release del informe, código, modelos JFLAP y retrospectiva.
 
 ### Roles de este sprint (rotativos)
@@ -1179,61 +1127,67 @@ El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su fic
 | Captura `pedido_determinismo.png` con la franja de *Nondeterminism* | Camila | `camila/fase-a-fichas-np` | Jessica | Opcional, no bloquea la entrega (el determinismo ya consta en la tabla δ total y en las otras dos capturas) |
 | F-G1 · Informe PDF (`scripts/armar_informe.py` → Word → PDF; enlaza al repositorio fichas, código y pruebas) | Jessica | `jessica/fase-df-gestion` · #36 y cierre | Luis | Hecho (22/11): fuente en `docs/generado/INFORME.md`; el PDF va adjunto al release `v1.0` y se sube al aula (no se versiona por su peso) |
 | F-G1 · Tag `v1.0` + release con el PDF | Jessica | `main` | — | Hecho (22/11), al integrar el cierre: *Releases → v1.0* |
+| F-G1 · Revisión final del informe: Times New Roman 12, sin preguntas de práctica ni listas de verificación, redacción sin repeticiones, numeración única de secciones | Jessica | `jessica/fase-df-gestion` | Luis | Hecho (24/11): release `v1.1` con el PDF corregido |
 
 ### Revisión (demo del sprint) · domingo 22/11
 - Qué se mostró: el informe PDF armado desde los documentos del repositorio (análisis de las seis fases, una ficha resumida por correo con enlace a la ficha completa), el simulador con los diez correos (10/10 coinciden con nuestro análisis) y el guion completo de 8–10 minutos con la parte de cada integrante.
 - Comentarios del revisor (Luis): aprobó el simulador (#34) y el armador del informe (#36) sin pedir cambios.
-- Estado de `python scripts/verificar_entrega.py` al cierre: 146 pruebas OK; todos los criterios en OK salvo el tag `v1.0` y la captura del release, que se crean justo después de integrar este cierre.
+- Estado de `python scripts/verificar_entrega.py` al cierre: 146 pruebas OK y los siete criterios en OK, con el tag `v1.0`, su release y las capturas finales.
+- Revisión final del informe (martes 24/11): formato Times New Roman 12, sin preguntas de práctica ni listas de verificación, redacción sin repeticiones y numeración única de secciones; se publica como release `v1.1`.
 
 ### Retrospectiva
 | Qué salió bien | Qué salió mal | Qué mejoramos el próximo sprint |
 |---|---|---|
 | Revisión cruzada en cada PR (Luis → Jessica, Camila → Luis, Jessica → Camila) con Actions en verde; el simulador coincidió 10/10 con las fichas; el informe se arma solo desde los `.md`, sin copiar a mano. | Los sprints se comprimieron porque al inicio no teníamos clara la fecha real (24/11) y coincide con otra entrega; algunas capturas se tomaron tarde o hubo que repetirlas; un error de bash con `!` al aprobar un PR. | Fijar la fecha real de entrega el primer día y planificar desde ahí; tomar cada captura en el momento (lista en `docs/EMPIEZA_AQUI.md`); ensayar la exposición con cronómetro antes del día. |
 
-## Evidencias de gestión
+## 8.5 Evidencias de gestión
 
-![Sprint 1 · ruleset main](../evidencias/s1_01_ruleset_main.png)
+Capturas de GitHub que respaldan la gestión: protección de `main`, Issues, PR revisados, pruebas automáticas y release.
 
-![Sprint 1 · colaboradores](../evidencias/s1_02_colaboradores.png)
+![Sprint 1 · Regla que protege main: PR, una aprobación y pruebas en verde](../evidencias/s1_01_ruleset_main.png)
 
-![Sprint 1 · issues backlog](../evidencias/s1_03_issues_backlog.png)
+![Sprint 1 · Colaboradores del repositorio](../evidencias/s1_02_colaboradores.png)
 
-![Sprint 1 · pr sin emojis](../evidencias/s1_04_pr_sin_emojis.png)
+![Sprint 1 · Issues del backlog con responsables](../evidencias/s1_03_issues_backlog.png)
 
-![Sprint 1 · actions verde](../evidencias/s1_05_actions_verde.png)
+![Sprint 1 · PR aprobado por un compañero con las pruebas en verde](../evidencias/s1_04_pr_sin_emojis.png)
 
-![Sprint 1 · codespace pruebas](../evidencias/s1_06_codespace_pruebas.png)
+![Sprint 1 · Pruebas automáticas en GitHub Actions](../evidencias/s1_05_actions_verde.png)
 
-![Sprint 2 · revision fase a](../evidencias/s2_01_revision_fase_a.png)
+![Sprint 1 · Pruebas ejecutadas en Codespaces](../evidencias/s1_06_codespace_pruebas.png)
 
-![Sprint 2 · revision de pares](../evidencias/s2_02_revision_de_pares.png)
+![Sprint 2 · Revisión y fusión del PR de la Fase A](../evidencias/s2_01_revision_fase_a.png)
 
-![Sprint 2 · issues cerrados](../evidencias/s2_03_issues_cerrados.png)
+![Sprint 2 · Revisión de pares](../evidencias/s2_02_revision_de_pares.png)
 
-![Sprint 3 · prs cerrados](../evidencias/s3_01_prs_cerrados.png)
+![Sprint 2 · Issues cerrados desde sus PR](../evidencias/s2_03_issues_cerrados.png)
 
-![Entrega final · contribuidores](../evidencias/final_01_contribuidores.png)
+![Sprint 3 · Pull requests cerrados](../evidencias/s3_01_prs_cerrados.png)
+
+![Entrega · Contribuciones de los tres integrantes](../evidencias/final_01_contribuidores.png)
+
+![Entrega · Release v1.0 con el informe adjunto](../evidencias/final_02_release_v1.png)
 
 # 9. Supuestos, límites y conclusiones
 
-**Responsable: Jessica**
+**Responsable:** Jessica Pijal
 
-### Supuestos
-Todos están justificados en `docs/DECISIONES_Y_HALLAZGOS.md`; aquí va el resumen.
+## 9.1 Supuestos
+Cada supuesto se justifica en `docs/DECISIONES_Y_HALLAZGOS.md` (decisiones A1–A8, B1–B3, C1–C4 y E1–E4); aquí se resumen.
 - **Modelo de cómputo:** máquina de Turing determinista, o de forma equivalente el modelo RAM con enteros codificados **en binario**. Por eso el tamaño de un número B es log₂B bits, y un algoritmo O(B) no es polinomial (H9).
 - **Autómatas (A1–A8):** F son los estados donde el proceso cerró de forma legítima; *Cancelado* y *Rechazada* cuentan como cierre válido. La variante "solo pedidos entregados" queda en `PEDIDO_ESTRICTO`. La función δ es parcial con un sumidero ERROR, y un símbolo fuera de Σ es un dato inválido, no un rechazo.
 - **Planta (B1–B3):** el grafo es no dirigido, los pesos son metros ≥ 0, el origen es R y el destino D. Una zona bloqueada se modela como vértice eliminado. Los empates se resuelven por nombre para que la salida sea reproducible.
 - **Inventario (C1–C4):** un lote que vence **hoy** ya no es elegible. FEFO ordena por (vencimiento, código de lote). `en_orden` cuenta solo las órdenes abiertas.
 - **Correos:** manda el **cuerpo del correo**, no la tarjeta del simulador (H7 en c3). Los tramos de p1, p2 y p3 tienen sentido, como muestran las flechas del mapa del portal. Los valores de n1 y c2 que la tabla no trae se toman del código de ejemplo del propio caso.
 
-### Límites de la inferencia
+## 9.2 Límites de la inferencia
 - **El código prueba lo que dicen sus datos, no la operación real.** Las 146 pruebas confirman que los algoritmos dan la respuesta correcta sobre estas instancias y sobre instancias aleatorias generadas. No prueban que la planta, los tiempos o las capacidades reales sean los del expediente: si cambian, hay que volver a ejecutar.
 - **Una instancia fácil no cambia la clase del problema.** La fórmula de c1 es 2-CNF y se resuelve en tiempo lineal (H6), pero el problema que describe el correo sigue siendo NP-completo.
 - **P vs NP sigue abierto.** Clasificar un problema como NP-completo no demuestra que no exista un algoritmo polinómico: dice que, si existiera, entonces P = NP. Para n1–n4 solo afirmamos que están en NP (certificado y verificador polinómico), sin afirmar NP-completitud.
 - **Los tiempos medidos dependen de la máquina.** Los números de `docs/generado/crecimiento.md` cambian entre ejecuciones; lo que se mantiene es la **forma** del crecimiento. Por eso el Big-O se respalda además con conteos de operaciones (`tests/test_complejidad.py`), que no dependen de la máquina.
 - **Las extrapolaciones son órdenes de magnitud.** Decir "20 centros: unos 4 800 años" multiplica el costo medido por el número de candidatos. Sirve para mostrar que la búsqueda exhaustiva es impracticable, no para predecir un tiempo exacto.
 
-### Conclusiones por fase
+## 9.3 Conclusiones por fase
 - **A · Autómatas:** los tres procesos (pedido, reserva, orden de compra) son lenguajes regulares. Cada AFD responde en un paso por símbolo, y los archivos .jff de JFLAP son idénticos a los autómatas probados en Python, así que las dos herramientas aceptan y rechazan las mismas secuencias.
 - **B · Rutas:** Dijkstra da R → B → A → E → D = **11 m**. La ruta de la Figura 5 también cuesta 11 m: hay **empate**, y Dijkstra garantiza el costo mínimo, no una ruta única (H1). BFS minimiza tramos, no metros: da 12 m (H2).
 - **C · FEFO y reposición:** las tres políticas (parcial, rechazar, esperar) dan resultados distintos ante falta de stock. La regla del enunciado sugiere **27** unidades y no duplica pedidos cuando ya hay una orden abierta (H5).
@@ -1251,4 +1205,4 @@ Todos están justificados en `docs/DECISIONES_Y_HALLAZGOS.md`; aquí va el resum
 - **Herramientas:** cada integrante usó un asistente de IA conversacional con los prompts de `equipo/ROLES_Y_PROMPTS.md`; Jessica usó Claude (Anthropic).
 - **Para qué:** generar y revisar el código Python y sus pruebas, redactar borradores de las fichas, las fases y el informe, y organizar el repositorio y los sprints.
 - **Cómo se verificó:** 146 pruebas automáticas (casos normales, límites e inválidos), pruebas de complejidad que cuentan operaciones, comparación de los .jff en JFLAP (Multiple Run), salidas generadas ejecutando el código y revisión cruzada de cada cambio en un PR aprobado por otro integrante.
-- **Responsabilidad:** cada integrante revisó, entiende y defiende su parte: Camila (Fase A, JFLAP, n1–n4), Luis (Fases B y C, p2, p3) y Jessica (gestión, c1–c3, Fase F, conclusiones e informe).
+- **Responsabilidad:** cada integrante revisó, entiende y defiende su parte: Camila (Fase A, JFLAP, n1–n4), Luis (Fases B y C, p1–p3) y Jessica (gestión, c1–c3, Fase F, conclusiones e informe).

@@ -1,8 +1,8 @@
 # Backlog del producto · lo mantiene quien tenga el rol de Coordinación en cada sprint
 
-El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su ficha, su código y sus pruebas** (sección 5). Por eso hay una fila por correo, además de las historias por fase. Sugerencia: crear un *Issue* de GitHub por fila y cerrarlo desde el PR.
+El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su ficha, su código y sus pruebas** (sección 5). Por eso hay una fila por correo, además de las historias por fase. Cada fila tiene un *Issue* de GitHub, que se cerró desde el PR correspondiente.
 
-> Los tres sprints se comprimieron al plazo real de entrega (martes 24/11): Sprint 1 = 17–21/11, Sprint 2 = 22/11, Sprint 3 = 23–24/11. La columna Sprint indica en cuál se terminó cada tarea.
+> Los tres sprints se comprimieron al plazo real de entrega (martes 24/11): Sprint 1 = 17–21/11, Sprint 2 = 22/11 y Sprint 3 = 22–24/11. La columna Sprint indica en cuál se terminó cada tarea.
 
 ## Historias por fase
 | ID | Historia | Fase | Responsable | Sprint | Estimación | Estado | Evidencia (PR / archivo) |
@@ -16,7 +16,7 @@ El enunciado pide que **cada correo sea una unidad de trabajo vinculada a su fic
 | F-C1 | Pseudocódigo + Big-O de FEFO y reposición | C | Luis | 2 | 3 | Hecho (22/11, #26) | `docs/fase_C_fefo_reposicion.md` |
 | F-E1 | Revisión cruzada de código y pruebas (PR) | E | Rol de validación | 2 | 2 | Hecho (22/11, revisiones cruzadas #20–#32) | `tests/`, `scripts/verificar_entrega.py` |
 | F-F1 | Nota sobre el problema de la parada | F | Jessica | 2 | 2 | Hecho (22/11, #27) | `docs/fase_F_nota_parada.md` |
-| F-G1 | Informe PDF + release v1.0 + presentación | — | Jessica (integra) | 3 | 3 | Hecho (22/11): informe PDF y release `v1.0`; exposición: ensayo el 23/11 | `docs/generado/INFORME.md`; PDF adjunto al release `v1.0` |
+| F-G1 | Informe PDF + release v1.0 + presentación | — | Jessica (integra) | 3 | 3 | Hecho: release `v1.0` (22/11) e informe final corregido en el release `v1.1` (24/11); exposición: ensayo el 23/11 | `docs/generado/INFORME.md`; PDF adjunto a los releases |
 
 ## Una unidad de trabajo por correo
 | ID | Correo | Clase | Responsable | Sprint | Ficha | Código | Pruebas | Estado |
